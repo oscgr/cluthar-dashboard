@@ -17,14 +17,11 @@
       <v-container>
         <v-row>
           <v-col cols="12">
-            <place-search
-              :coordiates="coordinates"
-              @set-coordinates="setCoordinates"
-            />
+            <place-search v-model="coordinates" />
           </v-col>
         </v-row>
         <v-row>
-          {{place}}
+          {{ place }}
         </v-row>
       </v-container>
     </v-main>
@@ -48,16 +45,21 @@ export default {
     place: {}
   }),
   methods: {
-    setCoordinates(latLng) {
-      this.coordinates = latLng
-      localStorage.setItem('coordinates', latLng)
-      fetch(`https://api.ipgeolocation.io/astronomy?apiKey=${API_KEY}&lat=${latLng.lat}&long=${latLng.lng}`)
+    getPlaceInfos() {
+      fetch(`https://api.ipgeolocation.io/astronomy?apiKey=${API_KEY}&lat=${this.coordinates.lat}&long=${this.coordinates.lng}`)
         .then(r => r.json())
         .then(r => this.place = r)
+    },
+  },
+  watch: {
+    coordinates(val) {
+      this.coordinates = val
+      localStorage.setItem('coordinates', JSON.stringify(val))
+      this.getPlaceInfos()
     }
   },
   mounted() {
-    this.coordinates = localStorage.getItem('coordinates') || {}
+    this.coordinates = JSON.parse(localStorage.getItem('coordinates')) || {}
   }
-};
+}
 </script>
