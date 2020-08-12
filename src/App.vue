@@ -50,9 +50,6 @@
 <script>
 import PlaceSearch from '@/components/PlaceSearch.vue';
 
-const IP_GEOLOCATION_API_KEY = 'f2b5fcdad58f47ebb86d4d4c93178d14'
-const OPEN_WEATHER_API_KEY = '84744bcb3ccf3dc67cf8426f62bb395c'
-
 const TempUnit = {
   C:'C',
   K: 'K',
@@ -86,12 +83,12 @@ export default {
   },
   methods: {
     getAzimuthInfos() {
-      fetch(`https://api.ipgeolocation.io/astronomy?apiKey=${IP_GEOLOCATION_API_KEY}&lat=${this.coordinates.lat}&long=${this.coordinates.lng}`)
+      fetch(`https://api.ipgeolocation.io/astronomy?apiKey=${process.env.VUE_APP_IP_GEOLOCATION_API_KEY}&lat=${this.coordinates.lat}&long=${this.coordinates.lng}`)
         .then(r => r.json())
         .then(r => this.azimuthInfos = r)
     },
     getWeatherInfos() {
-      fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${this.coordinates.lat}&lon=${this.coordinates.lng}&appid=${OPEN_WEATHER_API_KEY}`)
+      fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${this.coordinates.lat}&lon=${this.coordinates.lng}&appid=${process.env.VUE_APP_OPEN_WEATHER_API_KEY}`)
         .then(r => r.json())
         .then(r => this.weatherInfos = r)
     },
