@@ -5,11 +5,13 @@
       flat
       @click="show = !show"
       style="cursor: pointer"
+      class="text-uppercase"
     >
-      <v-toolbar-title v-if="value && value.lat" v-text="`LAT ${value.lat} LONG ${value.lng}`" />
-      <v-toolbar-title v-else v-text="'Choose a place...'" />
+      <v-toolbar-title class="font-weight-bold mr-6" v-if="value && value.lat && placeName" v-text="placeName" />
+      <v-toolbar-title v-if="value && value.lat" v-text="`LAT ${Math.round(value.lat * 100) / 100} LONG ${Math.round(value.lng * 100) / 100}`" />
+      <v-toolbar-title v-else v-text="'Choisissez un endroit...'" />
       <v-spacer />
-      {{ show ? 'OK' : (value && value.lat ? 'Change location' : '')}}
+      {{ show ? 'OK' : (value && value.lat ? `Changer d'endroit` : '')}}
       <v-icon>mdi mdi-chevron-{{ show ? 'up' : 'down' }}</v-icon>
     </v-toolbar>
     <v-expand-transition>
@@ -32,6 +34,7 @@ export default {
   name: 'placeSearch',
   props: {
     value: Object,
+    placeName: String,
   },
   data() {
     return {

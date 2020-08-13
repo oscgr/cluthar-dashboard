@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card width="100%" flat :color="$vuetify.theme.dark ? '#2d726d' : '#a6dcef'">
     <v-card-text class="py-0">
       <v-row>
         <v-col cols="8">
@@ -9,41 +9,41 @@
           <v-spacer />
         </v-col>
         <v-col cols="4" class="pr-0">
-          <v-img class="my-n3 mr-n3" v-if="weatherIcon" :src="`http://openweathermap.org/img/wn/${weatherIcon}@2x.png`" />
+          <v-img max-width="120px" class="my-n3 mr-n3" v-if="weatherIcon" :src="`http://openweathermap.org/img/wn/${weatherIcon}@2x.png`" />
         </v-col>
         <v-col cols="6" class="pt-0">
           <v-icon>mdi mdi-cloud-outline</v-icon>
-          <span class="text-h6" v-text="clouds" />
+          <span class="subtitle-1" v-text="clouds" />
           <v-spacer />
           <v-icon>mdi mdi-weather-windy</v-icon>
-          <span class="text-h6" v-text="wind" />
+          <span class="subtitle-1" v-text="wind" />
         </v-col>
         <v-col cols="6" class="pt-0 text-right">
           <v-icon>mdi mdi-water-percent</v-icon>
-          <span class="text-h6" v-text="humidity" />
+          <span class="subtitle-1" v-text="humidity" />
           <v-spacer />
           <v-icon>mdi mdi-gauge</v-icon>
-          <span class="text-h6" v-text="pressure" />
+          <span class="subtitle-1" v-text="pressure" />
         </v-col>
       </v-row>
       <v-row v-if="weatherInfos && weatherInfos.rain">
         <v-col cols="6" class="pt-0">
           <v-icon>mdi mdi-weather-pouring</v-icon>
-          <span class="text-h6" v-text="cumulation('rain', '1h')" />
+          <span class="subtitle-1" v-text="cumulation('rain', '1h')" />
         </v-col>
         <v-col cols="6" class="pt-0 text-right">
           <v-icon>mdi mdi-weather-pouring</v-icon>
-          <span class="text-h6" v-text="cumulation('rain', '3h')" />
+          <span class="subtitle-1" v-text="cumulation('rain', '3h')" />
         </v-col>
       </v-row>
       <v-row v-if="weatherInfos && weatherInfos.snow">
         <v-col cols="6" class="pt-0">
           <v-icon>mdi mdi-snowflake</v-icon>
-          <span class="text-h6" v-text="cumulation('snow', '1h')" />
+          <span class="subtitle-1" v-text="cumulation('snow', '1h')" />
         </v-col>
         <v-col cols="6" class="pt-0 text-right">
           <v-icon>mdi mdi-snowflake</v-icon>
-          <span class="text-h6" v-text="cumulation('snow', '3h')" />
+          <span class="subtitle-1" v-text="cumulation('snow', '3h')" />
         </v-col>
       </v-row>
     </v-card-text>
@@ -64,22 +64,22 @@ export default {
       return this.weatherInfos?.weather[0]?.icon
     },
     temperature() {
-      return `${this.weatherInfos?.main.temp}°C`
+      return `${this.weatherInfos?.main.hasOwnProperty('temp') ? this.weatherInfos?.main.temp : '? '}°C`
     },
     clouds() {
-      return this.weatherInfos?.clouds?.all ? `${this.weatherInfos?.clouds?.all}%` : 'unknown'
+      return this.weatherInfos?.clouds.hasOwnProperty('all') ? `${this.weatherInfos?.clouds?.all}%` : '? %'
     },
     wind() {
-      return (this.weatherInfos?.wind?.speed ? Math.round(this.weatherInfos?.wind?.speed * 3.6) : '?') + ' km/h'
+      return (this.weatherInfos?.wind?.hasOwnProperty('speed') ? Math.round(this.weatherInfos?.wind?.speed * 3.6) : '?') + ' km/h'
     },
     weather() {
       return this.weatherInfos?.weather[0]?.description
     },
     pressure() {
-      return this.weatherInfos?.main.pressure + ' hPa'
+      return (this.weatherInfos?.main.hasOwnProperty('pressure') ? this.weatherInfos?.main.pressure : '?') + ' hPa'
     },
     humidity() {
-      return this.weatherInfos?.main.humidity + '%'
+      return (this.weatherInfos?.main.hasOwnProperty('humidity') ? this.weatherInfos?.main.humidity : '? ') + '%'
     },
   },
   methods: {

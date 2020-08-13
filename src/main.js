@@ -2,6 +2,9 @@ import Vue from 'vue';
 import App from './App.vue';
 import i18n from './i18n';
 import vuetify from './plugins/vuetify';
+import moment from 'moment'
+
+moment.locale('fr')
 
 Vue.config.productionTip = false;
 
