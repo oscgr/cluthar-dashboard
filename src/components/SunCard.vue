@@ -1,19 +1,36 @@
 <template>
-    <v-card width="100%" flat :color="$vuetify.theme.dark ? '#801336' : '#dfd3c3'">
-    <v-card-title class="text-h5 pb-0">
-      <v-icon>mdi mdi-weather-sunny</v-icon> Soleil
-    </v-card-title>
-    <v-card-text class="py-0">
-      <v-row>
-        <v-col cols="12" class="">
-          <v-icon>mdi mdi-weather-sunset-up</v-icon>
-          <span class="subtitle-1" v-text="sunrise" />
-          <v-spacer />
-          <v-icon>mdi mdi-weather-sunset-down</v-icon>
-          <span class="subtitle-1" v-text="sunset" />
-          <v-spacer />
-          <v-icon>mdi mdi-timer-outline</v-icon>
-          <span class="subtitle-1" v-text="duration" />
+  <v-card width="100%" flat :color="$vuetify.theme.dark ? '#801336' : '#dfd3c3'">
+    <v-card-text>
+      <v-row no-gutters class="text-h4 pb-4">
+        <v-col cols="2" class="text-center">
+          <v-icon large class="info-icon">mdi mdi-weather-sunny</v-icon>
+        </v-col>
+        <v-col cols="10">
+          <span v-text="'Soleil'" />
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="text-h6">
+        <v-col cols="2" class="text-center">
+          <v-icon title="lever du soleil" class="info-icon">mdi mdi-weather-sunset-up</v-icon>
+        </v-col>
+        <v-col cols="10">
+          <span v-text="sunrise" />
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="text-h6">
+        <v-col cols="2" class="text-center">
+          <v-icon title="coucher du soleil" class="info-icon">mdi mdi-weather-sunset-down</v-icon>
+        </v-col>
+        <v-col cols="10">
+          <span v-text="sunset" />
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="text-h6">
+        <v-col cols="2" class="text-center">
+          <v-icon title="durée de la journée" class="info-icon">mdi mdi-timer-outline</v-icon>
+        </v-col>
+        <v-col cols="10">
+          <span v-text="duration" />
         </v-col>
       </v-row>
     </v-card-text>

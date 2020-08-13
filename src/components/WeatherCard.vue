@@ -3,47 +3,47 @@
     <v-card-text class="py-0">
       <v-row>
         <v-col cols="8">
-          <span class="text-h4" v-text="temperature" />
+          <span title="température" class="text-h4" v-text="temperature" />
           <v-spacer />
-          <span class="text-h5" v-text="weather" />
+          <span title="météo actuelle" class="text-h5" v-text="weather" />
           <v-spacer />
         </v-col>
         <v-col cols="4" class="pr-0">
-          <v-img max-width="120px" class="my-n3 mr-n3" v-if="weatherIcon" :src="`http://openweathermap.org/img/wn/${weatherIcon}@2x.png`" />
+          <v-img :title="weather" max-width="120px" class="my-n3 mr-n3" v-if="weatherIcon" :src="`http://openweathermap.org/img/wn/${weatherIcon}@2x.png`" />
         </v-col>
-        <v-col cols="6" class="pt-0">
-          <v-icon>mdi mdi-cloud-outline</v-icon>
-          <span class="subtitle-1" v-text="clouds" />
+        <v-col cols="6" class="pt-0 text-h6">
+          <v-icon title="couverture nuageuse" class="info-icon">mdi mdi-cloud-outline</v-icon>
+          <span v-text="clouds" />
           <v-spacer />
-          <v-icon>mdi mdi-weather-windy</v-icon>
-          <span class="subtitle-1" v-text="wind" />
+          <v-icon title="vitesse du vent" class="info-icon">mdi mdi-weather-windy</v-icon>
+          <span v-text="wind" />
         </v-col>
-        <v-col cols="6" class="pt-0 text-right">
-          <v-icon>mdi mdi-water-percent</v-icon>
-          <span class="subtitle-1" v-text="humidity" />
+        <v-col cols="6" class="pt-0 text-right text-h6">
+          <v-icon title="humidité" class="info-icon">mdi mdi-water-percent</v-icon>
+          <span title="humidité" v-text="humidity" />
           <v-spacer />
-          <v-icon>mdi mdi-gauge</v-icon>
-          <span class="subtitle-1" v-text="pressure" />
+          <v-icon title="pression" class="info-icon">mdi mdi-gauge</v-icon>
+          <span title="pression" v-text="pressure" />
         </v-col>
       </v-row>
       <v-row v-if="weatherInfos && weatherInfos.rain">
-        <v-col cols="6" class="pt-0">
-          <v-icon>mdi mdi-weather-pouring</v-icon>
-          <span class="subtitle-1" v-text="cumulation('rain', '1h')" />
+        <v-col cols="6" class="pt-0 text-h6">
+          <v-icon class="info-icon">mdi mdi-weather-pouring</v-icon>
+          <span v-text="cumulation('rain', '1h')" />
         </v-col>
-        <v-col cols="6" class="pt-0 text-right">
-          <v-icon>mdi mdi-weather-pouring</v-icon>
-          <span class="subtitle-1" v-text="cumulation('rain', '3h')" />
+        <v-col cols="6" class="pt-0 text-right text-h6">
+          <v-icon class="info-icon">mdi mdi-weather-pouring</v-icon>
+          <span v-text="cumulation('rain', '3h')" />
         </v-col>
       </v-row>
       <v-row v-if="weatherInfos && weatherInfos.snow">
-        <v-col cols="6" class="pt-0">
-          <v-icon>mdi mdi-snowflake</v-icon>
-          <span class="subtitle-1" v-text="cumulation('snow', '1h')" />
+        <v-col cols="6" class="pt-0 text-h6">
+          <v-icon class="info-icon">mdi mdi-snowflake</v-icon>
+          <span v-text="cumulation('snow', '1h')" />
         </v-col>
-        <v-col cols="6" class="pt-0 text-right">
-          <v-icon>mdi mdi-snowflake</v-icon>
-          <span class="subtitle-1" v-text="cumulation('snow', '3h')" />
+        <v-col cols="6" class="pt-0 text-right text-h6">
+          <v-icon class="info-icon">mdi mdi-snowflake</v-icon>
+          <span v-text="cumulation('snow', '3h')" />
         </v-col>
       </v-row>
     </v-card-text>

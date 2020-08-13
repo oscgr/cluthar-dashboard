@@ -34,6 +34,13 @@
   </v-app>
 </template>
 
+<style>
+.info-icon {
+  margin-top: -4px;
+  margin-right: 4px;
+}
+</style>
+
 <script>
 import PlaceSearch from '@/components/PlaceSearch.vue';
 import WeatherCard from "@/components/WeatherCard";
@@ -54,6 +61,7 @@ export default {
     coordinates: {},
     azimuthInfos: null,
     weatherInfos: null,
+
   }),
   methods: {
     getAzimuthInfos() {
