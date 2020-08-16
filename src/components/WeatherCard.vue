@@ -5,11 +5,13 @@
         <v-col cols="8">
           <span title="température" class="text-h4" v-text="temperature" />
           <v-spacer />
-          <span title="météo actuelle" class="text-h5" v-text="weather" />
+          <span title="ressenti" class="subtitle-2 font-weight-thin" v-if="temperature !== feelsLike" v-text="`Ressenti ${feelsLike}`" />
+          <v-spacer />
+          <span title="météo actuelle" class="text-h5" v-text="weatherDescription" />
           <v-spacer />
         </v-col>
         <v-col cols="4" class="pr-0">
-          <v-img :title="weather" max-width="120px" class="my-n3 mr-n3" v-if="weatherIcon" :src="`http://openweathermap.org/img/wn/${weatherIcon}@2x.png`" />
+          <v-img :title="weatherDescription" max-width="120px" class="my-n3 mr-n3" v-if="weatherIcon" :src="`http://openweathermap.org/img/wn/${weatherIcon}@2x.png`" />
         </v-col>
         <v-col cols="6" class="pt-0 text-h6">
           <v-icon title="couverture nuageuse" class="info-icon">mdi mdi-cloud-outline</v-icon>
@@ -26,7 +28,7 @@
           <span title="pression" v-text="pressure" />
         </v-col>
       </v-row>
-      <v-row v-if="weatherInfos && weatherInfos.rain">
+      <v-row v-if="hasType('rain')">
         <v-col cols="6" class="pt-0 text-h6">
           <v-icon class="info-icon">mdi mdi-weather-pouring</v-icon>
           <span v-text="cumulation('rain', '1h')" />
@@ -36,7 +38,7 @@
           <span v-text="cumulation('rain', '3h')" />
         </v-col>
       </v-row>
-      <v-row v-if="weatherInfos && weatherInfos.snow">
+      <v-row v-if="hasType('rain')">
         <v-col cols="6" class="pt-0 text-h6">
           <v-icon class="info-icon">mdi mdi-snowflake</v-icon>
           <span v-text="cumulation('snow', '1h')" />
@@ -51,41 +53,15 @@
 </template>
 <script>
 
+import weatherStore from "@/store/weatherStore";
+
 export default {
   name: 'WeatherCard',
-  props: {
-    weatherInfos: {},
-  },
-  data: () => ({
-    imageUrl: null,
-  }),
-  computed: {
-    weatherIcon() {
-      return this.weatherInfos?.weather[0]?.icon
-    },
-    temperature() {
-      return `${this.weatherInfos?.main.hasOwnProperty('temp') ? this.weatherInfos?.main.temp : '? '}°C`
-    },
-    clouds() {
-      return this.weatherInfos?.clouds.hasOwnProperty('all') ? `${this.weatherInfos?.clouds?.all}%` : '? %'
-    },
-    wind() {
-      return (this.weatherInfos?.wind?.hasOwnProperty('speed') ? Math.round(this.weatherInfos?.wind?.speed * 3.6) : '?') + ' km/h'
-    },
-    weather() {
-      return this.weatherInfos?.weather[0]?.description
-    },
-    pressure() {
-      return (this.weatherInfos?.main.hasOwnProperty('pressure') ? this.weatherInfos?.main.pressure : '?') + ' hPa'
-    },
-    humidity() {
-      return (this.weatherInfos?.main.hasOwnProperty('humidity') ? this.weatherInfos?.main.humidity : '? ') + '%'
-    },
-  },
-  methods: {
-    cumulation(type, duration) {
-      return (this.weatherInfos[type][duration] ? this.weatherInfos[type][duration] : '?') + ` mm (${duration})`
-    },
+
+  setup() {
+    const {temperature, feelsLike, weatherDescription, weatherIcon, clouds, cumulation, hasType, humidity, pressure, wind} = weatherStore()
+
+    return {temperature, feelsLike, weatherDescription, weatherIcon, clouds, cumulation, hasType, humidity, pressure, wind}
   }
 }
 </script>

@@ -33,6 +33,14 @@
           <span v-text="duration" />
         </v-col>
       </v-row>
+      <v-row no-gutters class="text-h6">
+        <v-col cols="2" class="text-center">
+          <v-icon title="durée de la journée" class="info-icon">mdi mdi-timer-outline</v-icon>
+        </v-col>
+        <v-col cols="10">
+          <span v-text="phase" />
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
@@ -44,25 +52,39 @@ export default {
   name: 'SunCard',
   props: {
     azimuthInfos: {},
+    timezone: Number,
+    timezoneString: String,
   },
-  data: () => ({
-    imageUrl: null,
-  }),
   computed: {
     sunriseMoment() {
-      return this.azimuthInfos?.sunrise ? moment(this.azimuthInfos?.sunrise, moment.HTML5_FMT.TIME_MS) : null
+      if (!this.azimuthInfos || Object.keys(this.azimuthInfos).length === 0) return null
+      return moment(this.azimuthInfos.sunrise, moment.HTML5_FMT.TIME)
     },
     sunsetMoment() {
-      return this.azimuthInfos?.sunrise ? moment(this.azimuthInfos?.sunset, moment.HTML5_FMT.TIME_MS) : null
+      if (!this.azimuthInfos || Object.keys(this.azimuthInfos).length === 0) return null
+      return moment(this.azimuthInfos.sunset, moment.HTML5_FMT.TIME)
     },
     sunrise() {
-      return this.sunriseMoment ? (`${this.sunriseMoment.format('LT')} (${this.sunriseMoment.fromNow()})`) : '?'
+      if (!moment.isMoment(this.sunriseMoment)) return '?'
+      return `${this.sunriseMoment.format('HH:mm')} (${this.timezoneString}) (${this.sunriseMoment.to(moment().utcOffset(this.timezone))})`
     },
     sunset() {
-      return this.sunsetMoment ? (`${this.sunsetMoment.format('LT')} (${this.sunsetMoment.fromNow()})`) : '?'
+      if (!moment.isMoment(this.sunsetMoment)) return '?'
+      return `${this.sunsetMoment.format('LT')} (${this.sunsetMoment.to(moment().utcOffset(this.timezone))})`
     },
     duration() {
-      return this.azimuthInfos?.day_length ? this.azimuthInfos?.day_length : '?'
+      if (!(moment.isMoment(this.sunriseMoment) && moment.isMoment(this.sunsetMoment))) return '?'
+      return this.sunsetMoment.subtract(this.sunriseMoment).utc().format('HH:mm')
+    },
+    phase() {
+      const now = moment()
+      // console.log(this.sunriseMoment)
+      // console.log(this.sunsetMoment)
+      // console.log(now.format())
+      // const sunriseDiff = this.sunriseMoment.diff(now, 'minute')
+      // const sunsetDiff = this.sunsetMoment.diff(now, 'minute')
+      // console.log(sunriseDiff, sunsetDiff)
+      return now
     }
   },
 }

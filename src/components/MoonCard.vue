@@ -6,7 +6,7 @@
           <v-icon large class="info-icon">mdi mdi-weather-sunny</v-icon>
         </v-col>
         <v-col cols="10">
-          <span v-text="'Soleil'" />
+          <span v-text="'Lune'" />
         </v-col>
       </v-row>
       <v-row no-gutters class="text-h6">
@@ -14,7 +14,7 @@
           <v-icon title="lever du soleil" class="info-icon">mdi mdi-weather-sunset-up</v-icon>
         </v-col>
         <v-col cols="10">
-          <span v-text="sunrise" />
+          <span v-text="moonrise" />
         </v-col>
       </v-row>
       <v-row no-gutters class="text-h6">
@@ -22,7 +22,7 @@
           <v-icon title="coucher du soleil" class="info-icon">mdi mdi-weather-sunset-down</v-icon>
         </v-col>
         <v-col cols="10">
-          <span v-text="sunset" />
+          <span v-text="moonset" />
         </v-col>
       </v-row>
       <v-row no-gutters class="text-h6">
@@ -45,24 +45,22 @@ export default {
   props: {
     azimuthInfos: {},
   },
-  data: () => ({
-    imageUrl: null,
-  }),
   computed: {
-    sunriseMoment() {
-      return this.azimuthInfos?.sunrise ? moment(this.azimuthInfos?.sunrise, moment.HTML5_FMT.TIME_MS) : null
+    moonriseMoment() {
+      return this.azimuthInfos?.moonrise ? moment(this.azimuthInfos?.moonrise, moment.HTML5_FMT.TIME_MS) : null
     },
-    sunsetMoment() {
-      return this.azimuthInfos?.sunrise ? moment(this.azimuthInfos?.sunset, moment.HTML5_FMT.TIME_MS) : null
+    moonsetMoment() {
+      return this.azimuthInfos?.moonrise ? moment(this.azimuthInfos?.moonset, moment.HTML5_FMT.TIME_MS) : null
     },
-    sunrise() {
-      return this.sunriseMoment ? (`${this.sunriseMoment.format('LT')} (${this.sunriseMoment.fromNow()})`) : '?'
+    moonrise() {
+      return this.moonriseMoment ? (`${this.moonriseMoment.format('LT')} (${this.moonriseMoment.fromNow()})`) : '?'
     },
-    sunset() {
-      return this.sunsetMoment ? (`${this.sunsetMoment.format('LT')} (${this.sunsetMoment.fromNow()})`) : '?'
+    moonset() {
+      return this.moonsetMoment ? (`${this.moonsetMoment.format('LT')} (${this.moonsetMoment.fromNow()})`) : '?'
     },
     duration() {
-      return this.azimuthInfos?.day_length ? this.azimuthInfos?.day_length : '?'
+      return null
+      // return this.moonsetMoment.subtract(this.moonriseMoment).utc().format('HH:MM')
     }
   },
 }
