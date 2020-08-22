@@ -22,19 +22,18 @@
           <v-col cols="12" lg="4" class="d-flex">
             <weather-card />
           </v-col>
-<!--          <v-col cols="12" md="6" lg="4" class="d-flex">-->
-<!--            <sun-card-->
-<!--              :azimuth-infos="azimuthInfos"-->
-<!--              :timezone="timezone"-->
-<!--              :timezone-string="timezoneString"-->
-<!--            />-->
-<!--          </v-col>-->
+          <v-col cols="12" md="6" lg="4" class="d-flex">
+            <sun-card />
+          </v-col>
 <!--          <v-col cols="12" md="6" lg="4" class="d-flex">-->
 <!--            <moon-card :azimuth-infos="azimuthInfos" />-->
 <!--          </v-col>-->
         </v-row>
       </v-container>
     </v-main>
+    <v-footer app>
+      <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+    </v-footer>
   </v-app>
 </template>
 
@@ -57,7 +56,7 @@ export default {
 
   components: {
     // MoonCard,
-    // SunCard,
+    SunCard,
     WeatherCard,
     PlaceCard,
   },
