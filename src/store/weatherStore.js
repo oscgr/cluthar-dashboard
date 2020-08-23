@@ -1,6 +1,9 @@
 import {computed, ref, reactive} from "@vue/composition-api";
+import astroStore from "@/store/astroStore";
 
 const loading = ref(false)
+
+const noData = ref(true)
 
 const state = reactive({
   data: {
@@ -9,12 +12,12 @@ const state = reactive({
     clouds: {},
     wind: {},
     sys: {},
-    name: null,
-    timezone: null
   }
 })
 
 export default () => {
+
+  const {isDay} = astroStore()
 
   /* ==================== GETTERS ==================== */
 
@@ -37,7 +40,36 @@ export default () => {
     return state.data.weather[0].description
   })
   const weatherIcon = computed(() => {
-    return state.data.weather[0].icon
+
+    if (noData.value) return null
+
+    // https://openweathermap.org/weather-conditions
+
+    const id = state.data.weather[0].id;
+
+    if ((200 <= id && id <= 202) || (230 <= id && id <= 232)) return require('@/assets/icons/weather/200-202_230-232.svg')
+    else if (210 <= id && id <= 221) return require('@/assets/icons/weather/210-221.svg')
+
+    else if (state.data.clouds.all > 50 && (300 <= id && id <= 500)) return require('@/assets/icons/weather/300-500-cloud.svg')
+    else if (isDay.value && (state.data.clouds.all < 50) && (300 <= id && id <= 500)) return require('@/assets/icons/weather/300-500-light-cloud-day.svg')
+    else if ((state.data.clouds.all < 50) && (300 <= id && id <= 500)) return require('@/assets/icons/weather/300-500-light-cloud-night.svg')
+
+    else if (id === 600) return require('@/assets/icons/weather/600.svg')
+    else if (701 <= id && id <= 771) return require('@/assets/icons/weather/701-771.svg')
+    else if (id === 781) return require('@/assets/icons/weather/781.svg')
+
+    else if (isDay.value && id === 800) return require('@/assets/icons/weather/800-day.svg')
+    else if (id === 800) return require('@/assets/icons/weather/800-night.svg')
+
+    else if (isDay.value && id === 801) return require('@/assets/icons/weather/801-day.svg')
+    else if (id === 801) return require('@/assets/icons/weather/801-night.svg')
+
+    else if (isDay.value && id === 802) return require('@/assets/icons/weather/802-day.svg')
+    else if (id === 802) return require('@/assets/icons/weather/802-night.svg')
+
+    else if (803 <= id && id <= 804) return require('@/assets/icons/weather/803-804.svg')
+
+    else return null
   })
   const clouds = computed(() => {
     return state.data.clouds.hasOwnProperty('all') ? `${state.data.clouds.all}%` : '? %'
@@ -51,19 +83,6 @@ export default () => {
   const humidity = computed(() => {
     return (state.data.main.hasOwnProperty('humidity') ? state.data.main.humidity : '? ') + '%'
   })
-
-  // const Sys = computed(() => {
-  //   return state.data.sys
-  // })
-  // const PlaceName = computed(() => {
-  //   return state.data.name
-  // })
-  // const Main = computed(() => {
-  //   return state.data.main
-  // })
-  // const Timezone = computed(() => {
-  //   return state.data.hasOwnProperty('timezone') ? (state.data.timezone / 60) : null
-  // })
 
   const cumulation = (type, duration) => {
     return ((hasType(type) && state.data[type][duration]) ? state.data[type][duration] : '?') + ` mm (${duration})`
@@ -81,6 +100,7 @@ export default () => {
         .then(r => {
           state.data = r
           loading.value = false
+          noData.value = false
           console.debug('[WEATHER] fetched weather')
           return r
         })
@@ -100,11 +120,6 @@ export default () => {
     humidity,
     hasType,
     cumulation,
-    //
-    // Sys,
-    // PlaceName,
-    // Main,
-    // Timezone,
     fetchWeather
   }
 }

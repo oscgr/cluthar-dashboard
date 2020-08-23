@@ -19,7 +19,7 @@
             <span title="ressenti" class="" v-if="temperature !== feelsLike" v-text="`Ressenti ${feelsLike}`" />
           </v-col>
           <v-col cols="6" class="pb-0 text-right">
-
+            <img height="94px" alt="météo" :src="weatherIcon" />
           </v-col>
         </v-row>
         <v-row>

@@ -47,6 +47,8 @@ export default () => {
     return DayCycle.NIGHT
   })
 
+  const isDay = computed(() => [DayCycle.DAY, DayCycle.ZENITH, DayCycle.SUNRISE_GOLDEN_HOUR, DayCycle.SUNRISE, DayCycle.SUNSET_GOLDEN_HOUR, DayCycle.SUNSET].includes(sunPhase.value))
+
   /* ==================== ACTIONS ==================== */
 
   const fetchAstro = (coordinates) => {
@@ -64,6 +66,7 @@ export default () => {
     fetchAstro,
     noData,
     sunPhase,
+    isDay,
     sunTimes
   }
 }
