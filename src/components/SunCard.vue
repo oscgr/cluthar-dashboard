@@ -35,7 +35,7 @@
         </v-col>
         <v-col cols="6" class="text-right">
           <v-icon title="moment de la journée" class="info-icon">mdi mdi-theme-light-dark</v-icon>
-          <span v-text="sunPhase" />
+          <span v-text="sunPhaseString" />
         </v-col>
       </v-row>
     </v-card-text>
@@ -45,11 +45,14 @@
 
 import moment from "moment";
 import astroStore from "@/store/astroStore";
-import {computed} from "@vue/composition-api";
+import {computed, getCurrentInstance} from "@vue/composition-api";
+import DayCycle from "@/enums/DayCycle";
 
 export default {
   name: 'SunCard',
   setup() {
+    const vm = getCurrentInstance()
+
     const {sunTimes, sunPhase} = astroStore()
 
     const sunriseMoment = computed(() => moment(sunTimes.value.sunrise))
@@ -66,21 +69,34 @@ export default {
 
     const duration = computed(() => sunriseMoment.value.to(sunsetMoment.value, true))
 
-    const sunIcon = computed(() => {
-      const now = moment()
-      const beforeSunrise = sunriseMoment.value.clone().subtract(30, 'minutes')
-      const afterSunrise = sunriseMoment.value.clone().add(30, 'minutes')
-      const beforeSunset = sunsetMoment.value.clone().subtract(30, 'minutes')
-      const afterSunset = sunsetMoment.value.clone().add(30, 'minutes')
+    const sunPhaseString = computed(() => vm.$t(`constants.DAY_CYCLE.${sunPhase.value}`))
 
-      if (now.isBefore(beforeSunrise)) return 'weather-night'
-      if (now.isBefore(afterSunrise)) return 'weather-sunset-up'
-      if (now.isBefore(beforeSunset)) return 'weather-sunny'
-      if (now.isBefore(afterSunset)) return 'weather-sunset-down'
-      return 'weather-night'
+    const sunIcon = computed(() => {
+      switch (sunPhase.value) {
+        case DayCycle.DAY:
+        case DayCycle.ZENITH:
+          return 'weather-sunny'
+        case DayCycle.NIGHT:
+        case DayCycle.NIGHT_START:
+        case DayCycle.NIGHT_END:
+        case DayCycle.NAUTICAL_DAWN:
+        case DayCycle.NAUTICAL_DUSK:
+        case DayCycle.DAWN:
+        case DayCycle.DUSK:
+        case DayCycle.NADIR:
+          return 'weather-night'
+        case DayCycle.SUNRISE:
+        case DayCycle.SUNRISE_GOLDEN_HOUR:
+          return 'weather-sunset-up'
+        case DayCycle.SUNSET:
+        case DayCycle.SUNSET_GOLDEN_HOUR:
+          return 'weather-sunset-down'
+        default:
+          return ''
+      }
     })
 
-    return {sunrise,sunriseFromNow, sunIcon, sunset, sunsetFromNow, sunPhase, duration}
+    return {sunrise,sunriseFromNow, sunIcon, sunset, sunsetFromNow, sunPhaseString, duration}
   }
 }
 </script>

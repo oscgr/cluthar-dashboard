@@ -1,3 +1,21 @@
 {
-  "message": "hello i18n !!"
+  "message": "hello i18n !!",
+  "constants": {
+    "DAY_CYCLE": {
+      "NIGHT": "nuit",
+      "NIGHT_START": "début de nuit",
+      "NIGHT_END": "fin de nuit",
+      "NAUTICAL_DAWN": "aube nautique",
+      "DAWN": "aube",
+      "SUNRISE": "lever du soleil",
+      "SUNRISE_GOLDEN_HOUR": "heure dorée (matin)",
+      "ZENITH": "zénith",
+      "DAY": "jour",
+      "SUNSET_GOLDEN_HOUR": "heure dorée (soir)",
+      "SUNSET": "coucher de soleil",
+      "DUSK": "crépuscule",
+      "NAUTICAL_DUSK": "crépuscule nautique",
+      "NADIR": "nadir"
+    }
+  }
 }
