@@ -27,8 +27,8 @@ export default () => {
     if (val) {
       state.lng = val.lng
       state.lat = val.lat
-      fetchWeather(val)
       fetchAstro(val)
+      fetchWeather(val)
       localStorage.setItem('coordinates', JSON.stringify(val))
     }
   }

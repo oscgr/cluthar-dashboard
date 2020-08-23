@@ -9,7 +9,7 @@
       <v-spacer></v-spacer>
 
       <v-btn class="mr-2" icon small @click="$vuetify.theme.dark = !$vuetify.theme.dark">
-        <v-icon v-text="`mdi mdi-${$vuetify.theme.dark ? 'brightness-4' : 'brightness-6'}`"></v-icon>
+        <v-icon v-text="$vuetify.theme.dark ? mdiBrightness4 : mdiBrightness6" />
       </v-btn>
     </v-app-bar>
 
@@ -48,8 +48,9 @@
 import PlaceCard from '@/components/PlaceCard.vue';
 import WeatherCard from "@/components/WeatherCard";
 import SunCard from "@/components/SunCard";
-import MoonCard from "@/components/MoonCard";
+// import MoonCard from "@/components/MoonCard";
 import coordinatesStore from "@/store/coordinatesStore";
+import { mdiBrightness4, mdiBrightness6 } from '@mdi/js';
 
 export default {
   name: 'App',
@@ -64,6 +65,10 @@ export default {
   setup() {
     const {setCoordinates} = coordinatesStore()
     setCoordinates()
+    return {
+      mdiBrightness4,
+      mdiBrightness6
+    }
   }
 }
 </script>

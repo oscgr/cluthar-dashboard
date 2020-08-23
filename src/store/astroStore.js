@@ -1,7 +1,9 @@
-import {computed, reactive} from "@vue/composition-api";
+import {computed, ref, reactive} from "@vue/composition-api";
 
 import SunCalc from 'suncalc'
 import DayCycle from "@/enums/DayCycle";
+
+const noData = ref(true)
 
 const state = reactive({
   sunTimes: {},
@@ -19,6 +21,9 @@ export default () => {
   const sunTimes = computed(() => state.sunTimes)
 
   const sunPhase = computed(() => {
+
+    if (noData.value) return ''
+
     const now = Date.now()
 
     if (now < state.sunTimes.nightEnd.getTime()) return DayCycle.NIGHT
@@ -52,9 +57,12 @@ export default () => {
     state.moonPosition = SunCalc.getMoonPosition(now, coordinates.lat, coordinates.lng)
     state.moonPosition = SunCalc.getMoonPosition(now, coordinates.lat, coordinates.lng)
     state.moonIllumination = SunCalc.getMoonIllumination(now)
+    noData.value = false
+    console.debug('[ASTRO] fetched data')
   }
   return {
     fetchAstro,
+    noData,
     sunPhase,
     sunTimes
   }

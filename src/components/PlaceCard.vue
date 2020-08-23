@@ -1,42 +1,34 @@
 <template>
-  <v-hover #default="{hover}">
     <v-card
       elevation="0"
       width="100%"
-      style="cursor: pointer"
       @click="toggleShow"
     >
-      <v-expand-transition>
-        <span v-show="hover" style="position: absolute" class="display-3">
-          <span class="align-self-center">
-          Changer
-          </span>
-        </span>
-      </v-expand-transition>
-      <v-card-text :class="`hoverable ${hover ? 'on-hover' : ''}`">
+      <v-card-text>
         <v-row no-gutters class="display-2 mb-4">
           <v-col cols="9">
-            <span v-if="coordinates.lat" v-text="placeName ? placeName : 'Sans nom'" />
+            <v-progress-circular size="32" indeterminate v-if="loading" />
+            <span v-else-if="coordinates.lat" v-text="placeName ? placeName : 'Sans nom'" />
             <span v-else v-text="'Choisissez un endroit...'" />
           </v-col>
           <v-col cols="3" class="text-right">
-            <v-icon v-if="coordinates.lat" size="50" title="endroit" class="">mdi mdi-map-marker</v-icon>
-            <v-icon v-else size="50" title="rechercher" class="">mdi mdi-home-search-outline</v-icon>
+            <v-icon v-if="coordinates.lat" size="50" title="endroit" v-text="mdiMapMarker" />
+            <v-icon v-else size="50" title="rechercher" v-text="mdiHomeSearchOutline" />
           </v-col>
         </v-row>
         <v-row no-gutters class="text-h6">
           <v-col cols="6">
-            <v-icon title="latitude" class="info-icon">mdi mdi-latitude</v-icon>
+            <v-icon title="latitude" class="info-icon" v-text="mdiLatitude" />
             <span v-text="`${coordinates.lat ? Math.floor(coordinates.lat * 100) / 100 : '?'}`" />
             <v-spacer />
-            <v-icon title="longitude" class="info-icon">mdi mdi-longitude</v-icon>
+            <v-icon title="longitude" class="info-icon" v-text="mdiLongitude" />
             <span v-text="`${coordinates.lng ? Math.floor(coordinates.lng * 100) / 100 : '?'}`" />
           </v-col>
           <v-col cols="6" class="text-right">
-            <v-icon title="pays" class="info-icon">mdi mdi-earth</v-icon>
+            <v-icon title="pays" class="info-icon" v-text="mdiEarth" />
             <span v-text="placeCountry" />
             <v-spacer />
-            <v-icon title="latitude" class="info-icon">mdi mdi-map-clock</v-icon>
+            <v-icon title="latitude" class="info-icon" v-text="mdiMapClock" />
             <span v-text="timezone" />
           </v-col>
         </v-row>
@@ -47,7 +39,6 @@
       </v-dialog>
     </v-card>
 
-  </v-hover>
 </template>
 
 <style>
@@ -57,15 +48,6 @@
   cursor: crosshair;
 }
 
-.hoverable {
-  transition: opacity .5s;
-  transition: filter .5s;
-}
-.on-hover {
-  opacity: 0.6;
-  filter: blur(2px);
-}
-
 </style>
 <script>
 
@@ -73,11 +55,13 @@ import {reactive, toRefs} from "@vue/composition-api";
 import coordinatesStore from "@/store/coordinatesStore";
 import weatherStore from "@/store/weatherStore";
 
+import {mdiMapMarker, mdiHomeSearchOutline, mdiLatitude, mdiLongitude, mdiEarth, mdiMapClock} from '@mdi/js'
+
 export default {
   name: 'placeSearch',
   setup() {
     const {coordinates, setCoordinates} = coordinatesStore()
-    const {placeName, placeCountry, timezone} = weatherStore()
+    const {loading, placeName, placeCountry, timezone} = weatherStore()
 
     const state = reactive({
       show: false,
@@ -130,12 +114,15 @@ export default {
     }
 
     return {
+      loading,
       coordinates,
       placeName,
       placeCountry,
       timezone,
       toggleShow,
-      ...toRefs(state)
+      ...toRefs(state),
+      // icons
+      mdiMapMarker, mdiHomeSearchOutline, mdiLatitude, mdiLongitude, mdiEarth, mdiMapClock
     }
   }
 }

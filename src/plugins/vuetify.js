@@ -7,4 +7,7 @@ export default new Vuetify({
   theme: {
     dark: window.matchMedia('(prefers-color-scheme: dark)').matches,
   },
+  icons: {
+    iconfont: 'mdiSvg'
+  }
 });

@@ -1,4 +1,6 @@
-import {computed, reactive} from "@vue/composition-api";
+import {computed, ref, reactive} from "@vue/composition-api";
+
+const loading = ref(false)
 
 const state = reactive({
   data: {
@@ -7,8 +9,8 @@ const state = reactive({
     clouds: {},
     wind: {},
     sys: {},
-    name: '',
-    timezone: ''
+    name: null,
+    timezone: null
   }
 })
 
@@ -16,12 +18,12 @@ export default () => {
 
   /* ==================== GETTERS ==================== */
 
-  const placeName = computed(() => state.data.name ? state.data.name : '')
+  const placeName = computed(() => state.data.name ? state.data.name : '?')
 
-  const placeCountry = computed(() => state.data.sys.country ? state.data.sys.country : '')
+  const placeCountry = computed(() => state.data.sys.country ? state.data.sys.country : '?')
 
   const timezone = computed(() => {
-    return state.data.hasOwnProperty('timezone') ? `GMT${state.data.timezone > 0 ? '+' : '-'}${Math.abs(state.data.timezone / 3600)}` : '?'
+    return state.data.timezone ? `GMT${state.data.timezone > 0 ? '+' : '-'}${Math.abs(state.data.timezone / 3600)}` : '?'
   })
 
   const temperature = computed(() => {
@@ -64,7 +66,7 @@ export default () => {
   // })
 
   const cumulation = (type, duration) => {
-    return (state.data[type]?.hasOwnProperty(duration) ? state[type][duration] : '?') + ` mm (${duration})`
+    return ((hasType(type) && state.data[type][duration]) ? state.data[type][duration] : '?') + ` mm (${duration})`
   }
   const hasType = (type) => {
     return state.data.hasOwnProperty(type)
@@ -73,14 +75,18 @@ export default () => {
   /* ==================== ACTIONS ==================== */
 
   const fetchWeather = (coordinates) => {
+    loading.value = true
       fetch(`https://api.openweathermap.org/data/2.5/weather?lang=fr&lat=${coordinates.lat}&lon=${coordinates.lng}&units=metric&appid=${process.env.VUE_APP_OPEN_WEATHER_API_KEY}`)
         .then(r => r.json())
         .then(r => {
           state.data = r
+          loading.value = false
+          console.debug('[WEATHER] fetched weather')
           return r
         })
   }
   return {
+    loading,
     placeName,
     placeCountry,
     timezone,
