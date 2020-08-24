@@ -1,13 +1,17 @@
 <template>
-  <v-card width="100%" flat :color="$vuetify.theme.dark ? '#801336' : '#dfd3c3'">
+  <v-card
+    width="100%"
+    height="100%"
+    flat
+    :color="$vuetify.theme.dark ? '#801336' : '#dfd3c3'"
+  >
     <v-card-text>
-      <v-row no-gutters class="display-2 pb-4">
-        <v-col cols="9">
-          <span v-text="'Soleil'" />
+      <v-row no-gutters class="display-3 pb-4">
+        <v-col cols="12">
+          <span v-text="sunPhaseString" />
         </v-col>
-        <v-col cols="3" class="text-right">
-          <v-icon size="50" v-text="sunIcon" />
-        </v-col>
+<!--        <v-col cols="3" class="text-right">-->
+<!--        </v-col>-->
       </v-row>
       <v-row no-gutters class="text-h6">
         <v-col cols="6">
@@ -28,14 +32,13 @@
           <span v-text="sunsetFromNow" />
         </v-col>
       </v-row>
-      <v-row no-gutters class="text-h6 pt-4">
+
+      <v-row no-gutters class="text-h6">
         <v-col cols="6">
           <v-icon title="durée de la journée" class="info-icon" v-text="mdiTimerOutline" />
           <span v-text="duration" />
         </v-col>
         <v-col cols="6" class="text-right">
-          <v-icon title="moment de la journée" class="info-icon" v-text="mdiThemeLightDark" />
-          <span v-text="sunPhaseString" />
         </v-col>
       </v-row>
     </v-card-text>
@@ -49,7 +52,6 @@ import {computed, getCurrentInstance} from "@vue/composition-api";
 import DayCycle from "@/enums/DayCycle";
 
 import {
-  mdiThemeLightDark,
   mdiTimerOutline,
   mdiWeatherNight,
   mdiWeatherSunny,
@@ -58,7 +60,7 @@ import {
 } from '@mdi/js'
 
 export default {
-  name: 'SunCard',
+  name: 'DayCard',
   setup() {
     const vm = getCurrentInstance()
 
@@ -107,7 +109,7 @@ export default {
 
     return {
       sunrise, sunriseFromNow, sunIcon, sunset, sunsetFromNow, sunPhaseString, duration,
-      mdiWeatherSunsetUp, mdiWeatherSunsetDown, mdiTimerOutline, mdiThemeLightDark
+      mdiWeatherSunsetUp, mdiWeatherSunsetDown, mdiTimerOutline
     }
   }
 }

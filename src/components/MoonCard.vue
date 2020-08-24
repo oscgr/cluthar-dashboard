@@ -1,67 +1,104 @@
 <template>
-  <v-card width="100%" flat dark :color="$vuetify.theme.dark ? '#0f4c75' : '#596e79'">
+  <v-card
+    width="100%"
+    height="100%"
+    dark
+    flat
+    :color="$vuetify.theme.dark ? '#0f4c75' : '#596e79'"
+  >
     <v-card-text>
-      <v-row no-gutters class="text-h4 pb-4">
-        <v-col cols="2" class="text-center">
-          <v-icon large class="info-icon">mdi mdi-weather-sunny</v-icon>
+      <v-row no-gutters>
+        <v-col cols="6">
+          <div title="température" class="display-1" v-text="moonPhaseString" />
         </v-col>
-        <v-col cols="10">
-          <span v-text="'Lune'" />
+        <v-col cols="6" class="text-right">
+          <img height="80px" alt="phase lunaire" :src="moonPhaseIcon" />
         </v-col>
       </v-row>
+
       <v-row no-gutters class="text-h6">
-        <v-col cols="2" class="text-center">
-          <v-icon title="lever du soleil" class="info-icon">mdi mdi-weather-sunset-up</v-icon>
+        <v-col cols="6">
+          <v-icon title="lever du lune" class="info-icon" v-text="mdiWeatherSunsetUp" />
+          <span v-text="rise" />
         </v-col>
-        <v-col cols="10">
-          <span v-text="moonrise" />
+        <v-col cols="6" class="text-right">
+          <span v-text="riseFromNow" />
         </v-col>
       </v-row>
+
       <v-row no-gutters class="text-h6">
-        <v-col cols="2" class="text-center">
-          <v-icon title="coucher du soleil" class="info-icon">mdi mdi-weather-sunset-down</v-icon>
+        <v-col cols="6">
+          <v-icon title="coucher de lune" class="info-icon" v-text="mdiWeatherSunsetDown" />
+          <span v-text="set" />
         </v-col>
-        <v-col cols="10">
-          <span v-text="moonset" />
+        <v-col cols="6" class="text-right">
+          <span v-text="setFromNow" />
         </v-col>
       </v-row>
+
       <v-row no-gutters class="text-h6">
-        <v-col cols="2" class="text-center">
-          <v-icon title="durée de la journée" class="info-icon">mdi mdi-timer-outline</v-icon>
+        <v-col cols="6">
+          <v-icon title="coucher de lune" class="info-icon" v-text="mdiAngleAcute" />
+          <span v-text="moonAltitude" />
         </v-col>
-        <v-col cols="10">
-          <span v-text="duration" />
+        <v-col cols="6" class="text-right text-capitalize">
+          <v-icon title="coucher de lune" class="info-icon" v-text="mdiCompass" />
+          <span v-text="moonAzimuth" />
         </v-col>
       </v-row>
+
+
     </v-card-text>
   </v-card>
 </template>
 <script>
 
 import moment from "moment";
+import astroStore from "@/store/astroStore";
+import {computed, getCurrentInstance} from "@vue/composition-api";
+import {mdiWeatherSunsetUp, mdiWeatherSunsetDown, mdiCompass, mdiAngleAcute} from '@mdi/js'
+import Global from '@/utils/global'
 
 export default {
   name: 'MoonCard',
-  props: {
-    azimuthInfos: {},
-  },
-  computed: {
-    moonriseMoment() {
-      return this.azimuthInfos?.moonrise ? moment(this.azimuthInfos?.moonrise, moment.HTML5_FMT.TIME_MS) : null
-    },
-    moonsetMoment() {
-      return this.azimuthInfos?.moonrise ? moment(this.azimuthInfos?.moonset, moment.HTML5_FMT.TIME_MS) : null
-    },
-    moonrise() {
-      return this.moonriseMoment ? (`${this.moonriseMoment.format('LT')} (${this.moonriseMoment.fromNow()})`) : '?'
-    },
-    moonset() {
-      return this.moonsetMoment ? (`${this.moonsetMoment.format('LT')} (${this.moonsetMoment.fromNow()})`) : '?'
-    },
-    duration() {
-      return null
-      // return this.moonsetMoment.subtract(this.moonriseMoment).utc().format('HH:MM')
+  setup() {
+
+    const vm = getCurrentInstance()
+
+    const {noData, moonPhase, moonTimes, moonPosition} = astroStore()
+
+    const riseMoment = computed(() => moment(moonTimes.value.rise))
+
+    const setMoment = computed(() => moment(moonTimes.value.set))
+
+    const rise = computed(() => noData.value ? '' : riseMoment.value.format('LT'))
+
+    const riseFromNow = computed(() => noData.value ? '' : riseMoment.value.fromNow())
+
+    const set = computed(() => noData.value ? '' : setMoment.value.format('LT'))
+
+    const setFromNow = computed(() => noData.value ? '' : setMoment.value.fromNow())
+
+    const moonAzimuth = computed(() => noData.value ? '?' : vm.$t(`constants.COMPASS_POINT.${Global.getCompassPoint(moonPosition.value.azimuth)}`))
+
+    const moonAltitude = computed(() => noData.value ? '?' : `${Global.getDegreesFromRadian(moonPosition.value.altitude)}°`)
+
+    const moonPhaseIcon = computed(() => require(`@/assets/icons/moonPhases/${moonPhase.value}.svg`))
+
+    const moonPhaseString = computed(() => noData.value ? '' : vm.$t(`constants.MOON_PHASE.${moonPhase.value}`))
+
+    return {
+      rise,
+      set,
+      riseFromNow,
+      setFromNow,
+      moonPhaseIcon,
+      moonPhaseString,
+      moonAzimuth,
+      moonAltitude,
+      // icons
+      mdiWeatherSunsetUp, mdiWeatherSunsetDown, mdiCompass, mdiAngleAcute
     }
-  },
+  }
 }
 </script>

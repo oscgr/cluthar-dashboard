@@ -16,6 +16,26 @@
       "DUSK": "crépuscule",
       "NAUTICAL_DUSK": "crépuscule nautique",
       "NADIR": "nadir"
+    },
+    "MOON_PHASE": {
+      "NEW_MOON": "nouvelle lune",
+      "WAXING_CRESCENT": "premier croissant",
+      "FIRST_QUARTER": "premier quartier",
+      "WAXING_GIBBOUS": "lune gibbeuse",
+      "FULL_MOON": "pleine lune",
+      "WANING_GIBBOUS": "lune gibbeuse",
+      "LAST_QUARTER": "dernier quartier",
+      "WANING_CRESCENT": "dernier croissant"
+    },
+    "COMPASS_POINT": {
+      "NORTH": "nord",
+      "NORTH_EAST": "nord-est",
+      "EAST": "est",
+      "SOUTH_EAST": "sud-est",
+      "SOUTH": "sud",
+      "SOUTH_WEST": "sud-ouest",
+      "WEST": "ouest",
+      "NORTH_WEST": "nord-ouest"
     }
   }
 }

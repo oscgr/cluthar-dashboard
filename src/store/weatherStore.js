@@ -91,6 +91,8 @@ export default () => {
     return state.data.hasOwnProperty(type)
   }
 
+  const isCloudy = computed(() => state.data.clouds.hasOwnProperty('all') ? state.data.clouds.all > 50 : false)
+
   /* ==================== ACTIONS ==================== */
 
   const fetchWeather = (coordinates) => {
@@ -118,6 +120,7 @@ export default () => {
     wind,
     pressure,
     humidity,
+    isCloudy,
     hasType,
     cumulation,
     fetchWeather

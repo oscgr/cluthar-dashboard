@@ -2,20 +2,22 @@
     <v-card
       elevation="0"
       width="100%"
+      height="100%"
       @click="toggleShow"
     >
       <v-card-text>
-        <v-row no-gutters class="display-2 mb-4">
-          <v-col cols="9">
+        <v-row no-gutters class="display-3 mb-2">
+          <v-col cols="12">
             <v-progress-circular size="32" indeterminate v-if="loading" />
             <span v-else-if="coordinates.lat" v-text="placeName ? placeName : 'Sans nom'" />
             <span v-else v-text="'Choisissez un endroit...'" />
           </v-col>
-          <v-col cols="3" class="text-right">
-            <v-icon v-if="coordinates.lat" size="50" title="endroit" v-text="mdiMapMarker" />
-            <v-icon v-else size="50" title="rechercher" v-text="mdiHomeSearchOutline" />
-          </v-col>
+<!--          <v-col cols="3" class="text-right">-->
+<!--            <v-icon v-if="coordinates.lat" size="50" title="endroit" v-text="mdiMapMarker" />-->
+<!--            <v-icon v-else size="50" title="rechercher" v-text="mdiHomeSearchOutline" />-->
+<!--          </v-col>-->
         </v-row>
+
         <v-row no-gutters class="text-h6">
           <v-col cols="6">
             <v-icon title="latitude" class="info-icon" v-text="mdiLatitude" />
@@ -51,7 +53,7 @@
 </style>
 <script>
 
-import {reactive, toRefs} from "@vue/composition-api";
+import {computed, reactive, toRefs} from "@vue/composition-api";
 import coordinatesStore from "@/store/coordinatesStore";
 import weatherStore from "@/store/weatherStore";
 
@@ -112,6 +114,12 @@ export default {
         state.marker = null
       }
     }
+    //
+    // const placeNameFontSize = computed(() => {
+    //   const contentLength = placeName.value?.length
+    //   console.log(contentLength)
+    //   return 72 - 2 * contentLength + 'px'
+    // })
 
     return {
       loading,
