@@ -35,10 +35,12 @@
 
       <v-row no-gutters class="text-h6">
         <v-col cols="6">
-          <v-icon title="durée de la journée" class="info-icon" v-text="mdiTimerOutline" />
-          <span v-text="duration" />
+          <v-icon title="coucher de lune" class="info-icon" v-text="mdiAngleAcute" />
+          <span v-text="sunAltitude" />
         </v-col>
         <v-col cols="6" class="text-right">
+          <v-icon title="durée de la journée" class="info-icon" v-text="mdiTimerOutline" />
+          <span v-text="duration" />
         </v-col>
       </v-row>
     </v-card-text>
@@ -56,15 +58,17 @@ import {
   mdiWeatherNight,
   mdiWeatherSunny,
   mdiWeatherSunsetDown,
-  mdiWeatherSunsetUp
+  mdiWeatherSunsetUp,
+  mdiAngleAcute,
 } from '@mdi/js'
+import Global from "@/utils/global";
 
 export default {
   name: 'DayCard',
   setup() {
     const vm = getCurrentInstance()
 
-    const {noData, sunTimes, sunPhase} = astroStore()
+    const {noData, sunTimes, sunPosition, sunPhase} = astroStore()
 
     const sunriseMoment = computed(() => moment(sunTimes.value.sunrise))
 
@@ -81,6 +85,8 @@ export default {
     const duration = computed(() => noData.value ? '' : sunriseMoment.value.to(sunsetMoment.value, true))
 
     const sunPhaseString = computed(() => noData.value ? '' : vm.$t(`constants.DAY_CYCLE.${sunPhase.value}`))
+
+    const sunAltitude = computed(() => noData.value ? '?' : `${Global.getDegreesFromRadian(sunPosition.value.altitude)}°`)
 
     const sunIcon = computed(() => {
       switch (sunPhase.value) {
@@ -108,8 +114,8 @@ export default {
     })
 
     return {
-      sunrise, sunriseFromNow, sunIcon, sunset, sunsetFromNow, sunPhaseString, duration,
-      mdiWeatherSunsetUp, mdiWeatherSunsetDown, mdiTimerOutline
+      sunrise, sunriseFromNow, sunIcon, sunset, sunsetFromNow, sunPhaseString, duration, sunAltitude,
+      mdiWeatherSunsetUp, mdiWeatherSunsetDown, mdiTimerOutline, mdiAngleAcute
     }
   }
 }

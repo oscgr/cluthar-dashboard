@@ -22,6 +22,7 @@ export default () => {
   // SUN
 
   const sunTimes = computed(() => state.sunTimes)
+  const sunPosition = computed(() => state.sunPosition)
 
   const moonTimes = computed(() => state.moonTimes)
   const moonPosition = computed(() => state.moonPosition)
@@ -90,6 +91,7 @@ export default () => {
     isDay,
     sunTimes,
     moonTimes,
+    sunPosition,
     moonPosition,
     moonPhase,
   }
