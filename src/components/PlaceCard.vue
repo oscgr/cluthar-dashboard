@@ -51,7 +51,7 @@
 </template>
 <script>
 
-import {reactive, toRefs, computed} from "@vue/composition-api";
+import {computed} from "@vue/composition-api";
 import coordinatesStore from "@/store/coordinatesStore";
 import weatherStore from "@/store/weatherStore";
 

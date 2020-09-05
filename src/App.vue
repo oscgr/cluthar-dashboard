@@ -17,9 +17,12 @@
           <v-col cols="12" md="6" lg="4">
             <moon-card />
           </v-col>
-<!--          <v-col cols="12" md="6" lg="4">-->
-<!--            <add-window-card />-->
-<!--          </v-col>-->
+          <v-col cols="12">
+            <v-divider/>
+          </v-col>
+          <v-col cols="12" md="6" lg="4">
+            <add-window-card />
+          </v-col>
         </v-row>
       </v-container>
     </v-main>
@@ -55,7 +58,7 @@ export default {
     DayCard,
     WeatherCard,
     PlaceCard,
-    // AddWindowCard,
+    AddWindowCard,
   },
 
   setup() {

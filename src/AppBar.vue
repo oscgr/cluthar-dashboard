@@ -7,19 +7,29 @@
 
     <v-spacer></v-spacer>
 
-    <v-btn @click="toggleShow" depressed small>Changer d'emplacement à la main</v-btn>
-
     <v-hover>
       <template #default="{hover}">
-        <v-btn :loading="geolocationLoading"  icon @click="setGeolocationCoordinates">
-          <v-icon v-text="hover ? mdiCrosshairsGps : mdiCrosshairs" />
+        <v-btn @click="toggleShow" depressed icon>
+          <v-icon v-text="hover ? mdiHomeSearch : mdiHomeSearchOutline" />
         </v-btn>
       </template>
     </v-hover>
 
-    <v-btn class="mr-2" icon  @click="$vuetify.theme.dark = !$vuetify.theme.dark">
-      <v-icon v-text="$vuetify.theme.dark ? mdiBrightness4 : mdiBrightness6" />
-    </v-btn>
+    <v-hover>
+      <template #default="{hover}">
+        <v-btn :loading="geolocationLoading" icon @click="setGeolocationCoordinates">
+          <v-icon v-text="hover ? mdiCrosshairsGps : mdiCrosshairs" />
+        </v-btn>
+      </template>
+    </v-hover>
+    <v-hover>
+      <template #default="{hover}">
+
+        <v-btn class="mr-2" icon @click="$vuetify.theme.dark = !$vuetify.theme.dark">
+          <v-icon v-text="($vuetify.theme.dark && !hover || !$vuetify.theme.dark && hover) ? mdiBrightness4 : mdiBrightness6" />
+        </v-btn>
+      </template>
+    </v-hover>
 
     <v-dialog v-model="show" width="90%">
       <v-card id="map" />
@@ -28,7 +38,14 @@
 </template>
 <script>
 
-import {mdiBrightness4, mdiBrightness6, mdiCrosshairsGps, mdiCrosshairs} from '@mdi/js'
+import {
+  mdiBrightness4,
+  mdiBrightness6,
+  mdiCrosshairs,
+  mdiCrosshairsGps,
+  mdiHomeSearch,
+  mdiHomeSearchOutline
+} from '@mdi/js'
 import coordinatesStore from "@/store/coordinatesStore";
 import {reactive, toRefs} from "@vue/composition-api";
 
@@ -96,7 +113,9 @@ export default {
       mdiBrightness4,
       mdiBrightness6,
       mdiCrosshairsGps,
-      mdiCrosshairs
+      mdiCrosshairs,
+      mdiHomeSearch,
+      mdiHomeSearchOutline
     }
   }
 }
