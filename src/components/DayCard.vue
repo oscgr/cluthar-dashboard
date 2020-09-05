@@ -6,12 +6,13 @@
     :color="$vuetify.theme.dark ? '#801336' : '#dfd3c3'"
   >
     <v-card-text>
-      <v-row no-gutters class="display-3 pb-4">
-        <v-col cols="12">
+      <v-row no-gutters class="display-1">
+        <v-col cols="6">
           <span v-text="sunPhaseString" />
         </v-col>
-<!--        <v-col cols="3" class="text-right">-->
-<!--        </v-col>-->
+        <v-col cols="6" class="text-right">
+          <img height="72px" alt="météo" :src="sunIcon" />
+        </v-col>
       </v-row>
       <v-row no-gutters class="text-h6">
         <v-col cols="6">
@@ -54,14 +55,13 @@ import {computed, getCurrentInstance} from "@vue/composition-api";
 import DayCycle from "@/enums/DayCycle";
 
 import {
+  mdiAngleAcute,
   mdiTimerOutline,
-  mdiWeatherNight,
-  mdiWeatherSunny,
   mdiWeatherSunsetDown,
   mdiWeatherSunsetUp,
-  mdiAngleAcute,
 } from '@mdi/js'
 import Global from "@/utils/global";
+import timeStore from "@/store/timeStore";
 
 export default {
   name: 'DayCard',
@@ -70,19 +70,25 @@ export default {
 
     const {noData, sunTimes, sunPosition, sunPhase} = astroStore()
 
+    const {fromNow} = timeStore()
+
     const sunriseMoment = computed(() => moment(sunTimes.value.sunrise))
 
     const sunsetMoment = computed(() => moment(sunTimes.value.sunset))
 
     const sunrise = computed(() => noData.value ? '' : sunriseMoment.value.format('LT'))
 
-    const sunriseFromNow = computed(() => noData.value ? '' : sunriseMoment.value.fromNow())
+    const sunriseFromNow = computed(() => noData.value ? '' : fromNow(sunriseMoment.value))
 
     const sunset = computed(() => noData.value ? '' : sunsetMoment.value.format('LT'))
 
-    const sunsetFromNow = computed(() => noData.value ? '' : sunsetMoment.value.fromNow())
+    const sunsetFromNow = computed(() => noData.value ? '' : fromNow(sunsetMoment.value))
 
-    const duration = computed(() => noData.value ? '' : sunriseMoment.value.to(sunsetMoment.value, true))
+    const duration = computed(() => {
+      if (noData.value) return '?'
+      const diff = moment.duration(sunsetMoment.value.diff(sunriseMoment.value))
+      return `${diff.hours()}h, ${diff.minutes()}m et ${diff.seconds()}s`
+  })
 
     const sunPhaseString = computed(() => noData.value ? '' : vm.$t(`constants.DAY_CYCLE.${sunPhase.value}`))
 
@@ -92,7 +98,7 @@ export default {
       switch (sunPhase.value) {
         case DayCycle.DAY:
         case DayCycle.ZENITH:
-          return mdiWeatherSunny
+          return require('@/assets/icons/dayPhases/noon.svg')
         case DayCycle.NIGHT:
         case DayCycle.NIGHT_START:
         case DayCycle.NIGHT_END:
@@ -101,13 +107,13 @@ export default {
         case DayCycle.DAWN:
         case DayCycle.DUSK:
         case DayCycle.NADIR:
-          return mdiWeatherNight
+          return require('@/assets/icons/dayPhases/004-tent.svg')
         case DayCycle.SUNRISE:
         case DayCycle.SUNRISE_GOLDEN_HOUR:
-          return mdiWeatherSunsetUp
+          return require('@/assets/icons/dayPhases/001-sunrise.svg')
         case DayCycle.SUNSET:
         case DayCycle.SUNSET_GOLDEN_HOUR:
-          return mdiWeatherSunsetDown
+          return require('@/assets/icons/dayPhases/002-sunset.svg')
         default:
           return ''
       }

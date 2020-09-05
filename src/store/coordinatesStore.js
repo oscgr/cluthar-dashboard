@@ -1,6 +1,8 @@
-import {computed, reactive} from "@vue/composition-api";
+import {ref, computed, reactive} from "@vue/composition-api";
 import weatherStore from "@/store/weatherStore";
 import astroStore from "@/store/astroStore";
+
+const geolocationLoading = ref(false)
 
 const state = reactive({
   lng: null,
@@ -20,6 +22,20 @@ export default () => {
 
   /* ==================== ACTIONS ==================== */
 
+  const setGeolocationCoordinates = () => {
+    if (navigator.geolocation) {
+      geolocationLoading.value = true
+      console.debug('[COORDS] fetching device coordinates...')
+      navigator.geolocation.getCurrentPosition((position => {
+        console.debug('[COORDS] fetched device coordinates')
+        setCoordinates({lng: position.coords.longitude, lat: position.coords.latitude})
+        geolocationLoading.value = false
+      }));
+    } else {
+      console.warn('Browser does not support geolocation')
+    }
+  }
+
   const setCoordinates = (val) => {
     if (!val && localStorage.getItem('coordinates')) {
       val = JSON.parse(localStorage.getItem('coordinates'))
@@ -33,7 +49,9 @@ export default () => {
     }
   }
   return {
+    geolocationLoading,
     coordinates,
     setCoordinates,
+    setGeolocationCoordinates,
   }
 }

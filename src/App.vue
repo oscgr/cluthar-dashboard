@@ -1,22 +1,11 @@
 <template>
   <v-app>
-    <v-app-bar app>
-
-      <span class="title">
-        AZIMUTH SHUTTER
-      </span>
-
-      <v-spacer></v-spacer>
-
-      <v-btn class="mr-2" icon small @click="$vuetify.theme.dark = !$vuetify.theme.dark">
-        <v-icon v-text="$vuetify.theme.dark ? mdiBrightness4 : mdiBrightness6" />
-      </v-btn>
-    </v-app-bar>
+    <app-bar />
 
     <v-main :style="{background: ($vuetify.theme.dark ?'#1b262c' : '#f0ece3')}">
       <v-container>
         <v-row>
-          <v-col cols="12" lg="4">
+          <v-col cols="12">
             <place-card />
           </v-col>
           <v-col cols="12" lg="4">
@@ -28,6 +17,9 @@
           <v-col cols="12" md="6" lg="4">
             <moon-card />
           </v-col>
+<!--          <v-col cols="12" md="6" lg="4">-->
+<!--            <add-window-card />-->
+<!--          </v-col>-->
         </v-row>
       </v-container>
     </v-main>
@@ -50,25 +42,26 @@ import WeatherCard from "@/components/WeatherCard";
 import DayCard from "@/components/DayCard";
 import MoonCard from "@/components/MoonCard";
 import coordinatesStore from "@/store/coordinatesStore";
-import { mdiBrightness4, mdiBrightness6 } from '@mdi/js';
+import AddWindowCard from "@/components/AddWindowCard";
+import AppBar from "@/AppBar";
+import {onMounted} from "@vue/composition-api";
 
 export default {
   name: 'App',
 
   components: {
+    AppBar,
     MoonCard,
     DayCard,
     WeatherCard,
     PlaceCard,
+    // AddWindowCard,
   },
 
   setup() {
     const {setCoordinates} = coordinatesStore()
-    setCoordinates()
-    return {
-      mdiBrightness4,
-      mdiBrightness6
-    }
+
+    onMounted(() => { setCoordinates() })
   }
 }
 </script>

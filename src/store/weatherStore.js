@@ -21,7 +21,11 @@ export default () => {
 
   /* ==================== GETTERS ==================== */
 
-  const placeName = computed(() => state.data.name ? state.data.name : '?')
+  const placeName = computed(() => {
+    if (state.data.name) return state.data.name
+    const storedPlaceName = localStorage.getItem('place_name')
+    return storedPlaceName ? storedPlaceName : '?'
+  })
 
   const placeCountry = computed(() => state.data.sys.country ? state.data.sys.country : '?')
 
@@ -50,11 +54,11 @@ export default () => {
     if ((200 <= id && id <= 202) || (230 <= id && id <= 232)) return require('@/assets/icons/weather/200-202_230-232.svg')
     else if (210 <= id && id <= 221) return require('@/assets/icons/weather/210-221.svg')
 
-    else if (state.data.clouds.all > 50 && (300 <= id && id <= 500)) return require('@/assets/icons/weather/300-500-cloud.svg')
-    else if (isDay.value && (state.data.clouds.all < 50) && (300 <= id && id <= 500)) return require('@/assets/icons/weather/300-500-light-cloud-day.svg')
-    else if ((state.data.clouds.all < 50) && (300 <= id && id <= 500)) return require('@/assets/icons/weather/300-500-light-cloud-night.svg')
+    else if (state.data.clouds.all > 50 && (300 <= id && id <= 531)) return require('@/assets/icons/weather/300-500-cloud.svg')
+    else if (isDay.value && (state.data.clouds.all < 50) && (300 <= id && id <= 531)) return require('@/assets/icons/weather/300-500-light-cloud-day.svg')
+    else if ((state.data.clouds.all < 50) && (300 <= id && id <= 531)) return require('@/assets/icons/weather/300-500-light-cloud-night.svg')
 
-    else if (id === 600) return require('@/assets/icons/weather/600.svg')
+    else if (id <= 600 && id <= 622) return require('@/assets/icons/weather/600.svg')
     else if (701 <= id && id <= 771) return require('@/assets/icons/weather/701-771.svg')
     else if (id === 781) return require('@/assets/icons/weather/781.svg')
 
@@ -103,6 +107,7 @@ export default () => {
           state.data = r
           loading.value = false
           noData.value = false
+          localStorage.setItem('place_name', state.data.name)
           console.debug('[WEATHER] fetched weather')
           return r
         })
