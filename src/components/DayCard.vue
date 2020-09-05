@@ -98,7 +98,7 @@ export default {
       switch (sunPhase.value) {
         case DayCycle.DAY:
         case DayCycle.ZENITH:
-          return require('@/assets/icons/dayPhases/noon.svg')
+          return require('@/assets/icons/dayPhases/001-mountain.svg')
         case DayCycle.NIGHT:
         case DayCycle.NIGHT_START:
         case DayCycle.NIGHT_END:
