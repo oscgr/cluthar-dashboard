@@ -79,7 +79,7 @@ export default {
 
   setup() {
 
-    const vm = getCurrentInstance()
+    const vm = getCurrentInstance().proxy
 
     const {loading, isCloudy, temperature, feelsLike, weatherDescription, weatherIcon, clouds, cumulation, hasType, humidity, pressure, wind} = weatherStore()
 

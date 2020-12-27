@@ -66,7 +66,7 @@ import timeStore from "@/store/timeStore";
 export default {
   name: 'DayCard',
   setup() {
-    const vm = getCurrentInstance()
+    const vm = getCurrentInstance().proxy
 
     const {noData, sunTimes, sunPosition, sunPhase} = astroStore()
 

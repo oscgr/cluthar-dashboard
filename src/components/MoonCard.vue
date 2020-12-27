@@ -64,7 +64,7 @@ export default {
   name: 'MoonCard',
   setup() {
 
-    const vm = getCurrentInstance()
+    const vm = getCurrentInstance().proxy
 
     const {noData, moonPhase, moonTimes, moonPosition} = astroStore()
 
