@@ -17,12 +17,6 @@
           <v-col cols="12" md="6" lg="4">
             <moon-card />
           </v-col>
-          <v-col cols="12">
-            <v-divider/>
-          </v-col>
-          <v-col cols="12" md="6" lg="4">
-            <add-window-card />
-          </v-col>
         </v-row>
       </v-container>
     </v-main>
@@ -45,7 +39,6 @@ import WeatherCard from "@/components/WeatherCard";
 import DayCard from "@/components/DayCard";
 import MoonCard from "@/components/MoonCard";
 import coordinatesStore from "@/store/coordinatesStore";
-import AddWindowCard from "@/components/AddWindowCard";
 import AppBar from "@/AppBar";
 import {onMounted} from "@vue/composition-api";
 
@@ -58,7 +51,6 @@ export default {
     DayCard,
     WeatherCard,
     PlaceCard,
-    AddWindowCard,
   },
 
   setup() {
