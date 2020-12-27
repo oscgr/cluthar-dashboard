@@ -26,11 +26,13 @@ export default () => {
     if (navigator.geolocation) {
       geolocationLoading.value = true
       console.debug('[COORDS] fetching device coordinates...')
-      navigator.geolocation.getCurrentPosition((position => {
+      navigator.geolocation.getCurrentPosition(position => {
         console.debug('[COORDS] fetched device coordinates')
         setCoordinates({lng: position.coords.longitude, lat: position.coords.latitude})
         geolocationLoading.value = false
-      }));
+      }, (e) => {
+        geolocationLoading.value = false
+      }, {timeout: 5000});
     } else {
       console.warn('Browser does not support geolocation')
     }

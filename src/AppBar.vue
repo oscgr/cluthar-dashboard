@@ -44,20 +44,21 @@ import {
   mdiCrosshairs,
   mdiCrosshairsGps,
   mdiHomeSearch,
-  mdiHomeSearchOutline
+  mdiHomeSearchOutline,
 } from '@mdi/js'
 import coordinatesStore from "@/store/coordinatesStore";
-import {reactive, toRefs} from "@vue/composition-api";
+import { reactive, toRefs} from "@vue/composition-api";
 
 export default {
   name: 'AppBar',
   setup() {
     const {geolocationLoading, coordinates, setCoordinates, setGeolocationCoordinates} = coordinatesStore()
 
+
     const state = reactive({
       show: false,
       map: null,
-      marker: null
+      marker: null,
     })
 
     const setMarker = () => {
@@ -115,7 +116,7 @@ export default {
       mdiCrosshairsGps,
       mdiCrosshairs,
       mdiHomeSearch,
-      mdiHomeSearchOutline
+      mdiHomeSearchOutline,
     }
   }
 }
