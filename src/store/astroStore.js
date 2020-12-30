@@ -1,38 +1,31 @@
-import {computed, ref, reactive} from "@vue/composition-api";
+import {computed, reactive, toRefs, watch} from "@vue/composition-api";
 
 import SunCalc from 'suncalc'
 import DayCycle from "@/enums/DayCycle";
 import MoonPhase from "@/enums/MoonPhase";
-
-const noData = ref(true)
+import placeStore from "@/store/placeStore";
 
 const state = reactive({
+  noData: true,
   sunTimes: {},
   sunPosition: {},
   moonTimes: {},
   moonPosition: {},
   moonIllumination: {}
-
 })
 
 export default () => {
+
+  const {noData: placeNoData, place} = placeStore()
 
   const HALF_HOUR = 1800000
 
   // SUN
 
-  const sunTimes = computed(() => state.sunTimes)
-  const sunPosition = computed(() => state.sunPosition)
-
-  const moonTimes = computed(() => state.moonTimes)
-  const moonPosition = computed(() => state.moonPosition)
-
   const sunPhase = computed(() => {
+    const now = new Date()
 
-    if (noData.value) return ''
-
-    const now = Date.now()
-
+    if (state.noData) return ''
     if (now < state.sunTimes.nightEnd.getTime()) return DayCycle.NIGHT
     if (now < state.sunTimes.nauticalDawn.getTime()) return DayCycle.NIGHT_END
     if (now < state.sunTimes.dawn.getTime()) return DayCycle.NAUTICAL_DUSK
@@ -40,7 +33,7 @@ export default () => {
     if (now < state.sunTimes.sunriseEnd.getTime()) return DayCycle.SUNRISE
     if (now < state.sunTimes.goldenHourEnd.getTime()) return DayCycle.SUNRISE_GOLDEN_HOUR
 
-    if ((state.sunTimes.solarNoon.getTime() - HALF_HOUR < now) && (now  < state.sunTimes.solarNoon.getTime() + HALF_HOUR)) return DayCycle.ZENITH
+    if ((state.sunTimes.solarNoon.getTime() - HALF_HOUR < now) && (now < state.sunTimes.solarNoon.getTime() + HALF_HOUR)) return DayCycle.ZENITH
 
     if (now < state.sunTimes.goldenHour.getTime()) return DayCycle.DAY
     if (now < state.sunTimes.sunsetStart.getTime()) return DayCycle.SUNSET_GOLDEN_HOUR
@@ -59,40 +52,43 @@ export default () => {
   // MOON
 
   const moonPhase = computed(() => {
-    const phase = state.moonIllumination.phase
-    if (!phase) return null
-    else if (phase < 1/16) return MoonPhase.NEW_MOON
-    else if (phase < 3/16) return MoonPhase.WAXING_CRESCENT
-    else if (phase < 5/16) return MoonPhase.FIRST_QUARTER
-    else if (phase < 7/16) return MoonPhase.WAXING_GIBBOUS
-    else if (phase < 9/16) return MoonPhase.FULL_MOON
-    else if (phase < 11/16) return MoonPhase.WANING_GIBBOUS
-    else if (phase < 13/16) return MoonPhase.LAST_QUARTER
-    else if (phase < 15/16) return MoonPhase.WANING_CRESCENT
-    else return MoonPhase.NEW_MOON
+    if (!state.noData) {
+      const phase = state.moonIllumination.phase
+      if (!phase) return null
+      else if (phase < 1/16) return MoonPhase.NEW_MOON
+      else if (phase < 3/16) return MoonPhase.WAXING_CRESCENT
+      else if (phase < 5/16) return MoonPhase.FIRST_QUARTER
+      else if (phase < 7/16) return MoonPhase.WAXING_GIBBOUS
+      else if (phase < 9/16) return MoonPhase.FULL_MOON
+      else if (phase < 11/16) return MoonPhase.WANING_GIBBOUS
+      else if (phase < 13/16) return MoonPhase.LAST_QUARTER
+      else if (phase < 15/16) return MoonPhase.WANING_CRESCENT
+      else return MoonPhase.NEW_MOON
+    }
   })
 
   /* ==================== ACTIONS ==================== */
 
-  const fetchAstro = (coordinates) => {
-    const now = new Date();
-    state.sunTimes = SunCalc.getTimes(now, coordinates.lat, coordinates.lng)
-    state.moonTimes = SunCalc.getMoonTimes(now, coordinates.lat, coordinates.lng)
-    state.sunPosition = SunCalc.getPosition(now, coordinates.lat, coordinates.lng)
-    state.moonPosition = SunCalc.getMoonPosition(now, coordinates.lat, coordinates.lng)
-    state.moonIllumination = SunCalc.getMoonIllumination(now)
-    noData.value = false
-    console.debug('[ASTRO] fetched data')
+  const fetchAstro = () => {
+    const now = new Date()
+    if (!placeNoData.value) {
+      state.sunTimes = SunCalc.getTimes(now, place.value.latitude, place.value.longitude)
+      state.moonTimes = SunCalc.getMoonTimes(now, place.value.latitude, place.value.longitude)
+      state.sunPosition = SunCalc.getPosition(now, place.value.latitude, place.value.longitude)
+      state.moonPosition = SunCalc.getMoonPosition(now, place.value.latitude, place.value.longitude)
+      state.moonIllumination = SunCalc.getMoonIllumination(now)
+      state.noData = false
+      console.debug('[ASTRO] fetched data')
+    }
   }
+
+  watch(place, fetchAstro)
+
   return {
+    ...toRefs(state),
     fetchAstro,
-    noData,
     sunPhase,
     isDay,
-    sunTimes,
-    moonTimes,
-    sunPosition,
-    moonPosition,
     moonPhase,
   }
 }

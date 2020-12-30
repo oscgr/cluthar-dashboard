@@ -59,6 +59,7 @@ import {computed, getCurrentInstance} from "@vue/composition-api";
 import {mdiWeatherSunsetUp, mdiWeatherSunsetDown, mdiCompass, mdiAngleAcute} from '@mdi/js'
 import Global from '@/utils/global'
 import timeStore from "@/store/timeStore";
+import placeStore from "@/store/placeStore";
 
 export default {
   name: 'MoonCard',
@@ -86,7 +87,7 @@ export default {
 
     const moonAltitude = computed(() => noData.value ? '?' : `${Global.getDegreesFromRadian(moonPosition.value.altitude)}°`)
 
-    const moonPhaseIcon = computed(() =>noData.value ? '' : require(`@/assets/icons/moonPhases/${moonPhase.value}.svg`))
+    const moonPhaseIcon = computed(() => noData.value ? '' : require(`@/assets/icons/moonPhases/${moonPhase.value}.svg`))
 
     const moonPhaseString = computed(() => noData.value ? '' : vm.$t(`constants.MOON_PHASE.${moonPhase.value}`))
 

@@ -7,33 +7,25 @@
       <v-card-text>
         <v-row no-gutters class="display-3 mb-2">
           <v-col cols="12">
-            <span v-if="coordinates.lat" v-text="placeName ? placeName : 'Sans nom'" />
-            <span v-else v-text="'Choisissez un endroit...'" />
+            <span v-text="place.display" />
           </v-col>
         </v-row>
         <v-row no-gutters class="display-1">
-          <v-col cols="6" class="">
+          <v-col cols="12">
             <span class="hidden-md-and-down" v-text="dateString" />
             <span class="hidden-lg-and-up" v-text="dateStringShort" />
           </v-col>
-          <v-col cols="6" class="text-right">
-            <span v-text="timeString" />
-          </v-col>
         </v-row>
-        <v-row no-gutters class="text-h6">
+        <v-row no-gutters class="text-h6 mt-4">
           <v-col cols="6">
             <v-icon title="latitude" class="info-icon" v-text="mdiLatitude" />
-            <span v-text="`${coordinates.lat ? Math.floor(coordinates.lat * 100) / 100 : '?'}`" />
+            <span v-text="`${place.latitude ? Math.floor(place.latitude * 100) / 100 : '?'}`" />
             <v-spacer />
             <v-icon title="longitude" class="info-icon" v-text="mdiLongitude" />
-            <span v-text="`${coordinates.lng ? Math.floor(coordinates.lng * 100) / 100 : '?'}`" />
+            <span v-text="`${place.longitude ? Math.floor(place.longitude * 100) / 100 : '?'}`" />
           </v-col>
-          <v-col cols="6" class="text-right">
-            <v-icon title="pays" class="info-icon" v-text="mdiEarth" />
-            <span v-text="placeCountry" />
-            <v-spacer />
-            <v-icon title="latitude" class="info-icon" v-text="mdiMapClock" />
-            <span v-text="timezone" />
+          <v-col cols="6" class="text-right display-1">
+            <span v-text="timeString" />
           </v-col>
         </v-row>
       </v-card-text>
@@ -43,34 +35,25 @@
 <script>
 
 import {computed} from "@vue/composition-api";
-import coordinatesStore from "@/store/coordinatesStore";
-import weatherStore from "@/store/weatherStore";
-
+import placeStore from "@/store/placeStore";
 import {mdiLatitude, mdiLongitude, mdiEarth, mdiMapClock, mdiCrosshairs, mdiCrosshairsGps} from '@mdi/js'
 import timeStore from "@/store/timeStore";
 
 export default {
-  name: 'placeSearch',
+  name: 'placeCard',
   setup() {
-    const {geolocationLoading, coordinates, setGeolocationCoordinates} = coordinatesStore()
-    const {placeName, placeCountry, timezone} = weatherStore()
+    const {place} = placeStore()
     const {now} = timeStore()
-
 
     const dateString = computed(() => now.value.format('dddd LL'))
     const dateStringShort = computed(() => now.value.format('ddd ll'))
     const timeString = computed(() => now.value.format('LTS'))
 
     return {
-      geolocationLoading,
-      setGeolocationCoordinates,
       dateString,
       dateStringShort,
       timeString,
-      coordinates,
-      placeName,
-      placeCountry,
-      timezone,
+      place,
       // icons
       mdiLatitude, mdiLongitude, mdiEarth, mdiMapClock, mdiCrosshairs, mdiCrosshairsGps
     }

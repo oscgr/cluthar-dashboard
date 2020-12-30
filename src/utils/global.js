@@ -15,5 +15,5 @@ export default {
   },
   getDegreesFromRadian(rad) {
     return Math.round(rad * 180 / Math.PI)
-  }
+  },
 }

@@ -62,13 +62,16 @@ import {
 } from '@mdi/js'
 import Global from "@/utils/global";
 import timeStore from "@/store/timeStore";
+import placeStore from "@/store/placeStore";
 
 export default {
   name: 'DayCard',
   setup() {
     const vm = getCurrentInstance().proxy
 
-    const {noData, sunTimes, sunPosition, sunPhase} = astroStore()
+    const {sunTimes, sunPosition, sunPhase} = astroStore()
+
+    const {noData} = placeStore()
 
     const {fromNow} = timeStore()
 

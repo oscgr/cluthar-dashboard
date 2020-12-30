@@ -1,62 +1,55 @@
-import {computed, ref, reactive} from "@vue/composition-api";
+import {reactive, toRefs, watch} from "@vue/composition-api";
 import astroStore from "@/store/astroStore";
+import placeStore from "@/store/placeStore";
+import axios from "axios";
 
-const loading = ref(false)
-
-const noData = ref(true)
 
 const state = reactive({
-  data: {
-    weather: [{}],
-    main: {},
-    clouds: {},
-    wind: {},
-    sys: {},
+  loading: false,
+  noData: false,
+  payload: {
+    current: {
+      weather: [{}]
+    },
+    daily: [],
+    hourly: [],
+    minutely: []
   }
 })
+
 
 export default () => {
 
   const {isDay} = astroStore()
+  const {place} = placeStore()
 
-  /* ==================== GETTERS ==================== */
+  const fetchWeather = async () => {
+    if (place.value.longitude) {
+      state.loading = true
+      const {data} = await axios.get(`https://api.openweathermap.org/data/2.5/onecall?lang=fr&lat=${place.value.latitude}&lon=${place.value.longitude}&units=metric&appid=${process.env.VUE_APP_OPEN_WEATHER_API_KEY}`)
+      state.payload = data
+      console.log(state.payload)
+      state.loading = false
+      state.noData = !!!data
+    }
+    state.noData = true
+  }
 
-  const placeName = computed(() => {
-    if (state.data.name) return state.data.name
-    const storedPlaceName = localStorage.getItem('place_name')
-    return storedPlaceName ? storedPlaceName : '?'
-  })
+  watch(place, fetchWeather)
 
-  const placeCountry = computed(() => state.data.sys.country ? state.data.sys.country : '?')
 
-  const timezone = computed(() => {
-    return state.data.timezone ? `GMT${state.data.timezone > 0 ? '+' : '-'}${Math.abs(state.data.timezone / 3600)}` : '?'
-  })
+  const weatherIcon = (id, clouds = 0) => {
 
-  const temperature = computed(() => {
-    return `${state.data.main.hasOwnProperty('temp') ? Math.round(state.data.main.temp) : '? '}°C`
-  })
-
-  const feelsLike = computed(() => {
-    return `${state.data.main.hasOwnProperty('feels_like') ? Math.round(state.data.main.feels_like) : '? '}°C`
-  })
-  const weatherDescription = computed(() => {
-    return state.data.weather[0].description
-  })
-  const weatherIcon = computed(() => {
-
-    if (noData.value) return null
+    if (!id) return null
 
     // https://openweathermap.org/weather-conditions
-
-    const id = state.data.weather[0].id;
 
     if ((200 <= id && id <= 202) || (230 <= id && id <= 232)) return require('@/assets/icons/weather/200-202_230-232.svg')
     else if (210 <= id && id <= 221) return require('@/assets/icons/weather/210-221.svg')
 
-    else if (state.data.clouds.all > 50 && (300 <= id && id <= 531)) return require('@/assets/icons/weather/300-500-cloud.svg')
-    else if (isDay.value && (state.data.clouds.all < 50) && (300 <= id && id <= 531)) return require('@/assets/icons/weather/300-500-light-cloud-day.svg')
-    else if ((state.data.clouds.all < 50) && (300 <= id && id <= 531)) return require('@/assets/icons/weather/300-500-light-cloud-night.svg')
+    else if (clouds > 50 && (300 <= id && id <= 531)) return require('@/assets/icons/weather/300-500-cloud.svg')
+    else if (isDay.value && (clouds < 50) && (300 <= id && id <= 531)) return require('@/assets/icons/weather/300-500-light-cloud-day.svg')
+    else if ((clouds < 50) && (300 <= id && id <= 531)) return require('@/assets/icons/weather/300-500-light-cloud-night.svg')
 
     else if (id <= 600 && id <= 622) return require('@/assets/icons/weather/600.svg')
     else if (701 <= id && id <= 771) return require('@/assets/icons/weather/701-771.svg')
@@ -74,60 +67,15 @@ export default () => {
     else if (803 <= id && id <= 804) return require('@/assets/icons/weather/803-804.svg')
 
     else return null
-  })
-  const clouds = computed(() => {
-    return state.data.clouds.hasOwnProperty('all') ? `${state.data.clouds.all}%` : '? %'
-  })
-  const wind = computed(() => {
-    return (state.data.wind.hasOwnProperty('speed') ? Math.round(state.data.wind.speed * 3.6) : '?') + ' km/h'
-  })
-  const pressure = computed(() => {
-    return (state.data.main.hasOwnProperty('pressure') ? state.data.main.pressure : '?') + ' hPa'
-  })
-  const humidity = computed(() => {
-    return (state.data.main.hasOwnProperty('humidity') ? state.data.main.humidity : '? ') + '%'
-  })
-
-  const cumulation = (type, duration) => {
-    return ((hasType(type) && state.data[type][duration]) ? state.data[type][duration] : '?') + ` mm (${duration})`
   }
-  const hasType = (type) => {
-    return state.data.hasOwnProperty(type)
-  }
-
-  const isCloudy = computed(() => state.data.clouds.hasOwnProperty('all') ? state.data.clouds.all > 50 : false)
 
   /* ==================== ACTIONS ==================== */
 
-  const fetchWeather = (coordinates) => {
-    loading.value = true
-      fetch(`https://api.openweathermap.org/data/2.5/weather?lang=fr&lat=${coordinates.lat}&lon=${coordinates.lng}&units=metric&appid=${process.env.VUE_APP_OPEN_WEATHER_API_KEY}`)
-        .then(r => r.json())
-        .then(r => {
-          state.data = r
-          loading.value = false
-          noData.value = false
-          localStorage.setItem('place_name', state.data.name)
-          console.debug('[WEATHER] fetched weather')
-          return r
-        })
-  }
+
   return {
-    loading,
-    placeName,
-    placeCountry,
-    timezone,
-    temperature,
-    feelsLike,
-    weatherDescription,
+    ...toRefs(state),
+    fetchWeather,
     weatherIcon,
-    clouds,
-    wind,
-    pressure,
-    humidity,
-    isCloudy,
-    hasType,
-    cumulation,
-    fetchWeather
   }
 }
+

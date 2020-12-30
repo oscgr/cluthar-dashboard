@@ -5,27 +5,25 @@
     <v-main :style="{background: ($vuetify.theme.dark ?'#1b262c' : '#f0ece3')}">
       <v-container>
         <v-row>
-          <v-col cols="12">
+          <v-col cols="12" md="6">
             <place-card />
           </v-col>
-          <v-col cols="12" md="6" lg="4">
-            <weather-card />
+          <v-col cols="12" md="6">
+            <current-weather-card />
           </v-col>
-          <v-col cols="12" md="6" lg="4">
+          <v-col cols="12" md="6">
             <day-card />
           </v-col>
-          <v-col cols="12" md="6" lg="4">
+          <v-col cols="12" md="6" >
             <moon-card />
           </v-col>
+          <v-col cols="12" md="6" >
+            <precipitation-card />
+          </v-col>
+
         </v-row>
       </v-container>
-      <v-hover>
-      <template #default="{hover}">
-        <v-btn class="ma-2" :style="{right: '24px', bottom: '24px', position: 'fixed', 'z-index': 4}" fab @click="toggleFullScreen">
-          <v-icon v-text="hover ? mdiFullscreenExit : mdiFullscreen" />
-        </v-btn>
-      </template>
-    </v-hover>
+      <btn-hover />
     </v-main>
     <v-footer app v-show="!fullScreen">
       <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
@@ -42,37 +40,42 @@
 
 <script>
 import PlaceCard from '@/components/PlaceCard.vue';
-import WeatherCard from "@/components/WeatherCard";
-import DayCard from "@/components/DayCard";
-import MoonCard from "@/components/MoonCard";
-import coordinatesStore from "@/store/coordinatesStore";
-import AppBar from "@/AppBar";
-import {onMounted} from "@vue/composition-api";
+import AppBar from "@/components/AppBar";
+import BtnHover from "@/components/BtnHover";
 import fullscreenStore from "@/store/fullscreenStore";
-import {mdiFullscreen, mdiFullscreenExit} from "@mdi/js";
+import weatherStore from "@/store/weatherStore";
+import {onMounted} from "@vue/composition-api";
+import MoonCard from "@/components/MoonCard";
+import DayCard from "@/components/DayCard";
+import astroStore from "@/store/astroStore";
+import CurrentWeatherCard from "@/components/CurrentWeatherCard";
+import PrecipitationCard from "@/components/PrecipitationCard";
 
 export default {
   name: 'App',
 
   components: {
+    BtnHover,
     AppBar,
     MoonCard,
     DayCard,
-    WeatherCard,
+    CurrentWeatherCard,
+    PrecipitationCard,
     PlaceCard,
   },
-
   setup() {
-    const {setCoordinates} = coordinatesStore()
-    const {fullScreen, toggleFullScreen} = fullscreenStore()
+    const {fullScreen} = fullscreenStore()
+    const {fetchWeather} = weatherStore()
+    const {fetchAstro} = astroStore()
 
     onMounted(() => {
-      setCoordinates()
+      fetchAstro()
+      fetchWeather()
     })
+
+
     return {
-      fullScreen,
-      mdiFullscreenExit, mdiFullscreen,
-      toggleFullScreen
+      fullScreen
     }
   }
 }
