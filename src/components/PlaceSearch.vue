@@ -1,63 +1,53 @@
 <template>
-<v-autocomplete :items="items"
-                :loading="loading"
-                dense
-                hide-details
-                item-text="display_name"
-                return-object
-                :search-input.sync="query"
-                hide-no-data
-                @input="setPlace"
-                v-show="show"
->
-        </v-autocomplete>
+  <v-autocomplete
+    v-show="show"
+    v-model:search="query"
+    autofocus
+    :items="items"
+    density="compact"
+    :loading="loading"
+    item-title="display_name"
+    return-object
+    hide-no-data
+    hide-details
+    placeholder="Recherchez votre ville"
+    @update:model-value="setPlace"
+  />
 </template>
-<script>
-import placeStore from "@/store/placeStore";
-import {reactive, toRefs, watch} from "@vue/composition-api";
-import axios from "axios";
 
-export default {
-  name: 'place-search',
-  setup() {
+<script setup lang="ts">
+import { reactive } from 'vue'
+import axios from 'axios'
+import { toRefs, watchDebounced } from '@vueuse/core'
+import placeStore from '@/store/placeStore'
 
-    const state = reactive({
-      show: false,
-      loading: false,
-      place: null,
-      query: '',
-      items: []
-    })
+defineProps<{ show: boolean }>()
+const emit = defineEmits<{ ['update:show']: Function }>()
+const state = reactive({
+  loading: false,
+  query: '',
+  items: [],
+})
 
-    const {changePlace} = placeStore()
+const { items, loading, query } = toRefs(state)
 
-    const open = () => {
-      state.show = true
-    }
+const { changePlace } = placeStore()
 
-    const setPlace = ({lat, lon, display_name}) => {
-      changePlace({
-        latitude: lat,
-        longitude: lon,
-        display: `${display_name?.split(',')[0]}|${display_name?.split(',')[display_name?.split(',').length - 1]}`
-      })
-      state.show = false
-    }
-
-    watch(() => state.query, async (query) => {
-      if (state.query) {
-        state.loading = true
-        const {data} = await axios.get(`https://nominatim.openstreetmap.org/search?q=${query}&format=json`)
-        state.items = data
-        state.loading = false
-      }
-    })
-
-    return {
-      ...toRefs(state),
-      setPlace,
-      open,
-    }
-  }
+const setPlace = ({ lat, lon, display_name }) => {
+  changePlace({
+    latitude: lat,
+    longitude: lon,
+    display: `${display_name?.split(',')[0]}|${display_name?.split(',')[display_name?.split(',').length - 1]}`,
+  })
+  emit('update:show', false)
 }
+
+watchDebounced(query, async (v) => {
+  if (v) {
+    state.loading = true
+    const { data } = await axios.get(`https://nominatim.openstreetmap.org/search?q=${v}&format=json`)
+    state.items = data
+    state.loading = false
+  }
+}, { debounce: 500 })
 </script>

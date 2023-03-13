@@ -1,6 +1,5 @@
-import {computed, reactive} from "@vue/composition-api";
+import { computed, reactive } from 'vue'
 import moment from 'moment'
-
 
 const state = reactive({
   now: moment(),
@@ -13,10 +12,9 @@ const update = () => {
 setInterval(() => update(), 1000)
 
 export default () => {
-
   const now = computed(() => state.now)
 
-  const fromNow = (date) => moment(date).from(state.now)
+  const fromNow = date => moment(date).from(state.now)
 
   return {
     now,

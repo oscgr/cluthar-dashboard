@@ -1,122 +1,96 @@
 <template>
-  <v-skeleton-loader
-    :style="{width: '100%', height: '100%'}"
+  <v-card
     width="100%"
-    type="image"
-    :loading="loading"
+    height="100%"
+    flat
   >
-    <v-card
-      width="100%"
-      height="100%"
-      flat
-    >
-      <v-card-title v-text="`Températures pour 48 heures`" />
-      <v-chart
-        type="line"
-        :series="series"
-        :options="chartOptions"
-        height="150"
-      />
-      <!--      <v-sparkline-->
-      <!--        padding="0"-->
-      <!--        :color="$vuetify.theme.dark ? 'white': 'primary'"-->
-      <!--        smooth-->
-      <!--        :value="temperatures"-->
-      <!--      />-->
-    </v-card>
-
-  </v-skeleton-loader>
+    <v-card-title v-text="`Températures pour 48 heures`" />
+    <VueApexCharts
+      type="line"
+      :series="series"
+      :options="chartOptions"
+      height="150"
+    />
+  <!--      <v-sparkline -->
+  <!--        padding="0" -->
+  <!--        :color="$vuetify.theme.dark ? 'white': 'primary'" -->
+  <!--        smooth -->
+  <!--        :value="temperatures" -->
+  <!--      /> -->
+  </v-card>
 </template>
-<script>
-import weatherStore from "@/store/weatherStore";
-import {mdiCloudOutline, mdiGauge, mdiSnowflake, mdiWaterPercent, mdiWeatherPouring, mdiWeatherWindy} from '@mdi/js'
-import {computed} from "@vue/composition-api";
-import Global from "@/utils/global";
-import Moment from "moment";
 
-export default {
-  name: 'HourlyTemperatureCard',
+<script lang="ts" setup>
+import { computed } from 'vue'
+import Moment from 'moment'
+import VueApexCharts from 'vue3-apexcharts'
+import Global from '@/utils/global'
+import weatherStore from '@/store/weatherStore'
+const { loading, payload } = weatherStore()
 
-  setup() {
+// const temperatures = computed(() => payload.value.hourly?.map(m => m.temp))
 
-    // const vm = getCurrentInstance().proxy
+// const cardColor = computed(() => {
+//   if (isCloudy.value && vm.$vuetify.theme.dark) return '#516269'
+//   else if (vm.$vuetify.theme.dark) return '#29586d'
+//   else if (!isCloudy.value) return '#a6dcef'
+//   else return '#d8e9ef'
+// })
 
-    const {loading, payload} = weatherStore()
+const chartOptions = computed(() => {
+  return {
+    ...Global.getGlobalApexChartOptions(),
+    xaxis: {
+      labels: {
+        rotate: 0,
+        formatter: value => Moment.unix(value).format('ddd kk:mm'),
+      },
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        show: false,
+      },
+      tickAmount: 5,
+      categories: payload.value.hourly?.map(m => m.dt),
+    },
+    colors: ['#77B6EA', '#545454'],
+    dataLabels: {
+      enabled: true,
+    },
+    markers: {
+      size: 1,
+    },
 
-    // const temperatures = computed(() => payload.value.hourly?.map(m => m.temp))
+    // yaxis: {
+    //   // min: 0,
+    //   // labels: {
+    //   //   show: false,
+    //   // formatter: (value) => `${Math.floor(value)}mm`
+    //   // },
+    //   axisBorder: {
+    //     show: false,
+    //   },
+    //   axisTicks: {
+    //     show: false,
+    //   },
+    //   tickAmount: 5,
+    //   // categories: payload.value.hourly?.map(m => m.dt)
+    // }
 
-    // const cardColor = computed(() => {
-    //   if (isCloudy.value && vm.$vuetify.theme.dark) return '#516269'
-    //   else if (vm.$vuetify.theme.dark) return '#29586d'
-    //   else if (!isCloudy.value) return '#a6dcef'
-    //   else return '#d8e9ef'
-    // })
-
-    const chartOptions = computed(() => {
-        return {
-          ...Global.getGlobalApexChartOptions(),
-          xaxis: {
-            labels: {
-              rotate: 0,
-              formatter: (value) => Moment.unix(value).format('ddd kk:mm')
-            },
-            axisBorder: {
-              show: false,
-            },
-            axisTicks: {
-              show: false,
-            },
-            tickAmount: 5,
-            categories: payload.value.hourly?.map(m => m.dt)
-          },
-          colors: ['#77B6EA', '#545454'],
-          dataLabels: {
-            enabled: true,
-          },
-          markers: {
-            size: 1
-          },
-
-          // yaxis: {
-          //   // min: 0,
-          //   // labels: {
-          //   //   show: false,
-          //   // formatter: (value) => `${Math.floor(value)}mm`
-          //   // },
-          //   axisBorder: {
-          //     show: false,
-          //   },
-          //   axisTicks: {
-          //     show: false,
-          //   },
-          //   tickAmount: 5,
-          //   // categories: payload.value.hourly?.map(m => m.dt)
-          // }
-
-        }
-      }
-    )
-    const series = computed(() => {
-      return [
-        {
-          name: 'rain',
-          data: payload.value.hourly?.map(m => m.temp)
-        },
-        {
-          name: 'feels like',
-          data: payload.value.hourly?.map(m => m.feels_like)
-        }
-      ]
-    })
-
-
-    return {
-      loading,
-      series,
-      chartOptions,
-      // icons
-      mdiCloudOutline, mdiWeatherWindy, mdiWaterPercent, mdiGauge, mdiWeatherPouring, mdiSnowflake,
-    }
   }
-}
+},
+)
+const series = computed(() => {
+  return [
+    {
+      name: 'rain',
+      data: payload.value.hourly?.map(m => m.temp),
+    },
+    {
+      name: 'feels like',
+      data: payload.value.hourly?.map(m => m.feels_like),
+    },
+  ]
+})
 </script>
