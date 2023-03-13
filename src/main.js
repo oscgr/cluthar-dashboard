@@ -1,4 +1,5 @@
 import '@/plugins/compositionApi'
+import '@/plugins/apexCharts'
 
 import Vue from 'vue';
 import App from './App.vue';

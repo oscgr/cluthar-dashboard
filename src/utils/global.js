@@ -1,4 +1,5 @@
 import CompassPoint from "@/enums/CompassPoint";
+import Moment from "moment";
 
 export default {
   getCompassPoint(rad) {
@@ -16,4 +17,37 @@ export default {
   getDegreesFromRadian(rad) {
     return Math.round(rad * 180 / Math.PI)
   },
+  getGlobalApexChartOptions() {
+    return {
+      grid: {
+        show: false,
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      chart: {
+        id: '0',
+        toolbar: {
+          show: false,
+        },
+        fontFamily: 'Roboto, sans-serif',
+        zoom: {
+          enabled: true,
+        },
+      },
+      tooltip: {
+        enabled: false,
+      },
+      legend: {
+        show: false,
+      },
+      stroke: {
+        // show: true,
+        curve: 'smooth',
+        // lineCap: 'butt',
+        // colors: '#FFFFFF',
+        width: 5,
+      }
+    }
+  }
 }

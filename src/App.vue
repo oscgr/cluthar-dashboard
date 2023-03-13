@@ -17,17 +17,24 @@
           <v-col cols="12" md="6" >
             <moon-card />
           </v-col>
+<!--          <v-col cols="12" md="6" v-if="alerts">-->
+<!--            <alerts-card />-->
+<!--          </v-col>-->
+
           <v-col cols="12" md="6" >
             <precipitation-card />
+          </v-col>
+          <v-col cols="12" md="6" >
+            <hourly-temperature-card />
           </v-col>
 
         </v-row>
       </v-container>
       <btn-hover />
     </v-main>
-    <v-footer app v-show="!fullScreen">
-      <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-    </v-footer>
+<!--    <v-footer app v-show="!fullScreen">-->
+<!--      <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>-->
+<!--    </v-footer>-->
   </v-app>
 </template>
 
@@ -44,17 +51,20 @@ import AppBar from "@/components/AppBar";
 import BtnHover from "@/components/BtnHover";
 import fullscreenStore from "@/store/fullscreenStore";
 import weatherStore from "@/store/weatherStore";
-import {onMounted} from "@vue/composition-api";
+import {computed, onMounted} from "@vue/composition-api";
 import MoonCard from "@/components/MoonCard";
 import DayCard from "@/components/DayCard";
 import astroStore from "@/store/astroStore";
 import CurrentWeatherCard from "@/components/CurrentWeatherCard";
 import PrecipitationCard from "@/components/PrecipitationCard";
+import AlertsCard from "@/components/AlertsCard";
+import HourlyTemperatureCard from "@/components/HourlyTemperatureCard";
 
 export default {
   name: 'App',
 
   components: {
+    HourlyTemperatureCard,
     BtnHover,
     AppBar,
     MoonCard,
@@ -65,7 +75,7 @@ export default {
   },
   setup() {
     const {fullScreen} = fullscreenStore()
-    const {fetchWeather} = weatherStore()
+    const {fetchWeather, payload} = weatherStore()
     const {fetchAstro} = astroStore()
 
     onMounted(() => {
@@ -73,9 +83,12 @@ export default {
       fetchWeather()
     })
 
+    const alerts = computed(() => payload.value.alerts?.length > 0)
+
 
     return {
-      fullScreen
+      fullScreen,
+      alerts,
     }
   }
 }

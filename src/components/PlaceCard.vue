@@ -5,9 +5,12 @@
         height="100%"
       >
       <v-card-text>
-        <v-row no-gutters class="display-3 mb-2">
+        <v-row no-gutters class=" mb-2">
+          <v-col cols="12" class="display-3">
+            <span v-text="place.display.split('|')[0]" />
+          </v-col>
           <v-col cols="12">
-            <span v-text="place.display" />
+            <span v-text="place.display.split('|')[1]" />
           </v-col>
         </v-row>
         <v-row no-gutters class="display-1">

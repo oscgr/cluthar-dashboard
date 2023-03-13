@@ -9,7 +9,7 @@
     <v-card-text>
       <v-row no-gutters>
         <v-col cols="6">
-          <div title="température" class="display-1" v-text="moonPhaseString" />
+          <div title="température" class="display-1 text-capitalize" v-text="moonPhaseString" />
         </v-col>
         <v-col cols="6" class="text-right">
           <img class="ma-2" height="56px" alt="phase lunaire" :src="moonPhaseIcon" />

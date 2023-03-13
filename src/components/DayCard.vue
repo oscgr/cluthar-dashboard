@@ -8,7 +8,7 @@
     <v-card-text>
       <v-row no-gutters class="display-1">
         <v-col cols="6">
-          <span v-text="sunPhaseString" />
+          <span v-text="sunPhaseString" class="text-capitalize" />
         </v-col>
         <v-col cols="6" class="text-right">
           <img height="72px" alt="météo" :src="sunIcon" />

@@ -13,7 +13,8 @@ const state = reactive({
     },
     daily: [],
     hourly: [],
-    minutely: []
+    minutely: [],
+    alerts: [],
   }
 })
 

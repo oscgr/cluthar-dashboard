@@ -1,7 +1,6 @@
 <template>
 <v-autocomplete :items="items"
                 :loading="loading"
-                clearable
                 dense
                 hide-details
                 item-text="display_name"
@@ -40,7 +39,7 @@ export default {
       changePlace({
         latitude: lat,
         longitude: lon,
-        display: display_name?.split(',')[0]
+        display: `${display_name?.split(',')[0]}|${display_name?.split(',')[display_name?.split(',').length - 1]}`
       })
       state.show = false
     }

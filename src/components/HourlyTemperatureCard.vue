@@ -10,40 +10,32 @@
       height="100%"
       flat
     >
-      <v-card-title v-text="`Précipitation dans l'heure`" />
-      <v-card-text v-if="!anyPrecipitation">
-        <span class="display-1" v-text="'Aucune pluie enregistrée'" />
-      </v-card-text>
+      <v-card-title v-text="`Températures pour 48 heures`" />
       <v-chart
-        v-if="anyPrecipitation"
         type="line"
         :series="series"
         :options="chartOptions"
         height="150"
       />
       <!--      <v-sparkline-->
-      <!--        v-if="anyPrecipitation"-->
-      <!--        fill-->
       <!--        padding="0"-->
       <!--        :color="$vuetify.theme.dark ? 'white': 'primary'"-->
       <!--        smooth-->
-      <!--        :value="precipitation"-->
+      <!--        :value="temperatures"-->
       <!--      />-->
     </v-card>
 
   </v-skeleton-loader>
 </template>
-<style>
-</style>
 <script>
 import weatherStore from "@/store/weatherStore";
 import {mdiCloudOutline, mdiGauge, mdiSnowflake, mdiWaterPercent, mdiWeatherPouring, mdiWeatherWindy} from '@mdi/js'
 import {computed} from "@vue/composition-api";
+import Global from "@/utils/global";
 import Moment from "moment";
-import Global from '@/utils/global'
 
 export default {
-  name: 'CurrentWeatherCard',
+  name: 'HourlyTemperatureCard',
 
   setup() {
 
@@ -51,51 +43,7 @@ export default {
 
     const {loading, payload} = weatherStore()
 
-
-    const anyPrecipitation = computed(() => payload.value.minutely?.some(m => m.precipitation > 0))
-
-    const chartOptions = computed(() => {
-        return {
-          ...Global.getGlobalApexChartOptions(),
-          xaxis: {
-            labels: {
-              rotate: 0,
-              formatter: (value) => `${Moment.unix(value).diff(Moment(), 'minute')} min.`
-            },
-            axisBorder: {
-              show: false,
-            },
-            axisTicks: {
-              show: false,
-            },
-            tickAmount: 5,
-            categories: payload.value.minutely?.map(m => m.dt)
-          },
-          yaxis: {
-            min: 0,
-            labels: {
-              show: false,
-              // formatter: (value) => `${Math.floor(value)}mm`
-            },
-            axisBorder: {
-              show: false,
-            },
-            axisTicks: {
-              show: false,
-            },
-            tickAmount: 5,
-            categories: payload.value.minutely?.map(m => m.dt)
-          }
-
-        }
-      }
-    )
-    const series = computed(() => {
-      return [{
-        name: 'rain',
-        data: payload.value.minutely?.map(m => m.precipitation)
-      }]
-    })
+    // const temperatures = computed(() => payload.value.hourly?.map(m => m.temp))
 
     // const cardColor = computed(() => {
     //   if (isCloudy.value && vm.$vuetify.theme.dark) return '#516269'
@@ -104,11 +52,68 @@ export default {
     //   else return '#d8e9ef'
     // })
 
+    const chartOptions = computed(() => {
+        return {
+          ...Global.getGlobalApexChartOptions(),
+          xaxis: {
+            labels: {
+              rotate: 0,
+              formatter: (value) => Moment.unix(value).format('ddd kk:mm')
+            },
+            axisBorder: {
+              show: false,
+            },
+            axisTicks: {
+              show: false,
+            },
+            tickAmount: 5,
+            categories: payload.value.hourly?.map(m => m.dt)
+          },
+          colors: ['#77B6EA', '#545454'],
+          dataLabels: {
+            enabled: true,
+          },
+          markers: {
+            size: 1
+          },
+
+          // yaxis: {
+          //   // min: 0,
+          //   // labels: {
+          //   //   show: false,
+          //   // formatter: (value) => `${Math.floor(value)}mm`
+          //   // },
+          //   axisBorder: {
+          //     show: false,
+          //   },
+          //   axisTicks: {
+          //     show: false,
+          //   },
+          //   tickAmount: 5,
+          //   // categories: payload.value.hourly?.map(m => m.dt)
+          // }
+
+        }
+      }
+    )
+    const series = computed(() => {
+      return [
+        {
+          name: 'rain',
+          data: payload.value.hourly?.map(m => m.temp)
+        },
+        {
+          name: 'feels like',
+          data: payload.value.hourly?.map(m => m.feels_like)
+        }
+      ]
+    })
+
+
     return {
       loading,
-      anyPrecipitation,
-      chartOptions,
       series,
+      chartOptions,
       // icons
       mdiCloudOutline, mdiWeatherWindy, mdiWaterPercent, mdiGauge, mdiWeatherPouring, mdiSnowflake,
     }
