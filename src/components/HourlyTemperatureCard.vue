@@ -22,8 +22,8 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import Moment from 'moment'
 import VueApexCharts from 'vue3-apexcharts'
+import { DateTime } from 'luxon'
 import Global from '@/utils/global'
 import weatherStore from '@/store/weatherStore'
 const { loading, payload } = weatherStore()
@@ -43,7 +43,11 @@ const chartOptions = computed(() => {
     xaxis: {
       labels: {
         rotate: 0,
-        formatter: value => Moment.unix(value).format('ddd kk:mm'),
+        formatter: (value) => {
+          if (!value)
+            return
+          return DateTime.fromMillis(value).toLocaleString(DateTime.TIME_24_SIMPLE)
+        },
       },
       axisBorder: {
         show: false,

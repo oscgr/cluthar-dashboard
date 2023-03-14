@@ -49,17 +49,17 @@
 </template>
 
 <script lang="ts" setup>
-import moment from 'moment'
 import { computed } from 'vue'
 import { mdiAngleAcute, mdiTimerOutline, mdiWeatherSunsetDown, mdiWeatherSunsetUp } from '@mdi/js'
 import { useDark } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
+import { DateTime } from 'luxon'
 import astroStore from '@/store/astroStore'
 import DayCycle from '@/enums/DayCycle'
 
 import Global from '@/utils/global'
-import timeStore from '@/store/timeStore'
 import placeStore from '@/store/placeStore'
+import { diffNowLocaleString } from '@/utils/durationDisplay'
 
 const dark = useDark()
 const { t } = useI18n()
@@ -67,25 +67,23 @@ const { sunTimes, sunPosition, sunPhase } = astroStore()
 
 const { noData } = placeStore()
 
-const { fromNow } = timeStore()
+const sunriseMoment = computed(() => DateTime.fromJSDate(sunTimes.value.sunrise))
 
-const sunriseMoment = computed(() => moment(sunTimes.value.sunrise))
+const sunsetMoment = computed(() => DateTime.fromJSDate(sunTimes.value.sunset))
 
-const sunsetMoment = computed(() => moment(sunTimes.value.sunset))
+const sunrise = computed(() => noData.value ? '' : sunriseMoment.value.toLocaleString(DateTime.TIME_24_SIMPLE))
 
-const sunrise = computed(() => noData.value ? '' : sunriseMoment.value.format('LT'))
+const sunriseFromNow = computed(() => noData.value ? '' : diffNowLocaleString(sunriseMoment.value))
 
-const sunriseFromNow = computed(() => noData.value ? '' : fromNow(sunriseMoment.value))
+const sunset = computed(() => noData.value ? '' : sunsetMoment.value.toLocaleString(DateTime.TIME_24_SIMPLE))
 
-const sunset = computed(() => noData.value ? '' : sunsetMoment.value.format('LT'))
-
-const sunsetFromNow = computed(() => noData.value ? '' : fromNow(sunsetMoment.value))
+const sunsetFromNow = computed(() => noData.value ? '' : diffNowLocaleString(sunsetMoment.value))
 
 const duration = computed(() => {
   if (noData.value)
     return '?'
-  const diff = moment.duration(sunsetMoment.value.diff(sunriseMoment.value))
-  return `${diff.hours()}h, ${diff.minutes()}m et ${diff.seconds()}s`
+  const diff = sunsetMoment.value.diff(sunriseMoment.value, ['hours', 'minutes', 'seconds'])
+  return `${diff.hours}h, ${diff.minutes}m et ${Math.floor(diff.seconds)}s`
 })
 
 const sunPhaseString = computed(() => noData.value ? '' : t(`constants.DAY_CYCLE.${sunPhase.value}`))

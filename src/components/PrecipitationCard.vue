@@ -6,7 +6,7 @@
   >
     <v-card-title v-text="`Précipitation dans l'heure`" />
     <v-card-text v-if="!anyPrecipitation">
-      <span class="text-h4" v-text="'Aucune pluie enregistrée'" />
+      <span class="text-h5" v-text="'Aucune pluie enregistrée'" />
     </v-card-text>
 
     <VueApexCharts
@@ -30,7 +30,7 @@
 <script lang="ts" setup>
 import VueApexCharts from 'vue3-apexcharts'
 import { computed } from 'vue'
-import Moment from 'moment'
+import { DateTime } from 'luxon'
 import weatherStore from '@/store/weatherStore'
 import Global from '@/utils/global'
 
@@ -44,7 +44,11 @@ const chartOptions = computed(() => {
     xaxis: {
       labels: {
         rotate: 0,
-        formatter: value => `${Moment.unix(value).diff(Moment(), 'minute')} min.`,
+        formatter: (value) => {
+          if (!value)
+            return
+          return `${DateTime.fromMillis(value).diff('minute')} min.`
+        },
       },
       axisBorder: {
         show: false,

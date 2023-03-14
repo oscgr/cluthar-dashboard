@@ -9,14 +9,14 @@
       <v-row no-gutters>
         <v-col>
           <div title="température" class="text-h2" v-text="temperature" />
-          <div v-if="temperature !== feelsLike" title="ressenti" class="" v-text="`Ressenti ${feelsLike}`" />
+          <span v-if="temperature !== feelsLike" title="ressenti" class="" v-text="`Ressenti ${feelsLike}`" />
         </v-col>
         <v-col class="flex-grow-0">
           <v-img width="72px" alt="météo" :src="currentWeatherIcon" />
         </v-col>
       </v-row>
       <v-row no-gutters>
-        <v-col cols="12">
+        <v-col cols="12" class="text-right">
           <span title="météo actuelle" class="text-h5" v-text="weatherDescription" />
         </v-col>
       </v-row>
@@ -61,8 +61,8 @@ const dark = useDark()
 
 const { loading, weatherIcon, payload } = weatherStore()
 
-const temperature = computed(() => `${payload.value.current.temp}°C`)
-const feelsLike = computed(() => `${payload.value.current.feels_like}°C`)
+const temperature = computed(() => `${Math.floor(payload.value.current.temp)}°C`)
+const feelsLike = computed(() => `${Math.floor(payload.value.current.feels_like)}°C`)
 const clouds = computed(() => `${payload.value.current.clouds}%`)
 const pressure = computed(() => `${payload.value.current.pressure} hPa`)
 const humidity = computed(() => `${payload.value.current.humidity}%`)
