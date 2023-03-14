@@ -24,9 +24,10 @@
 import { computed } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { DateTime } from 'luxon'
+import type { ApexOptions } from 'apexcharts'
 import Global from '@/utils/global'
-import weatherStore from '@/store/weatherStore'
-const { loading, payload } = weatherStore()
+import useWeather from '@/store/weather'
+const { loading, payload } = useWeather()
 
 // const temperatures = computed(() => payload.value.hourly?.map(m => m.temp))
 
@@ -37,13 +38,13 @@ const { loading, payload } = weatherStore()
 //   else return '#d8e9ef'
 // })
 
-const chartOptions = computed(() => {
+const chartOptions = computed<ApexOptions>(() => {
   return {
     ...Global.getGlobalApexChartOptions(),
     xaxis: {
       labels: {
         rotate: 0,
-        formatter: (value) => {
+        formatter: (value: number) => {
           if (!value)
             return
           return DateTime.fromMillis(value).toLocaleString(DateTime.TIME_24_SIMPLE)
@@ -56,7 +57,7 @@ const chartOptions = computed(() => {
         show: false,
       },
       tickAmount: 5,
-      categories: payload.value.hourly?.map(m => m.dt),
+      categories: payload.value.hourly?.map(m => m.dt) || [],
     },
     colors: ['#77B6EA', '#545454'],
     dataLabels: {
@@ -89,11 +90,11 @@ const series = computed(() => {
   return [
     {
       name: 'rain',
-      data: payload.value.hourly?.map(m => m.temp),
+      data: payload.value.hourly?.map(m => m.temp) || [],
     },
     {
       name: 'feels like',
-      data: payload.value.hourly?.map(m => m.feels_like),
+      data: payload.value.hourly?.map(m => m.feels_like) || [],
     },
   ]
 })

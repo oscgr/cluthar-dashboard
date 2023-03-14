@@ -55,23 +55,23 @@
 import { mdiCloudOutline, mdiGauge, mdiSnowflake, mdiWaterPercent, mdiWeatherPouring, mdiWeatherWindy } from '@mdi/js'
 import { computed } from 'vue'
 import { useDark } from '@vueuse/core'
-import weatherStore from '@/store/weatherStore'
+import useWeather from '@/store/weather'
 
 const dark = useDark()
 
-const { loading, weatherIcon, payload } = weatherStore()
+const { loading, weatherIcon, payload } = useWeather()
 
-const temperature = computed(() => `${Math.floor(payload.value.current.temp)}°C`)
-const feelsLike = computed(() => `${Math.floor(payload.value.current.feels_like)}°C`)
-const clouds = computed(() => `${payload.value.current.clouds}%`)
-const pressure = computed(() => `${payload.value.current.pressure} hPa`)
-const humidity = computed(() => `${payload.value.current.humidity}%`)
-const isCloudy = computed(() => payload.value.current > 50)
-const wind = computed(() => `${payload.value.current.wind_speed} km/h`)
-const currentWeatherIcon = computed(() => weatherIcon(payload.value.current.weather[0].id, payload.value.current.clouds))
-const weatherDescription = computed(() => payload.value.current.weather[0].description)
-const rain = computed(() => `${payload.value.current.rain && payload.value.current.rain['1h'] || '0'} mm`)
-const snow = computed(() => `${payload.value.current.snow && payload.value.current.snow['1h'] || '0'} mm`)
+const temperature = computed(() => `${Math.floor(payload.value.current?.temp || 0) || '?'}°C`)
+const feelsLike = computed(() => `${Math.floor(payload.value.current?.feels_like || 0) || '?'}°C`)
+const clouds = computed(() => `${payload.value.current?.clouds || '?'}%`)
+const pressure = computed(() => `${payload.value.current?.pressure || '?'} hPa`)
+const humidity = computed(() => `${payload.value.current?.humidity || '?'}%`)
+const isCloudy = computed(() => (payload.value.current?.clouds || 0) > 50)
+const wind = computed(() => `${Math.floor(payload.value.current?.wind_speed || 0) || '?'} km/h`)
+const currentWeatherIcon = computed(() => weatherIcon(payload.value.current?.weather[0].id, payload.value.current?.clouds))
+const weatherDescription = computed(() => payload.value.current?.weather[0].description)
+const rain = computed(() => `${payload.value.current?.rain?.['1h'] || '0'} mm`)
+const snow = computed(() => `${payload.value.current?.snow?.['1h'] || '0'} mm`)
 
 const cardColor = computed(() => {
   if (isCloudy.value && dark.value)

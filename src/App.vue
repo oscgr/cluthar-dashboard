@@ -17,9 +17,9 @@
           <v-col cols="12" md="6">
             <MoonCard />
           </v-col>
-          <!--          <v-col cols="12" md="6" v-if="alerts"> -->
-          <!--            <alerts-card /> -->
-          <!--          </v-col> -->
+          <v-col v-if="alerts" cols="12" md="6">
+            <AlertsCard />
+          </v-col>
 
           <v-col cols="12" md="6">
             <PrecipitationCard />
@@ -44,21 +44,22 @@ import { useTheme } from 'vuetify'
 import PlaceCard from '@/components/PlaceCard.vue'
 import AppBar from '@/components/AppBar.vue'
 import BtnHover from '@/components/BtnHover.vue'
-import fullscreenStore from '@/store/fullscreenStore'
-import weatherStore from '@/store/weatherStore'
+import useFullscreen from '@/store/fullscreen'
+import useWeather from '@/store/weather'
 import MoonCard from '@/components/MoonCard.vue'
 import DayCard from '@/components/DayCard.vue'
-import astroStore from '@/store/astroStore'
+import useAstro from '@/store/astro'
 import CurrentWeatherCard from '@/components/CurrentWeatherCard.vue'
 import PrecipitationCard from '@/components/PrecipitationCard.vue'
 import HourlyTemperatureCard from '@/components/HourlyTemperatureCard.vue'
-import placeStore from '@/store/placeStore'
+import usePlace from '@/store/place'
+import AlertsCard from '@/components/AlertsCard.vue'
 
 const dark = useDark()
-const { fullScreen } = fullscreenStore()
-const { fetchWeather, payload } = weatherStore()
-const { fetchAstro } = astroStore()
-const { noData, place } = placeStore()
+const { fullScreen } = useFullscreen()
+const { fetchWeather, payload } = useWeather()
+const { fetchAstro } = useAstro()
+const { noData, place } = usePlace()
 const theme = useTheme()
 onMounted(async () => {
   theme.global.name.value = dark.value ? 'dark' : 'light'

@@ -31,23 +31,24 @@
 import VueApexCharts from 'vue3-apexcharts'
 import { computed } from 'vue'
 import { DateTime } from 'luxon'
-import weatherStore from '@/store/weatherStore'
+import type { ApexOptions } from 'apexcharts'
+import useWeather from '@/store/weather'
 import Global from '@/utils/global'
 
-const { loading, payload } = weatherStore()
+const { loading, payload } = useWeather()
 
-const anyPrecipitation = computed(() => payload.value.minutely?.some(m => m.precipitation > 0))
+const anyPrecipitation = computed<boolean>(() => payload.value.minutely?.some(m => m.precipitation > 0) || false)
 
-const chartOptions = computed(() => {
+const chartOptions = computed<ApexOptions>(() => {
   return {
     ...Global.getGlobalApexChartOptions(),
     xaxis: {
       labels: {
         rotate: 0,
-        formatter: (value) => {
+        formatter: (value: number) => {
           if (!value)
-            return
-          return `${DateTime.fromMillis(value).diff('minute')} min.`
+            return ''
+          return `${DateTime.fromMillis(value).diffNow('minutes')} min.`
         },
       },
       axisBorder: {
@@ -57,7 +58,7 @@ const chartOptions = computed(() => {
         show: false,
       },
       tickAmount: 5,
-      categories: payload.value.minutely?.map(m => m.dt),
+      categories: payload.value.minutely?.map(m => m.dt) || [],
     },
     yaxis: {
       min: 0,
@@ -72,16 +73,16 @@ const chartOptions = computed(() => {
         show: false,
       },
       tickAmount: 5,
-      categories: payload.value.minutely?.map(m => m.dt),
+      categories: payload.value.minutely?.map(m => m.dt) || [],
     },
 
   }
 },
 )
-const series = computed(() => {
+const series = computed<{ name: string; data: number[] }[]>(() => {
   return [{
     name: 'rain',
-    data: payload.value.minutely?.map(m => m.precipitation),
+    data: payload.value.minutely?.map(m => m.precipitation) || [],
   }]
 })
 

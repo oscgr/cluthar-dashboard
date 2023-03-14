@@ -1,7 +1,8 @@
+import type { ApexOptions } from 'apexcharts'
 import CompassPoint from '@/enums/CompassPoint'
 
 export default {
-  getCompassPoint(rad) {
+  getCompassPoint(rad: number) {
     rad = rad < 0 ? rad + 2 * Math.PI : rad
     if (rad < Math.PI / 8)
       return CompassPoint.SOUTH
@@ -21,10 +22,10 @@ export default {
       return CompassPoint.SOUTH_EAST
     else return CompassPoint.NORTH
   },
-  getDegreesFromRadian(rad) {
+  getDegreesFromRadian(rad: number) {
     return Math.round(rad * 180 / Math.PI)
   },
-  getGlobalApexChartOptions() {
+  getGlobalApexChartOptions(): ApexOptions {
     return {
       grid: {
         show: false,

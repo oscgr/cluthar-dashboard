@@ -11,13 +11,13 @@
         </template>
       </v-hover>
 
-      <v-hover>
-        <template #default="{ hover }">
-          <v-btn :loading="loading" icon @click="setCoordinatesAsCurrentPosition">
-            <v-icon :icon="hover ? mdiCrosshairsGps : mdiCrosshairs" />
-          </v-btn>
-        </template>
-      </v-hover>
+      <!--      <v-hover> -->
+      <!--        <template #default="{ hover }"> -->
+      <!--          <v-btn :loading="loading" icon @click="setCoordinatesAsCurrentPosition"> -->
+      <!--            <v-icon :icon="hover ? mdiCrosshairsGps : mdiCrosshairs" /> -->
+      <!--          </v-btn> -->
+      <!--        </template> -->
+      <!--      </v-hover> -->
       <v-hover>
         <template #default="{ hover }">
           <v-btn class="mr-2" icon @click="dark = !dark">
@@ -30,19 +30,11 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  mdiBrightness4,
-  mdiBrightness6,
-  mdiCrosshairs,
-  mdiCrosshairsGps,
-  mdiHomeSearch,
-  mdiHomeSearchOutline,
-} from '@mdi/js'
+import { mdiBrightness4, mdiBrightness6, mdiHomeSearch, mdiHomeSearchOutline } from '@mdi/js'
 import { ref } from 'vue'
 import { useDark } from '@vueuse/core'
-import placeStore from '@/store/placeStore'
 import PlaceSearch from '@/components/PlaceSearch.vue'
+
 const dark = useDark()
 const showPlaceSearch = ref(false)
-const { setCoordinatesAsCurrentPosition, loading } = placeStore()
 </script>

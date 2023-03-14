@@ -19,7 +19,7 @@
 import { reactive } from 'vue'
 import axios from 'axios'
 import { toRefs, watchDebounced } from '@vueuse/core'
-import placeStore from '@/store/placeStore'
+import usePlace from '@/store/place'
 
 defineProps<{ show: boolean }>()
 const emit = defineEmits<{ ['update:show']: Function }>()
@@ -31,13 +31,14 @@ const state = reactive({
 
 const { items, loading, query } = toRefs(state)
 
-const { changePlace } = placeStore()
+const { changePlace } = usePlace()
 
-const setPlace = ({ lat, lon, display_name }) => {
+const setPlace = ({ lat, lon, display_name }: { lat: number; lon: number; display_name: string }) => {
   changePlace({
     latitude: lat,
     longitude: lon,
-    display: `${display_name?.split(',')[0]}|${display_name?.split(',')[display_name?.split(',').length - 1]}`,
+    name: display_name?.split(',')[0],
+    country: display_name?.split(',')[display_name?.split(',').length - 1],
   })
   emit('update:show', false)
 }
@@ -45,7 +46,7 @@ const setPlace = ({ lat, lon, display_name }) => {
 watchDebounced(query, async (v) => {
   if (v) {
     state.loading = true
-    const { data } = await axios.get(`https://nominatim.openstreetmap.org/search?q=${v}&format=json`)
+    const { data } = await axios.get(`https://nominatim.openstreetmap.org/search?q=${v}&format=jsonv2&accept-language=fr&limit=5`)
     state.items = data
     state.loading = false
   }

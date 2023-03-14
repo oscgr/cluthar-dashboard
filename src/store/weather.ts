@@ -1,40 +1,29 @@
 import { reactive, toRefs } from 'vue'
 import axios from 'axios'
-import astroStore from '@/store/astroStore'
-import placeStore from '@/store/placeStore'
+import type { Forecast } from 'owm-onecall-api'
+import useAstro from '@/store/astro'
+import usePlace from '@/store/place'
 
 const state = reactive({
   loading: false,
-  noData: false,
-  payload: {
-    current: {
-      weather: [{}],
-    },
-    daily: [],
-    hourly: [],
-    minutely: [],
-    alerts: [],
-  },
+  payload: {} as Partial<Forecast>,
 })
 
-export default () => {
-  const { isDay } = astroStore()
-  const { place } = placeStore()
+const useWeather = () => {
+  const { isDay } = useAstro()
+  const { place, noData } = usePlace()
 
   const fetchWeather = async () => {
-    if (place.value.longitude) {
-      state.loading = true
-      const { data } = await axios.get(`https://api.openweathermap.org/data/2.5/onecall?lang=fr&lat=${place.value.latitude}&lon=${place.value.longitude}&units=metric&appid=${import.meta.env.VITE_OPEN_WEATHER_API_KEY}`)
-      state.payload = data
-      state.loading = false
-      state.noData = !data
-    }
-    else {
-      state.noData = true
-    }
+    if (noData.value)
+      return
+    state.loading = true
+    // @ts-expect-error noData already make this null safe
+    const { data } = await axios.get<Forecast>(`https://api.openweathermap.org/data/2.5/onecall?lang=fr&lat=${place.value.latitude}&lon=${place.value.longitude}&units=metric&appid=${import.meta.env.VITE_OPEN_WEATHER_API_KEY}`)
+    state.payload = data
+    state.loading = false
   }
 
-  const weatherIcon = (id, clouds = 0) => {
+  const weatherIcon = (id?: number, clouds = 0) => {
     if (!id)
       return null
 
@@ -88,3 +77,5 @@ export default () => {
     weatherIcon,
   }
 }
+
+export default useWeather

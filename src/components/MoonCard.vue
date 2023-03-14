@@ -56,34 +56,31 @@ import { mdiAngleAcute, mdiCompass, mdiWeatherSunsetDown, mdiWeatherSunsetUp } f
 import { useI18n } from 'vue-i18n'
 import { useDark } from '@vueuse/core'
 import { DateTime } from 'luxon'
-import astroStore from '@/store/astroStore'
+import useAstro from '@/store/astro'
 import Global from '@/utils/global'
 import { diffNowLocaleString } from '@/utils/durationDisplay'
 
 const { t } = useI18n()
 const dark = useDark()
-const { noData, moonPhase, moonTimes, moonPosition } = astroStore()
+const { moonPhase, moonTimes, moonPosition } = useAstro()
 
-const riseMoment = computed(() => DateTime.fromJSDate(moonTimes.value.rise))
+const riseDateTime = computed(() => moonTimes.value?.rise && DateTime.fromJSDate(moonTimes.value.rise))
 
-const setMoment = computed(() => DateTime.fromJSDate(moonTimes.value.set))
+const setDateTime = computed(() => moonTimes.value?.set && DateTime.fromJSDate(moonTimes.value.set))
 
-const rise = computed(() => noData.value ? '' : riseMoment.value.toLocaleString(DateTime.TIME_24_SIMPLE))
+const rise = computed(() => riseDateTime.value?.toLocaleString(DateTime.TIME_24_SIMPLE))
 
-const riseFromNow = computed(() => noData.value ? '' : diffNowLocaleString(riseMoment.value))
+const riseFromNow = computed(() => riseDateTime.value && diffNowLocaleString(riseDateTime.value))
 
-const set = computed(() => noData.value
-  ? ''
-  : setMoment.value
-    .toLocaleString(DateTime.TIME_24_SIMPLE))
+const set = computed(() => setDateTime.value?.toLocaleString(DateTime.TIME_24_SIMPLE))
 
-const setFromNow = computed(() => noData.value ? '' : diffNowLocaleString(setMoment.value))
+const setFromNow = computed(() => setDateTime.value && diffNowLocaleString(setDateTime.value))
 
-const moonAzimuth = computed(() => noData.value ? '?' : t(`constants.COMPASS_POINT.${Global.getCompassPoint(moonPosition.value.azimuth)}`))
+const moonAzimuth = computed(() => moonPosition.value?.azimuth && t(`constants.COMPASS_POINT.${Global.getCompassPoint(moonPosition.value?.azimuth)}`))
 
-const moonAltitude = computed(() => noData.value ? '?' : `${Global.getDegreesFromRadian(moonPosition.value.altitude)}°`)
+const moonAltitude = computed(() => moonPosition.value?.altitude && `${Global.getDegreesFromRadian(moonPosition.value.altitude)}°`)
 
-const moonPhaseIcon = computed(() => noData.value ? '' : (`/icons/moonPhases/${moonPhase.value}.svg`))
+const moonPhaseIcon = computed(() => (`/icons/moonPhases/${moonPhase.value}.svg`))
 
-const moonPhaseString = computed(() => noData.value ? '' : t(`constants.MOON_PHASE.${moonPhase.value}`))
+const moonPhaseString = computed(() => moonPhase.value && t(`constants.MOON_PHASE.${moonPhase.value}`))
 </script>

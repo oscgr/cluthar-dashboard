@@ -7,10 +7,10 @@
     <v-card-text>
       <v-row no-gutters class=" mb-2">
         <v-col cols="12" class="text-h2">
-          <span v-text="place?.display?.split('|')[0]" />
+          <span v-text="place?.name" />
         </v-col>
         <v-col cols="12">
-          <span v-text="place?.display?.split('|')[1]" />
+          <span v-text="place?.country" />
         </v-col>
       </v-row>
       <v-row no-gutters class="text-h4">
@@ -40,9 +40,9 @@ import { computed } from 'vue'
 import { mdiLatitude, mdiLongitude } from '@mdi/js'
 import { useNow } from '@vueuse/core'
 import { DateTime } from 'luxon'
-import placeStore from '@/store/placeStore'
+import usePlace from '@/store/place'
 
-const { place } = placeStore()
+const { place } = usePlace()
 const now = useNow({ interval: 1000 })
 
 const nowDateTime = computed(() => now.value ? DateTime.fromJSDate(now.value) : null)

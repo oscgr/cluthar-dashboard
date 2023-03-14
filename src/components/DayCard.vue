@@ -54,61 +54,58 @@ import { mdiAngleAcute, mdiTimerOutline, mdiWeatherSunsetDown, mdiWeatherSunsetU
 import { useDark } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 import { DateTime } from 'luxon'
-import astroStore from '@/store/astroStore'
-import DayCycle from '@/enums/DayCycle'
+import useAstro from '@/store/astro'
+import DayPhase from '@/enums/DayPhase'
 
 import Global from '@/utils/global'
-import placeStore from '@/store/placeStore'
 import { diffNowLocaleString } from '@/utils/durationDisplay'
 
 const dark = useDark()
 const { t } = useI18n()
-const { sunTimes, sunPosition, sunPhase } = astroStore()
+const { sunTimes, sunPosition, sunPhase } = useAstro()
 
-const { noData } = placeStore()
+const sunriseDateTime = computed(() => sunTimes.value?.sunrise && DateTime.fromJSDate(sunTimes.value?.sunrise))
 
-const sunriseMoment = computed(() => DateTime.fromJSDate(sunTimes.value.sunrise))
+const sunsetDateTime = computed(() => sunTimes.value?.sunset && DateTime.fromJSDate(sunTimes.value?.sunset))
 
-const sunsetMoment = computed(() => DateTime.fromJSDate(sunTimes.value.sunset))
+const sunrise = computed(() => sunriseDateTime.value?.toLocaleString(DateTime.TIME_24_SIMPLE))
 
-const sunrise = computed(() => noData.value ? '' : sunriseMoment.value.toLocaleString(DateTime.TIME_24_SIMPLE))
+const sunriseFromNow = computed(() => sunriseDateTime.value && diffNowLocaleString(sunriseDateTime.value))
 
-const sunriseFromNow = computed(() => noData.value ? '' : diffNowLocaleString(sunriseMoment.value))
+const sunset = computed(() => sunsetDateTime.value?.toLocaleString(DateTime.TIME_24_SIMPLE))
 
-const sunset = computed(() => noData.value ? '' : sunsetMoment.value.toLocaleString(DateTime.TIME_24_SIMPLE))
-
-const sunsetFromNow = computed(() => noData.value ? '' : diffNowLocaleString(sunsetMoment.value))
+const sunsetFromNow = computed(() => sunsetDateTime.value && diffNowLocaleString(sunsetDateTime.value))
 
 const duration = computed(() => {
-  if (noData.value)
+  if (!sunsetDateTime.value || !sunriseDateTime.value)
     return '?'
-  const diff = sunsetMoment.value.diff(sunriseMoment.value, ['hours', 'minutes', 'seconds'])
+  const diff = sunsetDateTime.value?.diff(sunriseDateTime.value, ['hours', 'minutes', 'seconds'])
   return `${diff.hours}h, ${diff.minutes}m et ${Math.floor(diff.seconds)}s`
 })
 
-const sunPhaseString = computed(() => noData.value ? '' : t(`constants.DAY_CYCLE.${sunPhase.value}`))
+const sunPhaseString = computed(() => sunPhase.value && t(`constants.DAY_CYCLE.${sunPhase.value}`))
 
-const sunAltitude = computed(() => noData.value ? '?' : `${Global.getDegreesFromRadian(sunPosition.value.altitude)}°`)
+const sunAltitude = computed(() => sunPosition.value?.altitude && `${Global.getDegreesFromRadian(sunPosition.value.altitude)}°`)
 
 const sunIcon = computed(() => {
   switch (sunPhase.value) {
-    case DayCycle.DAY:
-    case DayCycle.ZENITH:
+    case DayPhase.DAY:
+    case DayPhase.ZENITH:
       return '/icons/dayPhases/001-mountain.svg'
-    case DayCycle.NIGHT:
-    case DayCycle.NIGHT_START:
-    case DayCycle.NIGHT_END:
-    case DayCycle.NAUTICAL_DAWN:
-    case DayCycle.NAUTICAL_DUSK:
-    case DayCycle.DAWN:
-    case DayCycle.DUSK:
-    case DayCycle.NADIR:
+    case DayPhase.NIGHT:
+    case DayPhase.NIGHT_START:
+    case DayPhase.NIGHT_END:
+    case DayPhase.NAUTICAL_DAWN:
+    case DayPhase.NAUTICAL_DUSK:
+    case DayPhase.DAWN:
+    case DayPhase.DUSK:
+    case DayPhase.NADIR:
       return '/icons/dayPhases/004-tent.svg'
-    case DayCycle.SUNRISE:
-    case DayCycle.SUNRISE_GOLDEN_HOUR:
+    case DayPhase.SUNRISE:
+    case DayPhase.SUNRISE_GOLDEN_HOUR:
       return '/icons/dayPhases/001-sunrise.svg'
-    case DayCycle.SUNSET:
-    case DayCycle.SUNSET_GOLDEN_HOUR:
+    case DayPhase.SUNSET:
+    case DayPhase.SUNSET_GOLDEN_HOUR:
       return '/icons/dayPhases/002-sunset.svg'
     default:
       return ''
