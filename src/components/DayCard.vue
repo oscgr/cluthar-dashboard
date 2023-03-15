@@ -64,9 +64,9 @@ const dark = useDark()
 const { t } = useI18n()
 const { sunTimes, sunPosition, sunPhase } = useAstro()
 
-const sunriseDateTime = computed(() => sunTimes.value?.sunrise && DateTime.fromJSDate(sunTimes.value?.sunrise))
+const sunriseDateTime = computed(() => sunTimes.value?.sunrise && DateTime.fromJSDate(sunTimes.value.sunrise))
 
-const sunsetDateTime = computed(() => sunTimes.value?.sunset && DateTime.fromJSDate(sunTimes.value?.sunset))
+const sunsetDateTime = computed(() => sunTimes.value?.sunset && DateTime.fromJSDate(sunTimes.value.sunset))
 
 const sunrise = computed(() => sunriseDateTime.value?.toLocaleString(DateTime.TIME_24_SIMPLE))
 
@@ -85,7 +85,11 @@ const duration = computed(() => {
 
 const sunPhaseString = computed(() => sunPhase.value && t(`constants.DAY_CYCLE.${sunPhase.value}`))
 
-const sunAltitude = computed(() => sunPosition.value?.altitude && `${Global.getDegreesFromRadian(sunPosition.value.altitude)}°`)
+const sunAltitude = computed(() => {
+  if (typeof sunPosition.value?.altitude !== 'number')
+    return '?'
+  return `${Global.getDegreesFromRadian(sunPosition.value.altitude)}°`
+})
 
 const sunIcon = computed(() => {
   switch (sunPhase.value) {

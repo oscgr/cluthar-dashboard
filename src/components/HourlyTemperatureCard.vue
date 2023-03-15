@@ -6,29 +6,27 @@
   >
     <v-card-title v-text="`Températures pour 48 heures`" />
     <VueApexCharts
+      ref="chart"
       type="line"
       :series="series"
       :options="chartOptions"
       height="150"
     />
-  <!--      <v-sparkline -->
-  <!--        padding="0" -->
-  <!--        :color="$vuetify.theme.dark ? 'white': 'primary'" -->
-  <!--        smooth -->
-  <!--        :value="temperatures" -->
-  <!--      /> -->
   </v-card>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { DateTime } from 'luxon'
 import type { ApexOptions } from 'apexcharts'
+import { chunk, max, maxBy, min, minBy } from 'lodash'
 import Global from '@/utils/global'
 import useWeather from '@/store/weather'
 const { loading, payload } = useWeather()
 
+const chart = ref(null)
+const CHART_CHUNK_SIZE = 4
 // const temperatures = computed(() => payload.value.hourly?.map(m => m.temp))
 
 // const cardColor = computed(() => {
@@ -38,6 +36,7 @@ const { loading, payload } = useWeather()
 //   else return '#d8e9ef'
 // })
 
+const chunkedHourly = computed(() => chunk(payload.value.hourly || [], CHART_CHUNK_SIZE).map(([first]) => first))
 const chartOptions = computed<ApexOptions>(() => {
   return {
     ...Global.getGlobalApexChartOptions(),
@@ -47,7 +46,7 @@ const chartOptions = computed<ApexOptions>(() => {
         formatter: (value: number) => {
           if (!value)
             return
-          return DateTime.fromMillis(value).toLocaleString(DateTime.TIME_24_SIMPLE)
+          return DateTime.fromMillis(value * 1000).toLocaleString(DateTime.TIME_24_SIMPLE)
         },
       },
       axisBorder: {
@@ -56,46 +55,83 @@ const chartOptions = computed<ApexOptions>(() => {
       axisTicks: {
         show: false,
       },
-      tickAmount: 5,
-      categories: payload.value.hourly?.map(m => m.dt) || [],
+      type: 'numeric',
     },
     colors: ['#77B6EA', '#545454'],
     dataLabels: {
-      enabled: true,
+      // enabled: true,
     },
     markers: {
-      size: 1,
+      // size: 1,
     },
 
-    // yaxis: {
-    //   // min: 0,
-    //   // labels: {
-    //   //   show: false,
-    //   // formatter: (value) => `${Math.floor(value)}mm`
-    //   // },
-    //   axisBorder: {
-    //     show: false,
-    //   },
-    //   axisTicks: {
-    //     show: false,
-    //   },
-    //   tickAmount: 5,
-    //   // categories: payload.value.hourly?.map(m => m.dt)
-    // }
-
+    yaxis: {
+      labels: {
+        show: true,
+        formatter: (value: number) => `${Math.floor(value)}°C`,
+      },
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        show: false,
+      },
+      // categories: payload.value.hourly?.map(m => m.dt)
+    },
+    annotations: {
+      points: [
+        {
+          x: maxBy(chunkedHourly.value || [], 'temp')?.dt,
+          y: maxBy(chunkedHourly.value || [], 'temp')?.temp,
+          marker: {
+            size: 2,
+            strokeWidth: 1,
+          },
+          label: {
+            borderColor: 'rgba(256, 256, 256, 0.9)',
+            style: {
+              // color: '',
+              background: 'rgba(256, 256, 256, 0.9)',
+            },
+            text: `${Math.floor(max(payload.value.hourly?.map(m => m.temp)) || 0)}°C à ${DateTime.fromMillis((maxBy(chunkedHourly.value || [], 'temp')?.dt || 0) * 1000).toLocaleString(DateTime.TIME_24_SIMPLE)}`,
+          },
+        },
+        {
+          x: minBy(chunkedHourly.value || [], 'temp')?.dt,
+          y: minBy(chunkedHourly.value || [], 'temp')?.temp,
+          marker: {
+            size: 2,
+            strokeWidth: 1,
+          },
+          label: {
+            borderColor: 'rgba(256, 256, 256, 0.9)',
+            style: {
+              // color: '',
+              background: 'rgba(256, 256, 256, 0.9)',
+            },
+            text: `${Math.floor(min(payload.value.hourly?.map(m => m.temp)) || 0)}°C à ${DateTime.fromMillis((minBy(chunkedHourly.value || [], 'temp')?.dt || 0) * 1000).toLocaleString(DateTime.TIME_24_SIMPLE)}`,
+          },
+        },
+      ],
+    },
   }
 },
 )
 const series = computed(() => {
   return [
     {
-      name: 'rain',
-      data: payload.value.hourly?.map(m => m.temp) || [],
+      name: 'temp',
+      data: chunkedHourly.value.map(({ temp, dt }) => [dt, temp]),
     },
-    {
-      name: 'feels like',
-      data: payload.value.hourly?.map(m => m.feels_like) || [],
-    },
+    // TODO in options
+    // {
+    //   name: 'feels like',
+    //   data: chunk(payload.value.hourly?.map(m => m.feels_like) || [], CHART_CHUNK_SIZE).map(([first]) => first),
+    // },
+    // {
+    //   name: 'Dew point',
+    //   data: chunk(payload.value.hourly?.map(m => m.dew_point) || [], CHART_CHUNK_SIZE).map(([first]) => first),
+    // },
   ]
 })
 </script>

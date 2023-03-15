@@ -76,11 +76,19 @@ const set = computed(() => setDateTime.value?.toLocaleString(DateTime.TIME_24_SI
 
 const setFromNow = computed(() => setDateTime.value && diffNowLocaleString(setDateTime.value))
 
-const moonAzimuth = computed(() => moonPosition.value?.azimuth && t(`constants.COMPASS_POINT.${Global.getCompassPoint(moonPosition.value?.azimuth)}`))
+const moonAzimuth = computed(() => {
+  if (typeof moonPosition.value?.azimuth !== 'number')
+    return '?'
+  return t(`constants.COMPASS_POINT.${Global.getCompassPoint(moonPosition.value.azimuth)}`)
+})
 
-const moonAltitude = computed(() => moonPosition.value?.altitude && `${Global.getDegreesFromRadian(moonPosition.value.altitude)}°`)
+const moonAltitude = computed(() => {
+  if (typeof moonPosition.value?.altitude !== 'number')
+    return '?'
+  return `${Global.getDegreesFromRadian(moonPosition.value.altitude)}°`
+})
 
-const moonPhaseIcon = computed(() => (`/icons/moonPhases/${moonPhase.value}.svg`))
+const moonPhaseIcon = computed(() => moonPhase.value ? (`/icons/moonPhases/${moonPhase.value}.svg`) : '')
 
 const moonPhaseString = computed(() => moonPhase.value && t(`constants.MOON_PHASE.${moonPhase.value}`))
 </script>

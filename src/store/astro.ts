@@ -24,8 +24,7 @@ const useAstro = () => {
   const sunPhase = computed<DayPhase | undefined>(() => {
     if (!state.sunTimes)
       return
-    const now = DateTime.now().toUnixInteger()
-
+    const now = DateTime.now().toMillis()
     if (now < state.sunTimes.nightEnd.getTime())
       return DayPhase.NIGHT
     if (now < state.sunTimes.nauticalDawn.getTime())

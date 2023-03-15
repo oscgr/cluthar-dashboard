@@ -40,7 +40,7 @@ export default {
         },
         fontFamily: 'Roboto, sans-serif',
         zoom: {
-          enabled: true,
+          enabled: false,
         },
       },
       tooltip: {
@@ -50,11 +50,13 @@ export default {
         show: false,
       },
       stroke: {
-        // show: true,
+        show: true,
         curve: 'smooth',
+
         // lineCap: 'butt',
-        // colors: '#FFFFFF',
-        width: 5,
+        // colors: ['#ea0000'],
+        width: 2,
+        // colors: ['#801336', '#dfd3c3', '#dfd3c3'],
       },
     }
   },

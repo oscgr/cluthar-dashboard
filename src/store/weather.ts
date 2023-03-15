@@ -1,9 +1,11 @@
 import { reactive, toRefs } from 'vue'
 import axios from 'axios'
 import type { Forecast } from 'owm-onecall-api'
+import { useLocalStorage } from '@vueuse/core'
 import useAstro from '@/store/astro'
 import usePlace from '@/store/place'
 
+const token = useLocalStorage<string | null>('open-weather-map-token', null)
 const state = reactive({
   loading: false,
   payload: {} as Partial<Forecast>,
@@ -14,11 +16,11 @@ const useWeather = () => {
   const { place, noData } = usePlace()
 
   const fetchWeather = async () => {
-    if (noData.value)
+    if (noData.value || !token.value)
       return
     state.loading = true
     // @ts-expect-error noData already make this null safe
-    const { data } = await axios.get<Forecast>(`https://api.openweathermap.org/data/2.5/onecall?lang=fr&lat=${place.value.latitude}&lon=${place.value.longitude}&units=metric&appid=${import.meta.env.VITE_OPEN_WEATHER_API_KEY}`)
+    const { data } = await axios.get<Forecast>(`https://api.openweathermap.org/data/2.5/onecall?lang=fr&lat=${place.value.latitude}&lon=${place.value.longitude}&units=metric&appid=${token.value}`)
     state.payload = data
     state.loading = false
   }
@@ -73,6 +75,7 @@ const useWeather = () => {
 
   return {
     ...toRefs(state),
+    token,
     fetchWeather,
     weatherIcon,
   }

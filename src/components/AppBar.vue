@@ -6,8 +6,8 @@
       </v-scroll-x-transition>
 
       <v-hover>
-        <template #default="{ hover }">
-          <v-btn depressed :icon="hover ? mdiHomeSearch : mdiHomeSearchOutline" @click="showPlaceSearch = !showPlaceSearch" />
+        <template #default="{ isHovering }">
+          <v-btn depressed :icon="isHovering ? mdiHomeSearch : mdiHomeSearchOutline" @click="showPlaceSearch = !showPlaceSearch" />
         </template>
       </v-hover>
 
@@ -19,9 +19,9 @@
       <!--        </template> -->
       <!--      </v-hover> -->
       <v-hover>
-        <template #default="{ hover }">
+        <template #default="{ isHovering }">
           <v-btn class="mr-2" icon @click="dark = !dark">
-            <v-icon :icon="(dark && !hover || !dark && hover) ? mdiBrightness4 : mdiBrightness6" />
+            <v-icon :icon="(dark && !isHovering || !dark && isHovering) ? mdiBrightness4 : mdiBrightness6" />
           </v-btn>
         </template>
       </v-hover>
@@ -34,7 +34,9 @@ import { mdiBrightness4, mdiBrightness6, mdiHomeSearch, mdiHomeSearchOutline } f
 import { ref } from 'vue'
 import { useDark } from '@vueuse/core'
 import PlaceSearch from '@/components/PlaceSearch.vue'
+import usePlace from '@/store/place'
 
+const { noData } = usePlace()
 const dark = useDark()
 const showPlaceSearch = ref(false)
 </script>

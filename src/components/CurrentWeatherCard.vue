@@ -61,13 +61,41 @@ const dark = useDark()
 
 const { loading, weatherIcon, payload } = useWeather()
 
-const temperature = computed(() => `${Math.floor(payload.value.current?.temp || 0) || '?'}°C`)
-const feelsLike = computed(() => `${Math.floor(payload.value.current?.feels_like || 0) || '?'}°C`)
-const clouds = computed(() => `${payload.value.current?.clouds || '?'}%`)
-const pressure = computed(() => `${payload.value.current?.pressure || '?'} hPa`)
-const humidity = computed(() => `${payload.value.current?.humidity || '?'}%`)
+const temperature = computed(() => {
+  if (typeof payload.value.current?.temp !== 'number')
+    return '?'
+  return `${Math.floor(payload.value.current.temp)}°C`
+})
+const feelsLike = computed(() => {
+  if (typeof payload.value.current?.feels_like !== 'number')
+    return '?'
+  return `${Math.floor(payload.value.current.feels_like)}°C`
+})
+const clouds = computed(() => {
+  if (typeof payload.value.current?.clouds !== 'number')
+    return '?'
+  return `${Math.floor(payload.value.current.clouds)}%`
+})
+
+const pressure = computed(() => {
+  if (typeof payload.value.current?.pressure !== 'number')
+    return '?'
+  return `${Math.floor(payload.value.current.pressure)} hPa`
+})
+const humidity = computed(() => {
+  if (typeof payload.value.current?.humidity !== 'number')
+    return '?'
+  return `${Math.floor(payload.value.current.humidity)}%`
+})
+
 const isCloudy = computed(() => (payload.value.current?.clouds || 0) > 50)
-const wind = computed(() => `${Math.floor(payload.value.current?.wind_speed || 0) || '?'} km/h`)
+
+const wind = computed(() => {
+  if (typeof payload.value.current?.wind_speed !== 'number')
+    return '?'
+  return `${Math.floor(payload.value.current?.wind_speed)} km/h`
+})
+
 const currentWeatherIcon = computed(() => weatherIcon(payload.value.current?.weather[0].id, payload.value.current?.clouds))
 const weatherDescription = computed(() => payload.value.current?.weather[0].description)
 const rain = computed(() => `${payload.value.current?.rain?.['1h'] || '0'} mm`)
