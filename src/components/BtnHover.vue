@@ -3,7 +3,7 @@
     <template #default="{ isHovering }">
       <v-btn
         class="ma-2" :style="{ 'right': '24px', 'bottom': '24px', 'position': 'fixed', 'z-index': 4 }"
-        :icon="isHovering ? mdiFullscreenExit : mdiFullscreen" @click="toggleFullScreen"
+        :icon="isHovering ? mdiFullscreenExit : mdiFullscreen" @click="toggle"
       />
     </template>
   </v-hover>
@@ -11,7 +11,7 @@
 
 <script lang="ts" setup>
 import { mdiFullscreen, mdiFullscreenExit } from '@mdi/js'
-import useFullscreen from '@/store/fullscreen'
+import { useFullscreen } from '@vueuse/core'
 
-const { fullScreen, toggleFullScreen } = useFullscreen()
+const { toggle } = useFullscreen()
 </script>

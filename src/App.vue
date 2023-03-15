@@ -1,9 +1,9 @@
 <template>
   <v-app>
-    <AppBar v-show="!fullScreen" />
+    <AppBar v-if="!isFullscreen" />
 
     <v-main :style="{ background: (dark ? '#1b262c' : '#f0ece3') }">
-      <v-container :fluid="fullScreen">
+      <v-container :fluid="isFullscreen">
         <v-card v-if="noData">
           <v-card-title class="text-center">
             Veuillez renseigner votre ville
@@ -50,12 +50,11 @@
 
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue'
-import { useDark } from '@vueuse/core'
+import { useDark, useFullscreen } from '@vueuse/core'
 import { useTheme } from 'vuetify'
 import PlaceCard from '@/components/PlaceCard.vue'
 import AppBar from '@/components/AppBar.vue'
 import BtnHover from '@/components/BtnHover.vue'
-import useFullscreen from '@/store/fullscreen'
 import useWeather from '@/store/weather'
 import MoonCard from '@/components/MoonCard.vue'
 import DayCard from '@/components/DayCard.vue'
@@ -69,7 +68,7 @@ import PlaceSearch from '@/components/PlaceSearch.vue'
 import OpenWeatherMapTokenPaster from '@/OpenWeatherMapTokenPaster.vue'
 
 const dark = useDark()
-const { fullScreen } = useFullscreen()
+const { isFullscreen } = useFullscreen()
 const { fetchWeather, payload, token } = useWeather()
 const { fetchAstro } = useAstro()
 const { noData, place } = usePlace()
@@ -84,6 +83,7 @@ const alerts = computed(() => (payload.value.alerts || [])?.length > 0)
 
 watch(place, fetchAstro)
 watch(place, fetchWeather)
+watch(token, fetchWeather)
 
 watch(dark, (v) => {
   theme.global.name.value = v ? 'dark' : 'light'
