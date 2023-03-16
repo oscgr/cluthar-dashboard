@@ -3,10 +3,18 @@
     width="100%"
     height="100%"
     flat
+    :loading="loading"
   >
-    <v-card-title v-text="`Tendances - une semaine`" />
+    <v-card-title class="position-absolute" v-text="`Tendances - une semaine`" />
+    <v-container fluid class="pa-0 position-absolute fill-height" style="z-index: 2">
+      <v-row no-gutters class="flex-nowrap justify-space-between px-1">
+        <v-col v-for="entry in chunkedDaily" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">
+          <DailyTemperatureCardChartCol :entry="entry" />
+        </v-col>
+      </v-row>
+    </v-container>
     <VueApexCharts
-      ref="chart"
+      :key="`chart_temp_${loading}${dark}`"
       type="line"
       :series="series"
       :options="chartOptions"
@@ -16,15 +24,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import type { ApexOptions } from 'apexcharts'
-import { chunk } from 'lodash'
+import { chunk, tail } from 'lodash'
+import { useDark } from '@vueuse/core'
 import Global from '@/utils/global'
 import useWeather from '@/store/weather'
-const { loading, payload } = useWeather()
+import DailyTemperatureCardChartCol from '@/components/DailyTemperatureCardChartCol.vue'
+const { payload, loading } = useWeather()
+const dark = useDark()
 
-const chart = ref(null)
 const CHART_CHUNK_SIZE = 1
 // const temperatures = computed(() => payload.value.daily?.map(m => m.temp))
 
@@ -35,89 +45,11 @@ const CHART_CHUNK_SIZE = 1
 //   else return '#d8e9ef'
 // })
 
-const chunkedDaily = computed(() => chunk(payload.value.daily || [], CHART_CHUNK_SIZE).map(([first]) => first))
+const chunkedDaily = computed(() => chunk(tail(payload.value.daily) || [], CHART_CHUNK_SIZE).map(([first]) => first))
 const chartOptions = computed<ApexOptions>(() => {
   return {
     ...Global.getGlobalApexChartOptions(),
-    xaxis: {
-      categories: chunkedDaily.value.map((v, i) => `J+${i}`),
-      labels: {
-        show: true,
-        rotate: 0,
-        // formatter: (value: number) => {
-        //   if (!value)
-        //     return
-        //   return DateTime.fromMillis(value * 1000).day
-        // },
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      // type: 'category',
-    },
-    colors: ['#77B6EA', '#de0808', '#0064fc', '#77CAEA'],
-    // dataLabels: {
-    //   enabled: true,
-    //   style: {
-    //     fontSize: 9,
-    //   },
-    // },
-    // markers: {
-    //   size: 1,
-    // },
-
-    yaxis: {
-      labels: {
-        show: false,
-        // formatter: (value: number) => `${Math.floor(value)}°C`,
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      // categories: payload.value.daily?.map(m => m.dt)
-    },
-    // annotations: {
-    //   points: [
-    //     {
-    //       x: maxBy(chunkedDaily.value || [], 'temp')?.dt,
-    //       y: maxBy(chunkedDaily.value || [], 'temp')?.temp.max,
-    //       marker: {
-    //         size: 2,
-    //         strokeWidth: 1,
-    //       },
-    //       label: {
-    //         borderColor: 'rgba(256, 256, 256, 0.9)',
-    //         style: {
-    //           // color: '',
-    //           background: 'rgba(256, 256, 256, 0.9)',
-    //         },
-    //         text: `${Math.floor(max(payload.value.daily?.map(m => m.temp.max)) || 0)}°C à ${DateTime.fromMillis((maxBy(chunkedDaily.value || [], 'temp')?.dt || 0) * 1000).day}`,
-    //       },
-    //     },
-    //     {
-    //       x: minBy(chunkedDaily.value || [], 'temp')?.dt,
-    //       y: minBy(chunkedDaily.value || [], 'temp')?.temp.min,
-    //       marker: {
-    //         size: 2,
-    //         strokeWidth: 1,
-    //       },
-    //       label: {
-    //         borderColor: 'rgba(256, 256, 256, 0.9)',
-    //         style: {
-    //           // color: '',
-    //           background: 'rgba(256, 256, 256, 0.9)',
-    //         },
-    //         text: `${Math.floor(min(payload.value.daily?.map(m => m.temp.min)) || 0)}°C à ${DateTime.fromMillis((minBy(chunkedDaily.value || [], 'temp')?.dt || 0) * 1000).day}`,
-    //       },
-    //     },
-    //   ],
-    // },
+    colors: ['rgba(0,0,255,0.1)', 'rgba(255,0,0,0.2)', dark.value ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', dark.value ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', dark.value ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', dark.value ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'],
   }
 },
 )
@@ -130,6 +62,22 @@ const series = computed(() => {
     {
       name: 'max',
       data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.max]),
+    },
+    {
+      name: 'morn',
+      data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.morn]),
+    },
+    {
+      name: 'day',
+      data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.day]),
+    },
+    {
+      name: 'eve',
+      data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.eve]),
+    },
+    {
+      name: 'night',
+      data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.night]),
     },
     // {
     //   name: 'wind',
@@ -145,4 +93,11 @@ const series = computed(() => {
     // },
   ]
 })
+const rain = computed(() => [
+  {
+    name: 'rain',
+    data: chunkedDaily.value.map(({ rain, dt }) => [dt, rain]),
+
+  },
+])
 </script>

@@ -46,7 +46,6 @@ export default {
         enabled: false,
       },
       chart: {
-        id: String(Math.random()),
         sparkline: {
           enabled: true,
         },

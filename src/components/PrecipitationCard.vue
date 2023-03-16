@@ -3,6 +3,7 @@
     width="100%"
     height="100%"
     flat
+    :loading="loading"
   >
     <v-card-title class="position-absolute" v-text="`Précipitation dans l'heure`" />
     <v-card-subtitle class="position-absolute mt-8" v-text="subtext" />
@@ -15,7 +16,7 @@
 
     <VueApexCharts
       v-else
-      :key="dark"
+      :key="`chart_precipitations_${loading}${dark}`"
       style="pointer-events: none"
       type="heatmap"
       :series="series"
@@ -41,7 +42,7 @@ import { diffNowLocaleString } from '@/utils/durationDisplay'
 const CHART_CHUNK_SIZE = 10
 
 const { t } = useI18n()
-const { payload } = useWeather()
+const { payload, loading } = useWeather()
 
 const dark = useDark()
 const noData = computed<boolean>(() => typeof payload.value.minutely === 'undefined')

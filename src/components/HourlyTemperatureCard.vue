@@ -3,11 +3,12 @@
     width="100%"
     height="100%"
     flat
+    :loading="loading"
   >
     <v-card-title class="position-absolute" style="z-index: 1" v-text="`Températures - aujourd'hui`" />
     <v-container fluid class="pa-0 position-absolute fill-height" style="z-index: 2">
       <v-row no-gutters class="flex-nowrap justify-space-between px-1">
-        <v-col v-for="entry in chunkedCols" :key="entry.dt" class="text-center d-flex flex-column flex-grow-0 flex-shrink-1">
+        <v-col v-for="entry in chunkedCols" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">
           <ChartCol :entry="entry" />
         </v-col>
       </v-row>
@@ -31,7 +32,7 @@ import { chunk, dropRight } from 'lodash'
 import { useDark } from '@vueuse/core'
 import Global from '@/utils/global'
 import useWeather from '@/store/weather'
-import ChartCol from '@/components/ChartCol.vue'
+import ChartCol from '@/components/HourlyTemperatureCardChartCol.vue'
 
 const { loading, payload } = useWeather()
 
@@ -46,7 +47,7 @@ const chunkedCols = computed(() => chunk(dropRight(payload.value.hourly, 24) || 
 const chartOptions = computed<ApexOptions>(() => {
   return {
     ...Global.getGlobalApexChartOptions(),
-    colors: [dark.value ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)', dark.value ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'],
+    colors: [dark.value ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)', dark.value ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'],
   }
 },
 )
