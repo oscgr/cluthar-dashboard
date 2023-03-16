@@ -7,6 +7,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite --port 1994",
+    "dev:open": "vite --port 1994 --host",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview"

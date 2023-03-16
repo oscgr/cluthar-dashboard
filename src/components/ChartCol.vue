@@ -1,0 +1,18 @@
+<template>
+  <div class="font-weight-black" style="font-family: 'Roboto Condensed'; font-size: 10px" v-text="time" />
+  <div style="font-family: 'Roboto Condensed'; font-size: 14px" v-text="temperature" />
+  <div class="font-weight-light" style="font-family: 'Roboto Condensed'; font-size: 12px" v-text="feelsLike" />
+</template>
+
+<script lang="ts" setup>
+import { computed } from 'vue'
+import { DateTime } from 'luxon'
+
+const props = defineProps<{
+  entry: { temp: number; feels_like: number; dt: number }
+}>()
+
+const temperature = computed(() => `${Math.floor(props.entry.temp)}°C`)
+const feelsLike = computed(() => `${Math.floor(props.entry.feels_like)}°C`)
+const time = computed(() => `${DateTime.fromMillis(props.entry.dt * 1000).hour}h`)
+</script>

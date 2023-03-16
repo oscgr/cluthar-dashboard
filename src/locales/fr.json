@@ -35,6 +35,13 @@
       "SOUTH_WEST": "sud-ouest",
       "WEST": "ouest",
       "NORTH_WEST": "nord-ouest"
+    },
+    "PRECIPITATION_LEVEL": {
+      "NONE": "aucun",
+      "DROPS": "gouttes",
+      "LIGHT":  "pluie faible",
+      "MODERATE": "pluie modérée",
+      "HEAVY":  "pluie forte"
     }
   }
 }

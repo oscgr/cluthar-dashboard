@@ -4,12 +4,12 @@
     height="100%"
     flat
   >
-    <v-card-title v-text="`Précipitation dans l'heure`" />
-    <v-card-subtitle v-text="subtext" />
-    <v-card-text v-if="noData">
+    <v-card-title class="position-absolute" v-text="`Précipitation dans l'heure`" />
+    <v-card-subtitle class="position-absolute mt-8" v-text="subtext" />
+    <v-card-text v-if="noData" class="mt-8">
       <span class="text-h5" v-text="'Pas d\'informations'" />
     </v-card-text>
-    <v-card-text v-else-if="!anyPrecipitation">
+    <v-card-text v-else-if="!anyPrecipitation" class="mt-8">
       <span class="text-h5" v-text="'Aucune pluie enregistrée'" />
     </v-card-text>
 
@@ -20,7 +20,7 @@
       type="heatmap"
       :series="series"
       :options="chartOptions"
-      height="120"
+      height="150"
     />
   </v-card>
 </template>
@@ -125,39 +125,11 @@ const chartOptions = computed<ApexOptions>(() => {
         },
       },
     },
-    xaxis: {
-      type: 'category',
-      labels: {
-        show: false,
-        showDuplicates: true,
-        rotate: 0,
-        //     showDuplicates: true,
-        //     // format: 'datetime',
-        formatter: (value: number) => {
-          if (!value)
-            return ''
-          // return DateTime.fromMillis(value * 1000).toJSDate()
-          return `${DateTime.fromMillis(value * 1000).diffNow(['minutes', 'seconds']).minutes} min.`
-        },
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    yaxis: {
-    //   min: 0,
-      labels: {
-        show: false,
-      },
-      axisBorder: {
-        show: false,
-      },
-    },
     dataLabels: {
       enabled: true,
+      style: {
+        fontWeight: '100',
+      },
       formatter(val) {
         if (!val)
           return

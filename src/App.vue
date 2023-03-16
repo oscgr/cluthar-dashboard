@@ -35,6 +35,9 @@
           <v-col cols="12" md="6">
             <HourlyTemperatureCard />
           </v-col>
+          <v-col cols="12" md="6">
+            <DailyTemperatureCard />
+          </v-col>
           <v-col v-if="alerts" cols="12">
             <AlertsCard />
           </v-col>
@@ -66,6 +69,7 @@ import usePlace from '@/store/place'
 import AlertsCard from '@/components/AlertsCard.vue'
 import PlaceSearch from '@/components/PlaceSearch.vue'
 import OpenWeatherMapTokenPaster from '@/OpenWeatherMapTokenPaster.vue'
+import DailyTemperatureCard from '@/components/DailyTemperatureCard.vue'
 
 const dark = useDark()
 const { isFullscreen } = useFullscreen()

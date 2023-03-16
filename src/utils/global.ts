@@ -25,38 +25,42 @@ export default {
   getDegreesFromRadian(rad: number) {
     return Math.round(rad * 180 / Math.PI)
   },
+  // TODO separate
+  // getGlobalAnnotationLabel(text: string): AnnotationLabel {
+  //   return {
+  //     // borderColor: 'rgba(256, 256, 256, 0.9)',
+  //     borderColor: 'transparent',
+  //     style: {
+  //       fontSize: '5px',
+  //       background: 'transparent',
+  //       color: dark.value ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)',
+  //       //   background: 'rgba(256, 256, 256, 0.9)',
+  //     },
+  //     // text: `${Math.floor(max(payload.value.hourly?.map(m => m.temp)) || 0)}°C à ${DateTime.fromMillis((maxBy(chunkedHourly.value || [], 'temp')?.dt || 0) * 1000).toLocaleString(DateTime.TIME_24_SIMPLE)}`,
+  //     text: 'max.',
+  //   }
+  // },
   getGlobalApexChartOptions(): ApexOptions {
     return {
-      grid: {
-        show: false,
-      },
       dataLabels: {
         enabled: false,
       },
       chart: {
-        id: '0',
-        toolbar: {
-          show: false,
+        id: String(Math.random()),
+        sparkline: {
+          enabled: true,
         },
-        fontFamily: 'Roboto, sans-serif',
-        zoom: {
-          enabled: false,
-        },
+        fontFamily: 'Roboto Condensed, sans-serif',
+        animations: {},
       },
       tooltip: {
         enabled: false,
       },
-      legend: {
-        show: false,
-      },
       stroke: {
         show: true,
         curve: 'smooth',
-
-        // lineCap: 'butt',
-        // colors: ['#ea0000'],
-        width: 2,
-        // colors: ['#801336', '#dfd3c3', '#dfd3c3'],
+        lineCap: 'round',
+        width: 1,
       },
     }
   },
