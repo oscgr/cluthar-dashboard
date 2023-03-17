@@ -6,8 +6,8 @@
     :loading="loading"
   >
     <v-card-title class="position-absolute" style="z-index: 1" v-text="`Températures - aujourd'hui`" />
-    <v-container fluid class="pa-0 position-absolute fill-height" style="z-index: 2">
-      <v-row no-gutters class="flex-nowrap justify-space-between px-1">
+    <v-container fluid class="pa-0 position-absolute fill-height pt-4" style="z-index: 2">
+      <v-row no-gutters class="flex-nowrap justify-space-between px-3">
         <v-col v-for="entry in chunkedCols" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">
           <ChartCol :entry="entry" />
         </v-col>
@@ -32,7 +32,7 @@ import { chunk, dropRight } from 'lodash'
 import { useDark } from '@vueuse/core'
 import Global from '@/utils/global'
 import useWeather from '@/store/weather'
-import ChartCol from '@/components/HourlyTemperatureCardChartCol.vue'
+import ChartCol from '@/components/Cards/HourlyTemperatureCard/HourlyTemperatureCardChartCol.vue'
 
 const { loading, payload } = useWeather()
 

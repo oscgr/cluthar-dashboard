@@ -7,7 +7,7 @@
   >
     <v-card-title class="position-absolute" v-text="`Tendances - une semaine`" />
     <v-container fluid class="pa-0 position-absolute fill-height" style="z-index: 2">
-      <v-row no-gutters class="flex-nowrap justify-space-between px-1">
+      <v-row no-gutters class="flex-nowrap justify-space-between px-3">
         <v-col v-for="entry in chunkedDaily" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">
           <DailyTemperatureCardChartCol :entry="entry" />
         </v-col>
@@ -31,7 +31,7 @@ import { chunk, tail } from 'lodash'
 import { useDark } from '@vueuse/core'
 import Global from '@/utils/global'
 import useWeather from '@/store/weather'
-import DailyTemperatureCardChartCol from '@/components/DailyTemperatureCardChartCol.vue'
+import DailyTemperatureCardChartCol from '@/components/Cards/DailyTemperatureCard/DailyTemperatureCardChartCol.vue'
 const { payload, loading } = useWeather()
 const dark = useDark()
 

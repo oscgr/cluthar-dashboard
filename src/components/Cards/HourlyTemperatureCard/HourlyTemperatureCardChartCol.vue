@@ -1,6 +1,6 @@
 <template>
-  <div class="font-weight-black" style="font-family: 'Roboto Condensed', sans-serif; font-size: 10px" v-text="time" />
-  <div style="font-family: 'Roboto Condensed', sans-serif; font-size: 14px" v-text="temperature" />
+  <div class="font-weight-black" style="font-family: 'Roboto Condensed', sans-serif; font-size: 14px" v-text="time" />
+  <div style="font-family: 'Roboto Condensed', sans-serif; font-size: 16px" v-text="temperature" />
   <div class="font-weight-light" style="font-family: 'Roboto Condensed',sans-serif; font-size: 12px" v-text="feelsLike" />
 </template>
 

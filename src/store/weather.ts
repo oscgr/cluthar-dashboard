@@ -25,7 +25,7 @@ const useWeather = () => {
     state.loading = false
   }
 
-  const weatherIcon = (id?: number, clouds = 0) => {
+  const weatherIcon = (id?: number, clouds = 0, ignoreDay = false) => {
     if (!id)
       return null
 
@@ -38,7 +38,7 @@ const useWeather = () => {
 
     else if (clouds > 50 && (id >= 300 && id <= 531))
       return '/icons/weather/300-500-cloud.svg'
-    else if (isDay.value && (clouds < 50) && (id >= 300 && id <= 531))
+    else if ((isDay.value || ignoreDay) && (clouds < 50) && (id >= 300 && id <= 531))
       return '/icons/weather/300-500-light-cloud-day.svg'
     else if ((clouds < 50) && (id >= 300 && id <= 531))
       return '/icons/weather/300-500-light-cloud-night.svg'
@@ -50,17 +50,17 @@ const useWeather = () => {
     else if (id === 781)
       return '/icons/weather/781.svg'
 
-    else if (isDay.value && id === 800)
+    else if ((isDay.value || ignoreDay) && id === 800)
       return '/icons/weather/800-day.svg'
     else if (id === 800)
       return '/icons/weather/800-night.svg'
 
-    else if (isDay.value && id === 801)
+    else if ((isDay.value || ignoreDay) && id === 801)
       return '/icons/weather/801-day.svg'
     else if (id === 801)
       return '/icons/weather/801-night.svg'
 
-    else if (isDay.value && id === 802)
+    else if ((isDay.value || ignoreDay) && id === 802)
       return '/icons/weather/802-day.svg'
     else if (id === 802)
       return '/icons/weather/802-night.svg'
