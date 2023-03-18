@@ -19,10 +19,21 @@ const useWeather = () => {
     if (noData.value || !token.value)
       return
     state.loading = true
-    // @ts-expect-error noData already make this null safe
-    const { data } = await axios.get<Forecast>(`https://api.openweathermap.org/data/2.5/onecall?lang=fr&lat=${place.value.latitude}&lon=${place.value.longitude}&units=metric&appid=${token.value}`)
-    state.payload = data
-    state.loading = false
+
+    try {
+      // @ts-expect-error noData already make this null safe
+      const { data } = await axios.get<Forecast>(`https://api.openweathermap.org/data/2.5/onecall?lang=fr&lat=${place.value.latitude}&lon=${place.value.longitude}&units=metric&appid=${token.value}`, {
+        timeout: 5000,
+      })
+      state.payload = data
+    }
+    catch (e) {
+      if (import.meta.env.DEV) // when coding without internet
+        state.payload = JSON.parse(import.meta.env.VITE_FAKE_WEATHER)
+    }
+    finally {
+      state.loading = false
+    }
   }
 
   const weatherIcon = (id?: number, clouds = 0, ignoreDay = false) => {

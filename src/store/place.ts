@@ -6,6 +6,7 @@ export interface Place {
   longitude: number
   name: string
   country: string
+  fullResult?: string // for items in search
 }
 
 const place = useLocalStorage<Place | null>('place', null, { deep: true, serializer: StorageSerializers.object })
