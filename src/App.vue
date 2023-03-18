@@ -5,10 +5,10 @@
     <v-main :style="{ background: (dark ? '#1b262c' : '#f0ece3') }">
       <v-container :fluid="isFullscreen">
         <v-row>
-          <v-col v-for="card in layout" :key="card.order" cols="12" :md="card.size">
+          <v-col v-for="card in layout" :key="card.cardType" cols="12" :md="card.size">
             <PlaceCard v-if="card.cardType === CardType.PLACE" />
             <CurrentWeatherCard v-else-if="card.cardType === CardType.WEATHER_TODAY" />
-            <DayCard v-else-if="card.cardType === CardType.SUN_TODAY" />
+            <SunCard v-else-if="card.cardType === CardType.SUN_TODAY" />
             <MoonCard v-else-if="card.cardType === CardType.MOON_TODAY" />
             <PrecipitationCard v-else-if="card.cardType === CardType.RAIN_NEXT_HOUR" />
             <HourlyTemperatureCard v-else-if="card.cardType === CardType.TEMP_NEXT_24H" />
@@ -28,14 +28,14 @@
       </v-hover>
     </v-main>
     <SetupDialog ref="setupDialog" />
-    <!--    <v-footer v-show="!fullScreen" app> -->
+    <!--    <v-footer v-show="!isFullscreen" app> -->
     <!--      <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
     <!--    </v-footer> -->
   </v-app>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useDark, useFullscreen } from '@vueuse/core'
 import { useTheme } from 'vuetify'
 import { mdiFullscreen, mdiFullscreenExit } from '@mdi/js'
@@ -43,7 +43,6 @@ import PlaceCard from '@/components/Cards/PlaceCard.vue'
 import AppBar from '@/components/AppBar.vue'
 import useWeather from '@/store/weather'
 import MoonCard from '@/components/Cards/MoonCard.vue'
-import DayCard from '@/components/Cards/DayCard.vue'
 import useAstro from '@/store/astro'
 import CurrentWeatherCard from '@/components/Cards/CurrentWeatherCard.vue'
 import PrecipitationCard from '@/components/Cards/PrecipitationCard.vue'
@@ -53,6 +52,7 @@ import AlertsCard from '@/components/Cards/AlertsCard.vue'
 import DailyTemperatureCard from '@/components/Cards/DailyTemperatureCard/DailyTemperatureCard.vue'
 import SetupDialog from '@/components/SetupDialog.vue'
 import useLayout, { CardType } from '@/store/layout'
+import SunCard from '@/components/Cards/SunCard.vue'
 const { toggle } = useFullscreen()
 const dark = useDark()
 const { isFullscreen } = useFullscreen()
@@ -68,6 +68,12 @@ const openSetupDialog = () => {
   setupDialog.value?.open()
 }
 
+onMounted(() => {
+  if (!place.value || !token.value)
+    setupDialog.value?.open()
+})
+
+// TODO do not watch - use after config save
 watch(place, fetchAstro, { immediate: true })
 watch(place, fetchWeather, { immediate: true })
 watch(token, fetchWeather)
@@ -76,10 +82,3 @@ watch(dark, (v) => {
   theme.global.name.value = v ? 'dark' : 'light'
 }, { immediate: true })
 </script>
-
-<style>
-.info-icon {
-  margin-top: -4px;
-  margin-right: 8px;
-}
-</style>

@@ -13,10 +13,10 @@ const state = reactive({
 
 const useWeather = () => {
   const { isDay } = useAstro()
-  const { place, noData } = usePlace()
+  const { place } = usePlace()
 
   const fetchWeather = async () => {
-    if (noData.value || !token.value)
+    if (!token.value)
       return
     state.loading = true
 

@@ -5,21 +5,26 @@
     flat
     :loading="loading"
   >
-    <v-card-title class="position-absolute" v-text="`Tendances - une semaine`" />
-    <v-container fluid class="pa-0 position-absolute fill-height" style="z-index: 2">
-      <v-row no-gutters class="flex-nowrap justify-space-between px-3">
-        <v-col v-for="entry in chunkedDaily" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">
-          <DailyTemperatureCardChartCol :entry="entry" />
-        </v-col>
-      </v-row>
-    </v-container>
-    <VueApexCharts
-      :key="`chart_temp_${loading}${dark}`"
-      type="line"
-      :series="series"
-      :options="chartOptions"
-      height="150"
-    />
+    <v-card-subtitle v-if="noData" class="pa-4">
+      Veuillez renseigner votre token
+    </v-card-subtitle>
+    <template v-else>
+      <v-card-title class="position-absolute" v-text="`Tendances - une semaine`" />
+      <v-container fluid class="pa-0 position-absolute fill-height" style="z-index: 2">
+        <v-row no-gutters class="flex-nowrap justify-space-between px-3">
+          <v-col v-for="entry in chunkedDaily" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">
+            <DailyTemperatureCardChartCol :entry="entry" />
+          </v-col>
+        </v-row>
+      </v-container>
+      <VueApexCharts
+        :key="`chart_temp_${loading}${dark}`"
+        type="line"
+        :series="series"
+        :options="chartOptions"
+        height="150"
+      />
+    </template>
   </v-card>
 </template>
 
@@ -45,6 +50,7 @@ const CHART_CHUNK_SIZE = 1
 //   else return '#d8e9ef'
 // })
 
+const noData = computed(() => typeof payload.value.daily === 'undefined')
 const chunkedDaily = computed(() => chunk(tail(payload.value.daily) || [], CHART_CHUNK_SIZE).map(([first]) => first))
 const chartOptions = computed<ApexOptions>(() => {
   return {

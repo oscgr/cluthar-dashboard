@@ -5,7 +5,10 @@
     flat
     :color="dark ? '#801336' : '#dfd3c3'"
   >
-    <v-card-text>
+    <v-card-subtitle v-if="!place" class="pa-4">
+      Veuillez renseigner votre emplacement
+    </v-card-subtitle>
+    <v-card-text v-else>
       <v-row no-gutters class="text-h4">
         <v-col>
           <span class="text-capitalize" v-text="sunPhaseString" />
@@ -59,9 +62,11 @@ import DayPhase from '@/enums/DayPhase'
 
 import Global from '@/utils/global'
 import { diffNowLocaleString } from '@/utils/durationDisplay'
+import usePlace from '@/store/place'
 
 const dark = useDark()
 const { t } = useI18n()
+const { place } = usePlace()
 const { sunTimes, sunPosition, sunPhase } = useAstro()
 
 const sunriseDateTime = computed(() => sunTimes.value?.sunrise && DateTime.fromJSDate(sunTimes.value.sunrise))

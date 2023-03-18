@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" novalidate>
-    <v-dialog ref="setupDialog" v-model="show" width="700" scrollable>
+    <v-dialog ref="setupDialog" v-model="show" width="700" scrollable transition="dialog-bottom-transition" :persistent="!tokenStore || !placeStore">
       <v-card>
         <v-card-title>Paramètres</v-card-title>
         <v-divider />
@@ -13,17 +13,18 @@
                 </p>
                 <v-autocomplete
                   v-model="setup.place"
-                  v-model:search="place.query"
                   :items="place.items"
                   :rules="[(v) => !!v || 'Requis']"
                   return-object
-                  :item-title="(v) => `${v.name}, ${v.country}`"
+                  :item-title="(v) => v.name ? `${v.name}, ${v.country}` : ''"
                   label="Ville ou localisation"
+                  :loading="place.loading"
+                  hide-no-data
                   placeholder="Recherchez votre localisation"
                   @update:search="searchLocations"
                 >
                   <template #item="{ item, props }">
-                    <v-list-item v-bind="props" :title="item.title" :subtitle="item.raw.fullResult" />
+                    <v-list-item v-bind="props" :title="item?.title" :subtitle="item.raw?.fullResult" />
                   </template>
                 </v-autocomplete>
               </v-col>
@@ -48,10 +49,14 @@
                 <div class="text-subtitle-1">
                   Disposition
                 </div>
-                <VueDraggable v-model="setup.layout" item-key="cardType" tag="v-row" group="cards" animation="200">
+                <VueDraggable
+                  v-model="setup.layout" item-key="cardType" tag="v-row" group="cards" animation="200"
+                  @start="grab = true"
+                  @end="grab = false"
+                >
                   <template #item="{ element }">
                     <v-col :cols="element.size">
-                      <v-card variant="elevated" color="primary">
+                      <v-card variant="outlined" :style="{ cursor: grab ? 'grabbing' : 'grab' }">
                         <v-card-text class="text-center pa-2">
                           <div v-text="$t(`constants.LAYOUT_CARD.${element.cardType}`)" />
                           <v-chip-group v-model="element.size" class="justify-center">
@@ -80,8 +85,8 @@
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <v-btn variant="text" @click="show = false" v-text="'Annuler'" />
-          <v-btn type="submit" variant="flat" color="primary" @click="save" v-text="'OK'" />
+          <v-btn variant="text" :disabled="!tokenStore || !placeStore" @click="show = false" v-text="'Annuler'" />
+          <v-btn variant="flat" color="primary" @click="save" v-text="'OK'" />
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -107,9 +112,10 @@ const { place: placeStore } = usePlace()
 const { layout: layoutStore } = useLayout()
 
 const state = reactive({
+  grab: false,
   show: false,
   place: {
-    query: '',
+    loading: false,
     items: [] as Place[],
   },
   pristine: {
@@ -127,7 +133,7 @@ const state = reactive({
 const open = () => {
   state.setup = {
     token: trim(tokenStore.value || ''),
-    place: omit(placeStore.value, ['fullResult']),
+    place: cloneDeep(placeStore.value),
     layout: cloneDeep(layoutStore.value),
   }
   state.pristine = cloneDeep(state.setup)
@@ -136,13 +142,14 @@ const open = () => {
 }
 
 const save = async () => {
-  const isValid = await form.value?.validate()
-  if (!isValid)
+  const { valid } = await form.value?.validate()
+  if (!valid)
     return
+
   if (state.setup.token !== state.pristine.token)
     tokenStore.value = state.setup.token
   if (state.setup.place !== state.pristine.place)
-    placeStore.value = state.setup.place
+    placeStore.value = omit(state.setup.place, ['fullResult'])
   if (state.setup.layout !== state.pristine.layout)
     layoutStore.value = state.setup.layout
   state.show = false
@@ -151,6 +158,7 @@ const save = async () => {
 const searchLocations = useDebounceFn(async (v: string) => {
   if (v) {
     try {
+      state.place.loading = true
       const { data } = await axios.get<{ lat: number; lon: number; display_name: string }[]>(`https://nominatim.openstreetmap.org/search?q=${v}&format=jsonv2&accept-language=fr&limit=5`)
       state.place.items = uniqBy(data, 'display_name').map(result => ({
         latitude: result.lat,
@@ -163,12 +171,13 @@ const searchLocations = useDebounceFn(async (v: string) => {
     catch (e) {
       state.place.items = []
     }
-
-    console.log(state.place.items)
+    finally {
+      state.place.loading = false
+    }
   }
 }, 500)
 
-const { show, setup, place } = toRefs(state)
+const { show, setup, place, grab } = toRefs(state)
 
 defineExpose({ open })
 </script>

@@ -5,8 +5,11 @@
     flat
     :color="dark ? '#801336' : '#f89a9a'"
   >
-    <v-card-text>
-      <v-row v-for="(alert, i) in alerts" :key="alert.name" no-gutters>
+    <v-card-subtitle v-if="alerts.length === 0" class="pa-4">
+      Aucune alerte météo
+    </v-card-subtitle>
+    <v-card-text v-else>
+      <v-row v-for="(alert, i) in payload.alerts" :key="alert.name" no-gutters>
         <v-col v-if="i !== 0" cols="12">
           <v-divider class="my-4" />
         </v-col>

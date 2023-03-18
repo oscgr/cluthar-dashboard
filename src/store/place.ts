@@ -1,5 +1,5 @@
 import { StorageSerializers, useLocalStorage } from '@vueuse/core'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 
 export interface Place {
   latitude: number
@@ -11,21 +11,10 @@ export interface Place {
 
 const place = useLocalStorage<Place | null>('place', null, { deep: true, serializer: StorageSerializers.object })
 
-const noData = computed(() => !place.value?.longitude && !place.value?.latitude)
-
 const loading = ref(false)
 
 const usePlace = () => {
   /* ==================== ACTIONS ==================== */
-
-  const changePlace = ({ latitude, longitude, name, country }: Place) => {
-    place.value = {
-      latitude,
-      longitude,
-      name,
-      country,
-    }
-  }
 
   // const setCoordinatesAsCurrentPosition = () => {
   //   if (navigator.geolocation) {
@@ -45,10 +34,8 @@ const usePlace = () => {
   // }
 
   return {
-    noData,
     loading,
     place,
-    changePlace,
     // setCoordinatesAsCurrentPosition,
   }
 }

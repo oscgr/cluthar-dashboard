@@ -1,11 +1,16 @@
 <template>
   <v-card
+    :loading="loading"
     width="100%"
     height="100%"
     flat
     :color="cardColor"
   >
-    <v-card-text>
+    <v-card-subtitle v-if="Object.keys(payload).length === 0" class="pa-4">
+      Veuillez renseigner votre token
+    </v-card-subtitle>
+
+    <v-card-text v-else>
       <v-row no-gutters>
         <v-col>
           <div title="température" class="text-h2" v-text="temperature" />

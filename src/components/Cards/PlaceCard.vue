@@ -4,7 +4,10 @@
     width="100%"
     height="100%"
   >
-    <v-card-text>
+    <v-card-subtitle v-if="!place" class="pa-4">
+      Veuillez renseigner votre emplacement
+    </v-card-subtitle>
+    <v-card-text v-else>
       <v-row no-gutters class=" mb-2">
         <v-col cols="12" class="text-h2">
           <span v-text="place?.name" />
@@ -22,10 +25,10 @@
       <v-row no-gutters class="text-h6 mt-4">
         <v-col cols="6">
           <v-icon title="latitude" class="info-icon" :icon="mdiLatitude" />
-          <span v-text="`${place.latitude ? Math.floor(place.latitude * 100) / 100 : '?'}`" />
+          <span v-text="`${place?.latitude ? Math.floor(place.latitude * 100) / 100 : '?'}`" />
           <v-spacer />
           <v-icon title="longitude" class="info-icon" :icon="mdiLongitude" />
-          <span v-text="`${place.longitude ? Math.floor(place.longitude * 100) / 100 : '?'}`" />
+          <span v-text="`${place?.longitude ? Math.floor(place.longitude * 100) / 100 : '?'}`" />
         </v-col>
         <v-col cols="6" class="d-flex text-h5 align-end justify-end">
           <span v-text="timeString || '?'" />

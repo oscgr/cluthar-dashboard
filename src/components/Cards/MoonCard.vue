@@ -6,7 +6,11 @@
     flat
     :color="dark ? '#0f4c75' : '#c8cdd0'"
   >
-    <v-card-text>
+    <v-card-subtitle v-if="!place" class="pa-4">
+      Veuillez renseigner votre emplacement
+    </v-card-subtitle>
+
+    <v-card-text v-else>
       <v-row no-gutters>
         <v-col>
           <div title="température" class="text-h4 text-capitalize" v-text="moonPhaseString" />
@@ -59,9 +63,11 @@ import { DateTime } from 'luxon'
 import useAstro from '@/store/astro'
 import Global from '@/utils/global'
 import { diffNowLocaleString } from '@/utils/durationDisplay'
+import usePlace from '@/store/place'
 
 const { t } = useI18n()
 const dark = useDark()
+const { place } = usePlace()
 const { moonPhase, moonTimes, moonPosition } = useAstro()
 
 const riseDateTime = computed(() => moonTimes.value?.rise && DateTime.fromJSDate(moonTimes.value.rise))

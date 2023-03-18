@@ -5,24 +5,26 @@
     flat
     :loading="loading"
   >
-    <v-card-title class="position-absolute" v-text="`Précipitation dans l'heure`" />
-    <v-card-subtitle class="position-absolute mt-8" v-text="subtext" />
-    <v-card-text v-if="noData" class="mt-8">
-      <span class="text-h5" v-text="'Pas d\'informations'" />
-    </v-card-text>
-    <v-card-text v-else-if="!anyPrecipitation" class="mt-8">
-      <span class="text-h5" v-text="'Aucune pluie enregistrée'" />
-    </v-card-text>
+    <v-card-subtitle v-if="noData" class="pa-4">
+      Veuillez renseigner votre token
+    </v-card-subtitle>
+    <template v-else>
+      <v-card-title class="position-absolute" v-text="`Précipitation dans l'heure`" />
+      <v-card-subtitle class="position-absolute mt-8" v-text="subtext" />
+      <v-card-text v-if="!anyPrecipitation" class="mt-8">
+        <span class="text-h5" v-text="'Aucune pluie enregistrée'" />
+      </v-card-text>
 
-    <VueApexCharts
-      v-else
-      :key="`chart_precipitations_${loading}${dark}`"
-      style="pointer-events: none"
-      type="heatmap"
-      :series="series"
-      :options="chartOptions"
-      height="150"
-    />
+      <VueApexCharts
+        v-else
+        :key="`chart_precipitations_${loading}${dark}_${series[0].data.x}`"
+        style="pointer-events: none"
+        type="heatmap"
+        :series="series"
+        :options="chartOptions"
+        height="150"
+      />
+    </template>
   </v-card>
 </template>
 
