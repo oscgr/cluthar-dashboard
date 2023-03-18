@@ -1,8 +1,9 @@
 <template>
-  <v-dialog ref="setupDialog" v-model="show" width="500">
-    <v-form ref="form" @submit.prevent="save">
+  <v-form ref="form" novalidate>
+    <v-dialog ref="setupDialog" v-model="show" width="700" scrollable>
       <v-card>
         <v-card-title>Paramètres</v-card-title>
+        <v-divider />
         <v-card-text>
           <v-container fluid>
             <v-row>
@@ -47,25 +48,44 @@
                 <div class="text-subtitle-1">
                   Disposition
                 </div>
+                <VueDraggable v-model="setup.layout" item-key="cardType" tag="v-row" group="cards" animation="200">
+                  <template #item="{ element }">
+                    <v-col :cols="element.size">
+                      <v-card variant="elevated" color="primary">
+                        <v-card-text class="text-center pa-2">
+                          <div v-text="$t(`constants.LAYOUT_CARD.${element.cardType}`)" />
+                          <v-chip-group v-model="element.size" class="justify-center">
+                            <v-chip value="3">
+                              3
+                            </v-chip>
+                            <v-chip value="4">
+                              4
+                            </v-chip>
+                            <v-chip value="6">
+                              6
+                            </v-chip>
+                            <v-chip value="12">
+                              12
+                            </v-chip>
+                          </v-chip-group>
+                        </v-card-text>
+                      </v-card>
+                    </v-col>
+                  </template>
+                </VueDraggable>
               </v-col>
-              <draggable />
-              <!--              <v-col cols="12"> -->
-              <!--                <v-select label="Langue" /> -->
-              <!--              </v-col> -->
-              <!--              <v-col cols="12"> -->
-              <!--                <v-select label="Langue" /> -->
-              <!--              </v-col> -->
             </v-row>
           </v-container>
         </v-card-text>
+        <v-divider />
         <v-card-actions>
           <v-spacer />
           <v-btn variant="text" @click="show = false" v-text="'Annuler'" />
-          <v-btn type="submit" variant="flat" color="primary" v-text="'OK'" />
+          <v-btn type="submit" variant="flat" color="primary" @click="save" v-text="'OK'" />
         </v-card-actions>
       </v-card>
-    </v-form>
-  </v-dialog>
+    </v-dialog>
+  </v-form>
 </template>
 
 <script lang="ts" setup>
@@ -73,15 +93,18 @@ import { reactive, ref, toRefs } from 'vue'
 import { cloneDeep, omit, trim, uniqBy } from 'lodash'
 import axios from 'axios'
 import { useDebounceFn } from '@vueuse/core'
-import draggable from 'vuedraggable'
 import useWeather from '@/store/weather'
 import type { Place } from '@/store/place'
 import usePlace from '@/store/place'
+import type { Card } from '@/store/layout'
+import useLayout from '@/store/layout'
+
 const setupDialog = ref(null)
 const form = ref(null)
 
 const { token: tokenStore } = useWeather()
 const { place: placeStore } = usePlace()
+const { layout: layoutStore } = useLayout()
 
 const state = reactive({
   show: false,
@@ -92,10 +115,12 @@ const state = reactive({
   pristine: {
     token: '' as string | null,
     place: null as Place | null,
+    layout: [] as Card[],
   },
   setup: {
     token: '' as string | null,
     place: null as Place | null,
+    layout: [] as Card[],
   },
 })
 
@@ -103,6 +128,7 @@ const open = () => {
   state.setup = {
     token: trim(tokenStore.value || ''),
     place: omit(placeStore.value, ['fullResult']),
+    layout: cloneDeep(layoutStore.value),
   }
   state.pristine = cloneDeep(state.setup)
 
@@ -111,7 +137,15 @@ const open = () => {
 
 const save = async () => {
   const isValid = await form.value?.validate()
-  console.log(isValid)
+  if (!isValid)
+    return
+  if (state.setup.token !== state.pristine.token)
+    tokenStore.value = state.setup.token
+  if (state.setup.place !== state.pristine.place)
+    placeStore.value = state.setup.place
+  if (state.setup.layout !== state.pristine.layout)
+    layoutStore.value = state.setup.layout
+  state.show = false
 }
 
 const searchLocations = useDebounceFn(async (v: string) => {
@@ -133,8 +167,6 @@ const searchLocations = useDebounceFn(async (v: string) => {
     console.log(state.place.items)
   }
 }, 500)
-
-// watchDebounced(() => state.place.query, , { debounce: 500 })
 
 const { show, setup, place } = toRefs(state)
 

@@ -7,6 +7,7 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
+import draggable from 'vuedraggable'
 import App from '@/App.vue'
 import en from '@/locales/en.json'
 import fr from '@/locales/fr.json'
@@ -34,4 +35,5 @@ createApp(App)
   .use(i18n)
   .use(vuetify)
   .use(VueApexCharts)
+  .component('VueDraggable', draggable)
   .mount('#app')

@@ -16,7 +16,7 @@ export interface Preferences {
   cards: Card[]
 }
 export interface Card {
-  order: number
+  // order: number
   size: '1' | '2' | '3' | '4' | '6' | '12'
   cardType: CardType
   extra?: Record<string, unknown>
@@ -24,42 +24,42 @@ export interface Card {
 
 const DEFAULT_LAYOUT = [
   {
-    order: 0,
+    // order: 0,
     size: '6',
     cardType: CardType.PLACE,
   },
   {
-    order: 1,
+    // order: 1,
     size: '6',
     cardType: CardType.WEATHER_TODAY,
   },
   {
-    order: 2,
+    // order: 2,
     size: '6',
     cardType: CardType.SUN_TODAY,
   },
   {
-    order: 3,
+    // order: 3,
     size: '6',
     cardType: CardType.MOON_TODAY,
   },
   {
-    order: 4,
+    // order: 4,
     size: '6',
     cardType: CardType.RAIN_NEXT_HOUR,
   },
   {
-    order: 5,
+    // order: 5,
     size: '6',
     cardType: CardType.TEMP_NEXT_24H,
   },
   {
-    order: 6,
+    // order: 6,
     size: '6',
     cardType: CardType.WEATHER_NEXT_6D,
   },
   {
-    order: 7,
+    // order: 7,
     size: '12',
     cardType: CardType.WEATHER_ALERTS,
   },

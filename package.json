@@ -33,6 +33,7 @@
     "@mdi/js": "^7.1.96",
     "@types/lodash": "^4.14.191",
     "@types/luxon": "^3.2.0",
+    "@types/vuedraggable": "^2.24.0",
     "@types/node": "^18.15.1",
     "@types/suncalc": "^1.9.0",
     "@vitejs/plugin-vue": "^4.0.0",
