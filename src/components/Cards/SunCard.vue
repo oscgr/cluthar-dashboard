@@ -3,7 +3,7 @@
     width="100%"
     height="100%"
     flat
-    :color="dark ? '#801336' : '#dfd3c3'"
+    :color="dark ? '#600e28' : '#dfd3c3'"
   >
     <v-card-subtitle v-if="!place" class="pa-4">
       Veuillez renseigner votre emplacement

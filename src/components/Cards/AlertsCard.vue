@@ -3,7 +3,7 @@
     width="100%"
     height="100%"
     flat
-    :color="dark ? '#801336' : '#f89a9a'"
+    :color="(alerts.length > 0) ? (dark ? '#801336' : '#f89a9a') : null"
   >
     <v-card-subtitle v-if="alerts.length === 0" class="pa-4">
       Aucune alerte météo

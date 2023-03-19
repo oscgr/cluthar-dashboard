@@ -4,7 +4,7 @@
     height="100%"
     dark
     flat
-    :color="dark ? '#0f4c75' : '#c8cdd0'"
+    :color="dark ? '#0b3c5d' : '#c8cdd0'"
   >
     <v-card-subtitle v-if="!place" class="pa-4">
       Veuillez renseigner votre emplacement

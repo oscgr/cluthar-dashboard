@@ -2,7 +2,7 @@
   <v-app>
     <AppBar v-if="!isFullscreen" @open-setup-dialog="openSetupDialog" />
 
-    <v-main :style="{ background: (dark ? '#1b262c' : '#f0ece3') }">
+    <v-main>
       <v-container :fluid="isFullscreen">
         <v-row>
           <v-col v-for="card in layout" :key="card.cardType" cols="12" :md="card.size">

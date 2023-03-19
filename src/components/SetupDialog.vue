@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="form" novalidate>
+  <VForm ref="form" novalidate>
     <v-dialog ref="setupDialog" v-model="show" width="700" scrollable transition="dialog-bottom-transition" :persistent="!tokenStore || !placeStore">
       <v-card>
         <v-card-title>Paramètres</v-card-title>
@@ -59,18 +59,18 @@
                       <v-card variant="outlined" :style="{ cursor: grab ? 'grabbing' : 'grab' }">
                         <v-card-text class="text-center pa-2">
                           <div v-text="$t(`constants.LAYOUT_CARD.${element.cardType}`)" />
-                          <v-chip-group v-model="element.size" class="justify-center">
+                          <v-chip-group v-model="element.size" class="justify-center" color="primary" mandatory variant="outlined">
                             <v-chip value="3">
-                              3
+                              ¼
                             </v-chip>
                             <v-chip value="4">
-                              4
+                              ⅓
                             </v-chip>
                             <v-chip value="6">
-                              6
+                              ½
                             </v-chip>
                             <v-chip value="12">
-                              12
+                              1
                             </v-chip>
                           </v-chip-group>
                         </v-card-text>
@@ -84,13 +84,14 @@
         </v-card-text>
         <v-divider />
         <v-card-actions>
+          <v-btn variant="text" :disabled="!tokenStore || !placeStore" @click="reset" v-text="'Réinitialiser'" />
           <v-spacer />
           <v-btn variant="text" :disabled="!tokenStore || !placeStore" @click="show = false" v-text="'Annuler'" />
           <v-btn variant="flat" color="primary" @click="save" v-text="'OK'" />
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-form>
+  </VForm>
 </template>
 
 <script lang="ts" setup>
@@ -98,6 +99,7 @@ import { reactive, ref, toRefs } from 'vue'
 import { cloneDeep, omit, trim, uniqBy } from 'lodash'
 import axios from 'axios'
 import { useDebounceFn } from '@vueuse/core'
+import { VForm } from 'vuetify/components/VForm'
 import useWeather from '@/store/weather'
 import type { Place } from '@/store/place'
 import usePlace from '@/store/place'
@@ -105,7 +107,7 @@ import type { Card } from '@/store/layout'
 import useLayout from '@/store/layout'
 
 const setupDialog = ref(null)
-const form = ref(null)
+const form = ref<InstanceType<typeof VForm> | null>(null)
 
 const { token: tokenStore } = useWeather()
 const { place: placeStore } = usePlace()
@@ -142,17 +144,26 @@ const open = () => {
 }
 
 const save = async () => {
-  const { valid } = await form.value?.validate()
-  if (!valid)
-    return
+  try {
+    const { valid } = await form.value?.validate()
+    if (!valid)
+      return
 
-  if (state.setup.token !== state.pristine.token)
-    tokenStore.value = state.setup.token
-  if (state.setup.place !== state.pristine.place)
-    placeStore.value = omit(state.setup.place, ['fullResult'])
-  if (state.setup.layout !== state.pristine.layout)
-    layoutStore.value = state.setup.layout
-  state.show = false
+    if (state.setup.token !== state.pristine.token)
+      tokenStore.value = state.setup.token
+    if (state.setup.place !== state.pristine.place)
+      placeStore.value = omit(state.setup.place, ['fullResult'])
+    if (state.setup.layout !== state.pristine.layout)
+      layoutStore.value = state.setup.layout
+    state.show = false
+  }
+  catch (e) {
+    //
+  }
+}
+
+const reset = () => {
+  state.setup = cloneDeep(state.pristine)
 }
 
 const searchLocations = useDebounceFn(async (v: string) => {

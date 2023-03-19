@@ -2,6 +2,8 @@ lockfileVersion: 5.4
 
 specifiers:
   '@antfu/eslint-config': ^0.36.0
+  '@fontsource/roboto': ^4.5.8
+  '@fontsource/roboto-condensed': ^4.5.9
   '@intlify/unplugin-vue-i18n': ^0.9.2
   '@mdi/js': ^7.1.96
   '@types/lodash': ^4.14.191
@@ -29,6 +31,8 @@ specifiers:
   vuetify: ^3.1.10
 
 dependencies:
+  '@fontsource/roboto': 4.5.8
+  '@fontsource/roboto-condensed': 4.5.9
   '@intlify/unplugin-vue-i18n': 0.9.2_vue-i18n@9.2.2
   '@vueuse/core': 9.13.0_vue@3.2.47
   apexcharts: 3.37.1
@@ -1552,6 +1556,14 @@ packages:
     resolution: {integrity: sha512-lxJ9R5ygVm8ZWgYdUweoq5ownDlJ4upvoWmO4eLxBYHdMo+vZ/Rx0EN6MbKWDJOSUGrqJy2Gt+Dyv/VKml0fjg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
+
+  /@fontsource/roboto-condensed/4.5.9:
+    resolution: {integrity: sha512-ql4sQq+h8puBVildZ5ssjYf8DWDONYDe3PD3Bu/p1ZW9GnRETRNPPcCTs/q62HIl3QimwwkiKWynn6wZhQaetg==}
+    dev: false
+
+  /@fontsource/roboto/4.5.8:
+    resolution: {integrity: sha512-CnD7zLItIzt86q4Sj3kZUiLcBk1dSk81qcqgMGaZe7SQ1P8hFNxhMl5AZthK1zrDM5m74VVhaOpuMGIL4gagaA==}
+    dev: false
 
   /@humanwhocodes/config-array/0.11.8:
     resolution: {integrity: sha512-UybHIJzJnR5Qc/MsD9Kr+RpO2h+/P1GhOwdiLPXK5TWk5sgTdu88bTD9UP+CKbPPh5Rni1u0GjAdYQLemG8g+g==}

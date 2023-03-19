@@ -13,18 +13,18 @@
     <v-card-text v-else>
       <v-row no-gutters>
         <v-col>
-          <div title="température" class="text-h2" v-text="temperature" />
+          <div title="température" class="text-h3 font-weight-thin" v-text="temperature" />
           <span v-if="temperature !== feelsLike" title="ressenti" class="" v-text="`Ressenti ${feelsLike}`" />
         </v-col>
         <v-col class="flex-grow-0">
           <v-img width="72px" alt="météo" :src="currentWeatherIcon" />
         </v-col>
       </v-row>
-      <v-row no-gutters>
-        <v-col cols="12" class="text-right">
-          <span title="météo actuelle" class="text-h5" v-text="weatherDescription" />
-        </v-col>
-      </v-row>
+      <!--      <v-row no-gutters> -->
+      <!--        <v-col cols="12" class="text-right"> -->
+      <!--          <span title="météo actuelle" class="text-h5" v-text="weatherDescription" /> -->
+      <!--        </v-col> -->
+      <!--      </v-row> -->
 
       <v-row no-gutters class="text-h6">
         <v-col cols="6">
@@ -108,9 +108,9 @@ const snow = computed(() => `${payload.value.current?.snow?.['1h'] || '0'} mm`)
 
 const cardColor = computed(() => {
   if (isCloudy.value && dark.value)
-    return '#516269'
+    return '#2e373b'
   else if (dark.value)
-    return '#29586d'
+    return '#193642'
   else if (!isCloudy.value)
     return '#a6dcef'
   else return '#d8e9ef'
