@@ -2,6 +2,7 @@ import { computed, reactive, toRefs } from 'vue'
 
 import SunCalc from 'suncalc'
 import { DateTime } from 'luxon'
+import {floor, round} from 'lodash'
 import DayPhase from '@/enums/DayPhase'
 import MoonPhase from '@/enums/MoonPhase'
 import usePlace from '@/store/place'
@@ -72,25 +73,27 @@ const useAstro = () => {
   const moonPhase = computed<MoonPhase | undefined>(() => {
     if (!state.moonIllumination?.phase)
       return
-    const phase = state.moonIllumination.phase
-    if (phase < 1 / 16)
+    const phase = round(state.moonIllumination?.phase * 27)
+    if (phase < 1)
       return MoonPhase.NEW_MOON
-    else if (phase < 3 / 16)
+    else if (phase < 7)
       return MoonPhase.WAXING_CRESCENT
-    else if (phase < 5 / 16)
+    else if (phase < 8)
       return MoonPhase.FIRST_QUARTER
-    else if (phase < 7 / 16)
+    else if (phase < 14)
       return MoonPhase.WAXING_GIBBOUS
-    else if (phase < 9 / 16)
+    else if (phase < 15)
       return MoonPhase.FULL_MOON
-    else if (phase < 11 / 16)
+    else if (phase < 21)
       return MoonPhase.WANING_GIBBOUS
-    else if (phase < 13 / 16)
+    else if (phase < 22)
       return MoonPhase.LAST_QUARTER
-    else if (phase < 15 / 16)
+    else if (phase < 28)
       return MoonPhase.WANING_CRESCENT
     else return MoonPhase.NEW_MOON
   })
+
+  const moonIcon = computed(() => `wi:wi-moon-${round(state.moonIllumination?.phase * 27)}`)
 
   /* ==================== ACTIONS ==================== */
 
@@ -107,6 +110,7 @@ const useAstro = () => {
 
   return {
     ...toRefs(state),
+    moonIcon,
     fetchAstro,
     sunPhase,
     isDay,

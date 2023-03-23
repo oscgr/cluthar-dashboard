@@ -4,11 +4,11 @@ import { VClassIcon } from 'vuetify/components/VIcon'
 import '@/assets/css/weather-icons.css'
 import '@/assets/css/weather-icons-wind.css'
 
-const weather: IconSet = {
+const wi: IconSet = {
   component: (props: IconProps) => h(VClassIcon, {
     ...props,
-    class: 'wi',
+    class: 'wi wi-fw',
   }),
 }
 
-export { weather }
+export { wi }

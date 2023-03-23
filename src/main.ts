@@ -7,12 +7,14 @@ import type { ThemeDefinition } from 'vuetify'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import draggable from 'vuedraggable'
-import { weather } from '@/assets/iconsets/weather'
+import { wi } from '@/assets/iconsets/wi'
 import App from '@/App.vue'
 import en from '@/locales/en.json'
 import fr from '@/locales/fr.json'
+import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
+
 import '@fontsource/roboto/latin.css'
 import '@fontsource/roboto-condensed/latin.css'
 
@@ -70,7 +72,7 @@ const vuetify = createVuetify({
     aliases,
     sets: {
       mdi,
-      weather,
+      wi,
     },
   },
 

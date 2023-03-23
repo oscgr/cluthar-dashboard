@@ -1,59 +1,77 @@
 <template>
-  <v-card
-    width="100%"
-    height="100%"
-    flat
-    :color="dark ? '#600e28' : '#dfd3c3'"
-  >
-    <v-card-subtitle v-if="!place" class="pa-4">
-      Veuillez renseigner votre emplacement
-    </v-card-subtitle>
-    <v-card-text v-else>
-      <v-row no-gutters class="text-h4">
-        <v-col>
-          <span class="text-capitalize" v-text="sunPhaseString" />
-        </v-col>
-        <v-col class="flex-grow-0">
-          <v-img width="72px" alt="météo" :src="sunIcon" />
-        </v-col>
-      </v-row>
-      <v-row no-gutters class="text-h6">
-        <v-col cols="6">
-          <v-icon title="lever du soleil" class="info-icon" :icon="mdiWeatherSunsetUp" />
-          <span v-text="sunrise" />
-        </v-col>
-        <v-col cols="6" class="text-right">
-          <span v-text="sunriseFromNow" />
-        </v-col>
-      </v-row>
+  <v-hover v-slot="{ isHovering, props }">
+    <v-card
+      v-bind="props"
+      width="100%"
+      height="100%"
+      flat
+      :color="dark ? '#600e28' : '#dfd3c3'"
+    >
+      <v-card-subtitle v-if="!place" class="pa-4">
+        Veuillez renseigner votre emplacement
+      </v-card-subtitle>
+      <v-card-text v-else>
+        <v-row no-gutters class="text-h4">
+          <v-col>
+            <div class="text-h4 font-weight-thin text-capitalize" v-text="sunPhaseString" />
+          </v-col>
+          <v-col class="flex-grow-0">
+            <v-icon :icon="sunIcon" size="48" />
+            <v-img width="72px" alt="météo" :src="sunIcon" />
+          </v-col>
+        </v-row>
 
-      <v-row no-gutters class="text-h6">
-        <v-col cols="6">
-          <v-icon title="coucher de soleil" class="info-icon" :icon="mdiWeatherSunsetDown" />
-          <span v-text="sunset" />
-        </v-col>
-        <v-col cols="6" class="text-right">
-          <span v-text="sunsetFromNow" />
-        </v-col>
-      </v-row>
+        <v-row no-gutters class="text-h6">
+          <v-col class="flex-grow-0">
+            <v-icon title="Lever de lune" size="24" style="width: 36px" icon="wi:wi-sunrise" />
+          </v-col>
+          <v-col>
+            <span style="line-height: 35px" v-text="isHovering ? 'Lever de soleil' : sunrise" />
+          </v-col>
+          <v-col class="text-right">
+            <span style="line-height: 35px" v-text="isHovering ? 'Relatif' : sunriseFromNow" />
+          </v-col>
+          <v-col class="flex-grow-0">
+            <v-icon title="Lever de lune" size="24" style="width: 36px" icon="wi:wi-sunrise" />
+          </v-col>
+        </v-row>
 
-      <v-row no-gutters class="text-h6">
-        <v-col cols="6">
-          <v-icon title="coucher de lune" class="info-icon" :icon="mdiAngleAcute" />
-          <span v-text="sunAltitude" />
-        </v-col>
-        <v-col cols="6" class="text-right">
-          <v-icon title="durée de la journée" class="info-icon" :icon="mdiTimerOutline" />
-          <span v-text="duration" />
-        </v-col>
-      </v-row>
-    </v-card-text>
-  </v-card>
+        <v-row no-gutters class="text-h6">
+          <v-col class="flex-grow-0">
+            <v-icon title="Coucher de lune" size="24" style="width: 36px" icon="wi:wi-sunset" />
+          </v-col>
+          <v-col>
+            <span style="line-height: 35px" v-text="isHovering ? 'Coucher de soleil' : sunset" />
+          </v-col>
+          <v-col class="text-right">
+            <span style="line-height: 35px" v-text="isHovering ? 'Relatif' : sunsetFromNow" />
+          </v-col>
+          <v-col class="flex-grow-0">
+            <v-icon title="Coucher de lune" size="24" style="width: 36px" icon="wi:wi-sunset" />
+          </v-col>
+        </v-row>
+
+        <v-row no-gutters class="text-h6">
+          <v-col class="flex-grow-0">
+            <v-icon title="Angle" size="24" style="width: 36px" icon="mdi-compass" />
+          </v-col>
+          <v-col>
+            <span style="line-height: 35px" v-text="isHovering ? 'Angle' : sunAltitude" />
+          </v-col>
+          <v-col class="text-right">
+            <span style="line-height: 35px" v-text="isHovering ? 'Durée' : duration" />
+          </v-col>
+          <v-col class="flex-grow-0">
+            <v-icon title="Angle" size="24" style="width: 36px" icon="mdi-timer-outline" />
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+  </v-hover>
 </template>
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { mdiAngleAcute, mdiTimerOutline, mdiWeatherSunsetDown, mdiWeatherSunsetUp } from '@mdi/js'
 import { useDark } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 import { DateTime } from 'luxon'
@@ -100,7 +118,7 @@ const sunIcon = computed(() => {
   switch (sunPhase.value) {
     case DayPhase.DAY:
     case DayPhase.ZENITH:
-      return '/icons/dayPhases/001-mountain.svg'
+      return 'wi:wi-day-sunny'
     case DayPhase.NIGHT:
     case DayPhase.NIGHT_START:
     case DayPhase.NIGHT_END:
@@ -109,13 +127,13 @@ const sunIcon = computed(() => {
     case DayPhase.DAWN:
     case DayPhase.DUSK:
     case DayPhase.NADIR:
-      return '/icons/dayPhases/004-tent.svg'
+      return 'wi:wi-stars'
     case DayPhase.SUNRISE:
     case DayPhase.SUNRISE_GOLDEN_HOUR:
-      return '/icons/dayPhases/001-sunrise.svg'
+      return 'wi:wi-sunrise'
     case DayPhase.SUNSET:
     case DayPhase.SUNSET_GOLDEN_HOUR:
-      return '/icons/dayPhases/002-sunset.svg'
+      return 'wi:wi-sunset'
     default:
       return ''
   }

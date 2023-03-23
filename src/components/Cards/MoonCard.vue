@@ -1,62 +1,79 @@
 <template>
-  <v-card
-    width="100%"
-    height="100%"
-    dark
-    flat
-    :color="dark ? '#0b3c5d' : '#c8cdd0'"
-  >
-    <v-card-subtitle v-if="!place" class="pa-4">
-      Veuillez renseigner votre emplacement
-    </v-card-subtitle>
+  <v-hover v-slot="{ isHovering, props }">
+    <v-card
+      v-bind="props"
+      width="100%"
+      height="100%"
+      dark
+      flat
+      :color="dark ? '#0b3c5d' : '#c8cdd0'"
+    >
+      <v-card-subtitle v-if="!place" class="pa-4">
+        Veuillez renseigner votre emplacement
+      </v-card-subtitle>
 
-    <v-card-text v-else>
-      <v-row no-gutters>
-        <v-col>
-          <div title="température" class="text-h4 text-capitalize" v-text="moonPhaseString" />
-        </v-col>
-        <v-col class="flex-grow-0">
-          <v-img class="ma-2" width="56px" alt="phase lunaire" :src="moonPhaseIcon" />
-        </v-col>
-      </v-row>
+      <v-card-text v-else>
+        <v-row no-gutters>
+          <v-col>
+            <div title="Phase de lune" class="text-h4 font-weight-thin text-capitalize" v-text="moonPhaseString" />
+          </v-col>
+          <v-col class="flex-grow-0">
+            <v-icon :icon="moonIcon" size="48" />
+            <!--            <v-img class="ma-2" width="56px" alt="phase lunaire" :src="moonPhaseIcon" /> -->
+          </v-col>
+        </v-row>
 
-      <v-row no-gutters class="text-h6">
-        <v-col cols="6">
-          <v-icon title="lever du lune" class="info-icon" :icon="mdiWeatherSunsetUp" />
-          <span v-text="rise" />
-        </v-col>
-        <v-col cols="6" class="text-right">
-          <span v-text="riseFromNow" />
-        </v-col>
-      </v-row>
+        <v-row no-gutters class="text-h6">
+          <v-col class="flex-grow-0">
+            <v-icon title="Lever de lune" size="24" style="width: 36px" icon="wi:wi-moonrise" />
+          </v-col>
+          <v-col>
+            <span style="line-height: 35px" v-text="isHovering ? 'Lever de lune' : rise" />
+          </v-col>
+          <v-col class="text-right">
+            <span style="line-height: 35px" v-text="isHovering ? 'Relatif' : riseFromNow" />
+          </v-col>
+          <v-col class="flex-grow-0">
+            <v-icon title="Lever de lune" size="24" style="width: 36px" icon="wi:wi-moonrise" />
+          </v-col>
+        </v-row>
 
-      <v-row no-gutters class="text-h6">
-        <v-col cols="6">
-          <v-icon title="coucher de lune" class="info-icon" :icon="mdiWeatherSunsetDown" />
-          <span v-text="set" />
-        </v-col>
-        <v-col cols="6" class="text-right">
-          <span v-text="setFromNow" />
-        </v-col>
-      </v-row>
+        <v-row no-gutters class="text-h6">
+          <v-col class="flex-grow-0">
+            <v-icon title="Coucher de lune" size="24" style="width: 36px" icon="wi:wi-moonset" />
+          </v-col>
+          <v-col>
+            <span style="line-height: 35px" v-text="isHovering ? 'Coucher de lune' : set" />
+          </v-col>
+          <v-col class="text-right">
+            <span style="line-height: 35px" v-text="isHovering ? 'Relatif' : setFromNow" />
+          </v-col>
+          <v-col class="flex-grow-0">
+            <v-icon title="Coucher de lune" size="24" style="width: 36px" icon="wi:wi-moonset" />
+          </v-col>
+        </v-row>
 
-      <v-row no-gutters class="text-h6">
-        <v-col cols="6">
-          <v-icon title="coucher de lune" class="info-icon" :icon="mdiAngleAcute" />
-          <span v-text="moonAltitude" />
-        </v-col>
-        <v-col cols="6" class="text-right text-capitalize">
-          <v-icon title="coucher de lune" class="info-icon" :icon="mdiCompass" />
-          <span v-text="moonAzimuth" />
-        </v-col>
-      </v-row>
-    </v-card-text>
-  </v-card>
+        <v-row no-gutters class="text-h6">
+          <v-col class="flex-grow-0">
+            <v-icon title="Angle" size="24" style="width: 36px" icon="mdi-angle-acute" />
+          </v-col>
+          <v-col>
+            <span style="line-height: 35px" v-text="isHovering ? 'Angle' : moonAltitude" />
+          </v-col>
+          <v-col class="text-right">
+            <span style="line-height: 35px" v-text="isHovering ? 'Orientation' : moonAzimuth" />
+          </v-col>
+          <v-col class="flex-grow-0">
+            <v-icon title="Angle" size="24" style="width: 36px" icon="mdi-compass" />
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+  </v-hover>
 </template>
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { mdiAngleAcute, mdiCompass, mdiWeatherSunsetDown, mdiWeatherSunsetUp } from '@mdi/js'
 import { useI18n } from 'vue-i18n'
 import { useDark } from '@vueuse/core'
 import { DateTime } from 'luxon'
@@ -68,7 +85,7 @@ import usePlace from '@/store/place'
 const { t } = useI18n()
 const dark = useDark()
 const { place } = usePlace()
-const { moonPhase, moonTimes, moonPosition } = useAstro()
+const { moonPhase, moonTimes, moonPosition, moonIcon } = useAstro()
 
 const riseDateTime = computed(() => moonTimes.value?.rise && DateTime.fromJSDate(moonTimes.value.rise))
 
@@ -94,7 +111,9 @@ const moonAltitude = computed(() => {
   return `${Global.getDegreesFromRadian(moonPosition.value.altitude)}°`
 })
 
-const moonPhaseIcon = computed(() => moonPhase.value ? (`/icons/moonPhases/${moonPhase.value}.svg`) : '')
+const moonPhaseIcon = computed(() => {
+  return moonPhase.value ? (`/icons/moonPhases/${moonPhase.value}.svg`) : ''
+})
 
 const moonPhaseString = computed(() => moonPhase.value && t(`constants.MOON_PHASE.${moonPhase.value}`))
 </script>

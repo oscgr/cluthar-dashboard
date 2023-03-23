@@ -15,31 +15,42 @@ export default defineConfig({
       include: [/\.vue$/, /\.md$/],
     }),
     VueI18nPlugin({
+      // runtimeOnly: true,
+
       include: path.resolve(__dirname, './src/locales/**'),
     }),
     // https://github.com/antfu/vite-plugin-pwa
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Vitesse',
-        short_name: 'Vitesse',
-        theme_color: '#ffffff',
+        name: 'Cluthar dashboard',
+        short_name: 'Cluthar',
+        theme_color: '#A89D8D',
+        background_color: '#f0ece3',
         icons: [
           {
-            src: '/pwa-192x192.png',
+            src: 'public/manifest-icon-192.maskable.png',
             sizes: '192x192',
             type: 'image/png',
+            purpose: 'any',
           },
           {
-            src: '/pwa-512x512.png',
-            sizes: '512x512',
+            src: 'public/manifest-icon-192.maskable.png',
+            sizes: '192x192',
             type: 'image/png',
+            purpose: 'maskable',
           },
           {
-            src: '/pwa-512x512.png',
+            src: 'public/manifest-icon-512.maskable.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable',
+            purpose: 'any',
+          },
+          {
+            src: 'public/manifest-icon-512.maskable.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
           },
         ],
       },

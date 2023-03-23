@@ -2,25 +2,25 @@
   <v-app-bar app>
     <template #prepend>
       <!--      <v-icon class="wi wi-day-snow-thunderstorm" /> -->
-      <v-app-bar-nav-icon icon="weather:wi-day-snow-thunderstorm" />
+      <v-app-bar-nav-icon icon="wi:wi-day-snow-thunderstorm" />
     </template>
 
     <v-app-bar-title>Dashboard</v-app-bar-title>
 
     <template v-if="$vuetify.display.mdAndUp" #append>
       <v-switch
-        v-model="dark" hide-details class="mr-4 v-switch-light" inset :true-icon="mdiBrightness2" :false-icon="mdiBrightness5"
+        v-model="dark" hide-details class="mr-4 v-switch-light" inset true-icon="mdi-brightness-2" false-icon="mdi-brightness-5"
       />
       <v-tooltip open-delay="500" text="Paramètres">
         <template #activator="{ props }">
-          <v-btn class="mr-2" :icon="mdiCogOutline" v-bind="props" @click="$emit('openSetupDialog')" />
+          <v-btn class="mr-2" icon="mdi-cog-outline" v-bind="props" @click="$emit('openSetupDialog')" />
         </template>
       </v-tooltip>
     </template>
     <template v-else #append>
       <v-menu origin="overlap">
         <template #activator="{ props }">
-          <v-btn v-bind="props" :icon="mdiDotsVertical" />
+          <v-btn v-bind="props" icon="mdi-dots-vertical" />
         </template>
         <v-list density="compact">
           <v-list-item @click="dark = !dark">
@@ -36,7 +36,6 @@
 </template>
 
 <script lang="ts" setup>
-import { mdiBrightness2, mdiBrightness5, mdiCogOutline, mdiDotsVertical } from '@mdi/js'
 import { useDark } from '@vueuse/core'
 
 defineEmits(['openSetupDialog'])

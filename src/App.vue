@@ -22,7 +22,7 @@
           <v-btn
             v-bind="props"
             class="ma-2" :style="{ 'right': '24px', 'bottom': '24px', 'position': 'fixed', 'z-index': 4 }"
-            :icon="isHovering ? mdiFullscreenExit : mdiFullscreen" @click="toggle"
+            :icon="isHovering ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'" @click="toggle"
           />
         </template>
       </v-hover>
@@ -38,7 +38,6 @@
 import { onMounted, ref, watch } from 'vue'
 import { useDark, useFullscreen } from '@vueuse/core'
 import { useTheme } from 'vuetify'
-import { mdiFullscreen, mdiFullscreenExit } from '@mdi/js'
 import PlaceCard from '@/components/Cards/PlaceCard.vue'
 import AppBar from '@/components/AppBar.vue'
 import useWeather from '@/store/weather'

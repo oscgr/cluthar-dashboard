@@ -22,6 +22,9 @@ export default {
       return CompassPoint.SOUTH_EAST
     else return CompassPoint.NORTH
   },
+  getWeatherIcon(id: number, day?: boolean) {
+    return `wi:wi-owm${(typeof day !== 'undefined') ? (day ? '-day' : '-night') : ''}-${id}`
+  },
   getDegreesFromRadian(rad: number) {
     return Math.round(rad * 180 / Math.PI)
   },

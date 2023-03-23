@@ -1,6 +1,6 @@
 <template>
   <VForm ref="form" novalidate>
-    <v-dialog ref="setupDialog" v-model="show" width="700" scrollable transition="dialog-bottom-transition" :persistent="!tokenStore || !placeStore">
+    <v-dialog ref="setupDialog" v-model="show" :width="$vuetify.display.smAndDown ? '' : '700'" scrollable transition="dialog-bottom-transition" :persistent="!tokenStore || !placeStore" :fullscreen="$vuetify.display.smAndDown">
       <v-card>
         <v-card-title>Paramètres</v-card-title>
         <v-divider />
