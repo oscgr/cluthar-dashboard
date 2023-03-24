@@ -17,7 +17,7 @@
           <v-col>
             <div title="Phase de lune" class="text-h4 font-weight-thin text-capitalize" v-text="moonPhaseString" />
           </v-col>
-          <v-col class="flex-grow-0">
+          <v-col class="flex-grow-0 pb-4">
             <v-icon :icon="moonIcon" size="48" />
             <!--            <v-img class="ma-2" width="56px" alt="phase lunaire" :src="moonPhaseIcon" /> -->
           </v-col>
@@ -55,16 +55,16 @@
 
         <v-row no-gutters class="text-h6">
           <v-col class="flex-grow-0">
-            <v-icon title="Angle" size="24" style="width: 36px" icon="mdi-angle-acute" />
-          </v-col>
-          <v-col>
-            <span style="line-height: 35px" v-text="isHovering ? 'Angle' : moonAltitude" />
-          </v-col>
-          <v-col class="text-right">
-            <span style="line-height: 35px" v-text="isHovering ? 'Orientation' : moonAzimuth" />
+            <v-icon class="wi-wind" title="Angle" size="24" style="width: 36px" :icon="moonOrientationIcon" />
           </v-col>
           <v-col class="flex-grow-0">
-            <v-icon title="Angle" size="24" style="width: 36px" icon="mdi-compass" />
+            <span style="line-height: 35px" v-text="isHovering ? 'Orientation' : `${moonOrientation}°`" />
+          </v-col>
+          <v-col class="text-right">
+            <span style="line-height: 35px" v-text="isHovering ? 'Durée' : duration" />
+          </v-col>
+          <v-col class="flex-grow-0">
+            <v-icon title="Angle" size="24" style="width: 36px" icon="mdi-timer-outline" />
           </v-col>
         </v-row>
       </v-card-text>
@@ -99,20 +99,17 @@ const set = computed(() => setDateTime.value?.toLocaleString(DateTime.TIME_24_SI
 
 const setFromNow = computed(() => setDateTime.value && diffNowLocaleString(setDateTime.value))
 
-const moonAzimuth = computed(() => {
-  if (typeof moonPosition.value?.azimuth !== 'number')
-    return '?'
-  return t(`constants.COMPASS_POINT.${Global.getCompassPoint(moonPosition.value.azimuth)}`)
+const moonOrientation = computed(() => {
+  const angle = Global.getDegreesFromRadian(moonPosition.value?.azimuth || 0) + 180
+  return (angle > 0) ? angle : (360 + angle)
 })
+const moonOrientationIcon = computed(() => `wi:towards-${moonOrientation.value}-deg`)
 
-const moonAltitude = computed(() => {
-  if (typeof moonPosition.value?.altitude !== 'number')
+const duration = computed(() => {
+  if (!setDateTime.value || !riseDateTime.value)
     return '?'
-  return `${Global.getDegreesFromRadian(moonPosition.value.altitude)}°`
-})
-
-const moonPhaseIcon = computed(() => {
-  return moonPhase.value ? (`/icons/moonPhases/${moonPhase.value}.svg`) : ''
+  const diff = setDateTime.value?.diff(riseDateTime.value, ['hours', 'minutes', 'seconds'])
+  return `${diff.hours}h, ${diff.minutes}m et ${Math.floor(diff.seconds)}s`
 })
 
 const moonPhaseString = computed(() => moonPhase.value && t(`constants.MOON_PHASE.${moonPhase.value}`))

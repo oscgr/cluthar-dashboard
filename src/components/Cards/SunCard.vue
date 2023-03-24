@@ -15,9 +15,8 @@
           <v-col>
             <div class="text-h4 font-weight-thin text-capitalize" v-text="sunPhaseString" />
           </v-col>
-          <v-col class="flex-grow-0">
+          <v-col class="flex-grow-0 pb-4 pr-8">
             <v-icon :icon="sunIcon" size="48" />
-            <v-img width="72px" alt="météo" :src="sunIcon" />
           </v-col>
         </v-row>
 
@@ -53,11 +52,12 @@
 
         <v-row no-gutters class="text-h6">
           <v-col class="flex-grow-0">
-            <v-icon title="Angle" size="24" style="width: 36px" icon="mdi-compass" />
+            <v-icon class="wi-wind" title="Angle" size="24" style="width: 36px" :icon="sunOrientationIcon" />
           </v-col>
-          <v-col>
-            <span style="line-height: 35px" v-text="isHovering ? 'Angle' : sunAltitude" />
+          <v-col class="flex-grow-0">
+            <span style="line-height: 35px" v-text="isHovering ? 'Orientation' : `${sunOrientation}°`" />
           </v-col>
+          <v-col class="flex-grow-0" />
           <v-col class="text-right">
             <span style="line-height: 35px" v-text="isHovering ? 'Durée' : duration" />
           </v-col>
@@ -108,11 +108,11 @@ const duration = computed(() => {
 
 const sunPhaseString = computed(() => sunPhase.value && t(`constants.DAY_CYCLE.${sunPhase.value}`))
 
-const sunAltitude = computed(() => {
-  if (typeof sunPosition.value?.altitude !== 'number')
-    return '?'
-  return `${Global.getDegreesFromRadian(sunPosition.value.altitude)}°`
+const sunOrientation = computed(() => { // todo wrong value - see why
+  const angle = Global.getDegreesFromRadian(sunPosition.value?.azimuth || 0) + 180
+  return (angle > 0) ? angle : (360 + angle)
 })
+const sunOrientationIcon = computed(() => `wi:towards-${sunOrientation.value}-deg`)
 
 const sunIcon = computed(() => {
   switch (sunPhase.value) {
