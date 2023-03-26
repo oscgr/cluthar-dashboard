@@ -28,10 +28,10 @@
             <v-icon title="Lever de lune" size="24" style="width: 36px" icon="wi:wi-moonrise" />
           </v-col>
           <v-col>
-            <span style="line-height: 35px" v-text="isHovering ? 'Lever de lune' : rise" />
+            <span style="line-height: 35px" v-text="isHovering ? 'Lever de lune' : (rise || 'Hier')" />
           </v-col>
           <v-col class="text-right">
-            <span style="line-height: 35px" v-text="isHovering ? 'Relatif' : riseFromNow" />
+            <span style="line-height: 35px" v-text="isHovering ? 'Relatif' : (capitalize(riseFromNow) || '--')" />
           </v-col>
           <v-col class="flex-grow-0">
             <v-icon title="Lever de lune" size="24" style="width: 36px" icon="wi:wi-moonrise" />
@@ -43,10 +43,10 @@
             <v-icon title="Coucher de lune" size="24" style="width: 36px" icon="wi:wi-moonset" />
           </v-col>
           <v-col>
-            <span style="line-height: 35px" v-text="isHovering ? 'Coucher de lune' : set" />
+            <span style="line-height: 35px" v-text="isHovering ? 'Coucher de lune' : (set || 'Demain')" />
           </v-col>
           <v-col class="text-right">
-            <span style="line-height: 35px" v-text="isHovering ? 'Relatif' : setFromNow" />
+            <span style="line-height: 35px" v-text="isHovering ? 'Relatif' : (capitalize(setFromNow) || '--')" />
           </v-col>
           <v-col class="flex-grow-0">
             <v-icon title="Coucher de lune" size="24" style="width: 36px" icon="wi:wi-moonset" />
@@ -58,10 +58,10 @@
             <v-icon class="wi-wind" title="Angle" size="24" style="width: 36px" :icon="moonOrientationIcon" />
           </v-col>
           <v-col class="flex-grow-0">
-            <span style="line-height: 35px" v-text="isHovering ? 'Orientation' : `${moonOrientation}°`" />
+            <span style="line-height: 35px; white-space: nowrap" v-text="isHovering ? 'Orientation' : ((moonPosition.altitude > 0) ? capitalize(compass) : ('--'))" />
           </v-col>
           <v-col class="text-right">
-            <span style="line-height: 35px" v-text="isHovering ? 'Durée' : duration" />
+            <span style="line-height: 35px" v-text="isHovering ? 'Durée' : (displayDuration ? duration : '--')" />
           </v-col>
           <v-col class="flex-grow-0">
             <v-icon title="Angle" size="24" style="width: 36px" icon="mdi-timer-outline" />
@@ -77,6 +77,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDark } from '@vueuse/core'
 import { DateTime } from 'luxon'
+import { capitalize } from 'lodash'
 import useAstro from '@/store/astro'
 import Global from '@/utils/global'
 import { diffNowLocaleString } from '@/utils/durationDisplay'
@@ -104,6 +105,10 @@ const moonOrientation = computed(() => {
   return (angle > 0) ? angle : (360 + angle)
 })
 const moonOrientationIcon = computed(() => `wi:towards-${moonOrientation.value}-deg`)
+
+const compass = computed(() => moonPosition.value?.azimuth ? t(`constants.COMPASS_POINT.${Global.getCompassPoint(moonOrientation.value)}`) : '')
+
+const displayDuration = computed(() => riseDateTime.value && setDateTime.value && (riseDateTime.value < setDateTime.value))
 
 const duration = computed(() => {
   if (!setDateTime.value || !riseDateTime.value)

@@ -18,8 +18,8 @@
             <div title="température" class="text-h3 font-weight-thin" v-text="temperature" />
             <span v-if="temperature !== feelsLike" title="ressenti" class="" v-text="`Ressenti ${feelsLike}`" />
           </v-col>
-          <v-col v-if="isHovering" class="text-h4 text-right">
-            <span style="height: 48px" v-text="weatherDescription" />
+          <v-col v-if="isHovering" class="text-h4  text-right">
+            <span v-text="capitalize(weatherDescription)" />
           </v-col>
           <v-col v-else class="flex-grow-0 d-flex text-right pr-8">
             <v-icon v-for="weather in (payload.current?.weather || [])" :key="weather.id" :icon="weatherIcon(weather.id)" size="64" />
@@ -78,6 +78,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useDark } from '@vueuse/core'
+import { capitalize } from 'lodash'
 import useWeather from '@/store/weather'
 
 const dark = useDark()

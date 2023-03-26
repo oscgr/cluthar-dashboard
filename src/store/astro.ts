@@ -2,7 +2,7 @@ import { computed, reactive, toRefs } from 'vue'
 
 import SunCalc from 'suncalc'
 import { DateTime } from 'luxon'
-import {floor, round} from 'lodash'
+import { round } from 'lodash'
 import DayPhase from '@/enums/DayPhase'
 import MoonPhase from '@/enums/MoonPhase'
 import usePlace from '@/store/place'

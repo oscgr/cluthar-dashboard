@@ -23,7 +23,7 @@
           <span class=" " v-text="alert.description" />
         </v-col>
         <v-col cols="6">
-          <span class="font-weight-medium" v-text="`Depuis le ${unixFormatted(alert.start)} (${unixFromNow(alert.start)})`" />
+          <span class="font-weight-medium" v-text="`À partir du ${unixFormatted(alert.start)} (${unixFromNow(alert.start)})`" />
         </v-col>
         <v-col cols="6" class="text-right">
           <span class="font-weight-medium" v-text="`Jusqu'à ${unixFormatted(alert.end)} (${unixFromNow(alert.end)})`" />

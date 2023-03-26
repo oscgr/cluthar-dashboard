@@ -1,10 +1,10 @@
 <template>
-  <div class="font-weight-black" style="font-family: 'Roboto Condensed', sans-serif; font-size: 10px; padding-top: 50%" v-text="time" />
-  <div style="font-family: 'Roboto Condensed', sans-serif; font-size: 14px; white-space: nowrap" v-text="`${min}° / ${max}°`" />
+  <div class="font-weight-black" style="font-family: 'Roboto Condensed', sans-serif; font-size: 10px;" v-text="time" />
+  <div style="font-family: 'Roboto Condensed', sans-serif; font-size: 18px; white-space: nowrap" v-text="`${min}° / ${max}°`" />
   <v-icon :icon="weatherIcon(entry.weather[0].id, true)" size="32" />
 
-  <div class="font-weight-light pt-1" style="font-family: 'Roboto Condensed',sans-serif; font-size: 8px; " v-text="`M. ${morning} J. ${day}`" />
-  <div class="font-weight-light pt-1" style="font-family: 'Roboto Condensed',sans-serif; font-size: 8px; " v-text="`S. ${evening} N. ${night}`" />
+<!--    <div class="font-weight-light pt-1" style="font-family: 'Roboto Condensed',sans-serif; font-size: 8px; " v-text="`M. ${morning} J. ${day}`" /> -->
+<!--    <div class="font-weight-light pt-1" style="font-family: 'Roboto Condensed',sans-serif; font-size: 8px; " v-text="`S. ${evening} N. ${night}`" /> -->
 </template>
 
 <script lang="ts" setup>

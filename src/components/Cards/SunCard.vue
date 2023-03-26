@@ -28,7 +28,7 @@
             <span style="line-height: 35px" v-text="isHovering ? 'Lever de soleil' : sunrise" />
           </v-col>
           <v-col class="text-right">
-            <span style="line-height: 35px" v-text="isHovering ? 'Relatif' : sunriseFromNow" />
+            <span style="line-height: 35px" v-text="isHovering ? 'Relatif' : (capitalize(sunriseFromNow) || '--')" />
           </v-col>
           <v-col class="flex-grow-0">
             <v-icon title="Lever de lune" size="24" style="width: 36px" icon="wi:wi-sunrise" />
@@ -43,7 +43,7 @@
             <span style="line-height: 35px" v-text="isHovering ? 'Coucher de soleil' : sunset" />
           </v-col>
           <v-col class="text-right">
-            <span style="line-height: 35px" v-text="isHovering ? 'Relatif' : sunsetFromNow" />
+            <span style="line-height: 35px" v-text="isHovering ? 'Relatif' : (capitalize(sunsetFromNow) || '--')" />
           </v-col>
           <v-col class="flex-grow-0">
             <v-icon title="Coucher de lune" size="24" style="width: 36px" icon="wi:wi-sunset" />
@@ -55,7 +55,7 @@
             <v-icon class="wi-wind" title="Angle" size="24" style="width: 36px" :icon="sunOrientationIcon" />
           </v-col>
           <v-col class="flex-grow-0">
-            <span style="line-height: 35px" v-text="isHovering ? 'Orientation' : `${sunOrientation}°`" />
+            <span style="line-height: 35px; white-space: nowrap" v-text="isHovering ? 'Orientation' : ((sunPosition.altitude > 0) ? capitalize(compass) : ('--'))" />
           </v-col>
           <v-col class="flex-grow-0" />
           <v-col class="text-right">
@@ -75,6 +75,7 @@ import { computed } from 'vue'
 import { useDark } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 import { DateTime } from 'luxon'
+import { capitalize } from 'lodash'
 import useAstro from '@/store/astro'
 import DayPhase from '@/enums/DayPhase'
 
@@ -108,11 +109,13 @@ const duration = computed(() => {
 
 const sunPhaseString = computed(() => sunPhase.value && t(`constants.DAY_CYCLE.${sunPhase.value}`))
 
-const sunOrientation = computed(() => { // todo wrong value - see why
+const sunOrientation = computed(() => {
   const angle = Global.getDegreesFromRadian(sunPosition.value?.azimuth || 0) + 180
   return (angle > 0) ? angle : (360 + angle)
 })
 const sunOrientationIcon = computed(() => `wi:towards-${sunOrientation.value}-deg`)
+
+const compass = computed(() => sunPosition.value?.azimuth ? t(`constants.COMPASS_POINT.${Global.getCompassPoint(sunOrientation.value)}`) : '')
 
 const sunIcon = computed(() => {
   switch (sunPhase.value) {

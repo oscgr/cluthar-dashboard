@@ -2,6 +2,7 @@
   <v-card
     width="100%"
     height="100%"
+    min-height="150px"
     flat
     :loading="loading"
   >
@@ -9,21 +10,23 @@
       Veuillez renseigner votre token
     </v-card-subtitle>
     <template v-else>
-      <v-card-title class="position-absolute" v-text="`Tendances - une semaine`" />
-      <v-container fluid class="pa-0 position-absolute fill-height" style="z-index: 2">
-        <v-row no-gutters class="flex-nowrap justify-space-between px-3">
+      <VueApexCharts
+        :key="`chart_temp_${loading}${dark}`"
+        class="pt-2 ml-n8 position-absolute"
+        style="width: 114%; z-index: -1; pointer-events: none"
+        type="line"
+        :series="series"
+        :options="chartOptions"
+        height="140"
+      />
+      <v-card-title v-text="`Tendances - une semaine`" />
+      <v-card-text>
+        <v-row no-gutters class="flex-nowrap justify-space-between ">
           <v-col v-for="entry in chunkedDaily" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">
             <DailyTemperatureCardChartCol :entry="entry" />
           </v-col>
         </v-row>
-      </v-container>
-      <VueApexCharts
-        :key="`chart_temp_${loading}${dark}`"
-        type="line"
-        :series="series"
-        :options="chartOptions"
-        height="150"
-      />
+      </v-card-text>
     </template>
   </v-card>
 </template>
@@ -32,7 +35,7 @@
 import { computed } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import type { ApexOptions } from 'apexcharts'
-import { chunk, tail } from 'lodash'
+import { chunk, initial, tail } from 'lodash'
 import { useDark } from '@vueuse/core'
 import Global from '@/utils/global'
 import useWeather from '@/store/weather'
@@ -51,7 +54,8 @@ const CHART_CHUNK_SIZE = 1
 // })
 
 const noData = computed(() => typeof payload.value.daily === 'undefined')
-const chunkedDaily = computed(() => chunk(tail(payload.value.daily) || [], CHART_CHUNK_SIZE).map(([first]) => first))
+const chunkedDaily = computed(() => initial(tail(chunk(payload.value.daily || [], CHART_CHUNK_SIZE))).map(([first]) => first))
+const chunkedDailyForGraph = computed(() => chunk(payload.value.daily || [], CHART_CHUNK_SIZE).map(([first]) => first))
 const chartOptions = computed<ApexOptions>(() => {
   return {
     ...Global.getGlobalApexChartOptions(),
@@ -63,28 +67,28 @@ const series = computed(() => {
   return [
     {
       name: 'min',
-      data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.min]),
+      data: chunkedDailyForGraph.value.map(({ temp, dt }) => [dt, temp.min]),
     },
     {
       name: 'max',
-      data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.max]),
+      data: chunkedDailyForGraph.value.map(({ temp, dt }) => [dt, temp.max]),
     },
-    {
-      name: 'morn',
-      data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.morn]),
-    },
-    {
-      name: 'day',
-      data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.day]),
-    },
-    {
-      name: 'eve',
-      data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.eve]),
-    },
-    {
-      name: 'night',
-      data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.night]),
-    },
+    // {
+    //   name: 'morn',
+    //   data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.morn]),
+    // },
+    // {
+    //   name: 'day',
+    //   data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.day]),
+    // },
+    // {
+    //   name: 'eve',
+    //   data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.eve]),
+    // },
+    // {
+    //   name: 'night',
+    //   data: chunkedDaily.value.map(({ temp, dt }) => [dt, temp.night]),
+    // },
     // {
     //   name: 'wind',
     //   data: chunkedDaily.value.map(({ wind_speed, dt }) => [dt, wind_speed]),
@@ -99,11 +103,11 @@ const series = computed(() => {
     // },
   ]
 })
-const rain = computed(() => [
-  {
-    name: 'rain',
-    data: chunkedDaily.value.map(({ rain, dt }) => [dt, rain]),
-
-  },
-])
+// const rain = computed(() => [
+//   {
+//     name: 'rain',
+//     data: chunkedDaily.value.map(({ rain, dt }) => [dt, rain]),
+//
+//   },
+// ])
 </script>
