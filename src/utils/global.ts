@@ -28,6 +28,15 @@ export default {
   getDegreesFromRadian(rad: number) {
     return Math.round(rad * 180 / Math.PI)
   },
+  mergeApexChartOptions(partial: ApexOptions): ApexOptions {
+    return {
+      ...this.getGlobalApexChartOptions(),
+      ...partial,
+    }
+  },
+  /**
+   * @private use
+   */
   getGlobalApexChartOptions(): ApexOptions {
     return {
       dataLabels: {

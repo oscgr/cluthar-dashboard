@@ -9,10 +9,10 @@
       Veuillez renseigner votre token
     </v-card-subtitle>
     <template v-else>
-      <v-card-title class="position-absolute" v-text="`Précipitation dans l'heure`" />
-      <v-card-subtitle class="position-absolute mt-8" v-text="subtext" />
+      <v-card-title class="position-absolute" v-text="`Précipitation dans l'heure`"/>
+      <v-card-subtitle class="position-absolute mt-8" v-text="subtext"/>
       <v-card-text v-if="!anyPrecipitation" class="mt-8">
-        <span class="text-h5" v-text="'Aucune pluie enregistrée'" />
+        <span class="text-h5" v-text="'Aucune pluie enregistrée'"/>
       </v-card-text>
 
       <VueApexCharts
@@ -30,21 +30,21 @@
 
 <script lang="ts" setup>
 import VueApexCharts from 'vue3-apexcharts'
-import { computed } from 'vue'
-import type { ApexOptions } from 'apexcharts'
-import { chunk, floor } from 'lodash'
-import { DateTime } from 'luxon'
-import { useI18n } from 'vue-i18n'
-import { useDark } from '@vueuse/core'
+import {computed} from 'vue'
+import type {ApexOptions} from 'apexcharts'
+import {chunk, floor} from 'lodash'
+import {DateTime} from 'luxon'
+import {useI18n} from 'vue-i18n'
+import {useDark} from '@vueuse/core'
 import useWeather from '@/store/weather'
 import Global from '@/utils/global'
 import PrecipitationLevel from '@/enums/PrecipitationLevel'
-import { diffNowLocaleString } from '@/utils/durationDisplay'
+import {diffNowLocaleString} from '@/utils/durationDisplay'
 
 const CHART_CHUNK_SIZE = 10
 
-const { t } = useI18n()
-const { payload, loading } = useWeather()
+const {t} = useI18n()
+const {payload, loading} = useWeather()
 
 const dark = useDark()
 const noData = computed<boolean>(() => typeof payload.value.minutely === 'undefined')
@@ -75,77 +75,76 @@ const subtext = computed(() => {
   if (chunkedMinutely.value[0]?.precipitation !== 0)
     return t(`constants.PRECIPITATION_LEVEL.${getPrecipitationLevel(chunkedMinutely.value[0]?.precipitation)}`)
   else if (anyPrecipitation.value)
-    return `${t(`constants.PRECIPITATION_LEVEL.${getPrecipitationLevel(chunkedMinutely.value.find(({ precipitation }) => precipitation > 0)?.precipitation)}`)} ${diffNowLocaleString(DateTime.fromMillis(chunkedMinutely.value.find(({ precipitation }) => precipitation > 0)?.dt * 1000))}`
+    return `${t(`constants.PRECIPITATION_LEVEL.${getPrecipitationLevel(chunkedMinutely.value.find(({precipitation}) => precipitation > 0)?.precipitation)}`)} ${diffNowLocaleString(DateTime.fromMillis(chunkedMinutely.value.find(({precipitation}) => precipitation > 0)?.dt * 1000))}`
 })
 
 /* ==================== CHART ==================== */
 
 const chartOptions = computed<ApexOptions>(() => {
-  return {
-    ...Global.getGlobalApexChartOptions(),
-    stroke: {
-      colors: ['transparent'],
-    },
-    plotOptions: {
-      heatmap: {
-        radius: 0,
-        enableShades: false,
-        colorScale: {
-          ranges: [{
-            from: 0,
-            to: 0.1,
-            color: 'transparent',
-            // foreColor: '#000000',
-            name: PrecipitationLevel.NONE,
-          }, {
-            from: 0.1,
-            to: 1,
-            color: 'rgba(1,128,255,0.1)',
-            foreColor: dark.value ? '#EEEEEE' : '#000000',
-            name: PrecipitationLevel.DROPS,
-          }, {
-            from: 1,
-            to: 3,
-            color: 'rgba(1,128,255,0.2)',
-            foreColor: dark.value ? '#EEEEEE' : '#000000',
-            name: PrecipitationLevel.LIGHT,
-          }, {
-            from: 3,
-            to: 7,
-            color: 'rgba(1,128,255,0.4)',
-            // foreColor: undefined,
-            name: PrecipitationLevel.MODERATE,
-          }, {
-            from: 7,
-            to: 10000,
-            color: 'rgba(1,128,255,0.7)',
-            // foreColor: undefined,
-            name: PrecipitationLevel.HEAVY,
-          }],
-          inverse: false,
-          min: 0,
-          max: 8,
+  return Global.mergeApexChartOptions({
+      stroke: {
+        colors: ['transparent'],
+      },
+      plotOptions: {
+        heatmap: {
+          radius: 0,
+          enableShades: false,
+          colorScale: {
+            ranges: [{
+              from: 0,
+              to: 0.1,
+              color: 'transparent',
+              // foreColor: '#000000',
+              name: PrecipitationLevel.NONE,
+            }, {
+              from: 0.1,
+              to: 1,
+              color: 'rgba(1,128,255,0.1)',
+              foreColor: dark.value ? '#EEEEEE' : '#000000',
+              name: PrecipitationLevel.DROPS,
+            }, {
+              from: 1,
+              to: 3,
+              color: 'rgba(1,128,255,0.2)',
+              foreColor: dark.value ? '#EEEEEE' : '#000000',
+              name: PrecipitationLevel.LIGHT,
+            }, {
+              from: 3,
+              to: 7,
+              color: 'rgba(1,128,255,0.4)',
+              // foreColor: undefined,
+              name: PrecipitationLevel.MODERATE,
+            }, {
+              from: 7,
+              to: 10000,
+              color: 'rgba(1,128,255,0.7)',
+              // foreColor: undefined,
+              name: PrecipitationLevel.HEAVY,
+            }],
+            inverse: false,
+            min: 0,
+            max: 8,
+          },
         },
       },
-    },
-    dataLabels: {
-      enabled: true,
-      style: {
-        fontWeight: '100',
+      dataLabels: {
+        enabled: true,
+        style: {
+          fontWeight: '100',
+        },
+        formatter(val) {
+          if (!val)
+            return
+          return `${floor(Number(val), 1)}mm`
+        },
       },
-      formatter(val) {
-        if (!val)
-          return
-        return `${floor(Number(val), 1)}mm`
-      },
-    },
-  }
-},
-)
+    }
+  )
+})
 const series = computed<{ name: string; data: { x: number; y: number } }[]>(() => {
   return [{
     name: 'rain',
-    data: chunkedMinutely.value.map(({ dt, precipitation }) => ({ x: dt, y: precipitation })),
+    data: chunkedMinutely.value.map(({dt, precipitation}) => ({x: dt, y: precipitation})),
   }]
 })
 

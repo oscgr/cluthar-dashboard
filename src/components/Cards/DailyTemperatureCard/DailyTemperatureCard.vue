@@ -56,13 +56,7 @@ const CHART_CHUNK_SIZE = 1
 const noData = computed(() => typeof payload.value.daily === 'undefined')
 const chunkedDaily = computed(() => initial(tail(chunk(payload.value.daily || [], CHART_CHUNK_SIZE))).map(([first]) => first))
 const chunkedDailyForGraph = computed(() => chunk(payload.value.daily || [], CHART_CHUNK_SIZE).map(([first]) => first))
-const chartOptions = computed<ApexOptions>(() => {
-  return {
-    ...Global.getGlobalApexChartOptions(),
-    colors: ['rgba(0,0,255,0.1)', 'rgba(255,0,0,0.2)', dark.value ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', dark.value ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', dark.value ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', dark.value ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'],
-  }
-},
-)
+const chartOptions = computed<ApexOptions>(() => Global.mergeApexChartOptions({ colors: ['rgba(0,0,255,0.1)', 'rgba(255,0,0,0.2)', dark.value ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', dark.value ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', dark.value ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', dark.value ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)']}))
 const series = computed(() => {
   return [
     {

@@ -53,13 +53,7 @@ const COL_CHUNK_SIZE = 3
 const noData = computed(() => typeof payload.value.hourly === 'undefined')
 const chunkedHourly = computed(() => chunk(dropRight(payload.value.hourly, 24) || [], CHART_CHUNK_SIZE).map(([first]) => first))
 const chunkedCols = computed(() => initial(tail(chunk(dropRight(payload.value.hourly, 24) || [], COL_CHUNK_SIZE))).map(([first]) => first))
-const chartOptions = computed<ApexOptions>(() => {
-  return {
-    ...Global.getGlobalApexChartOptions(),
-    colors: [dark.value ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)', dark.value ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'],
-  }
-},
-)
+const chartOptions = computed<ApexOptions>(() => Global.mergeApexChartOptions({colors: [dark.value ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)', dark.value ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)']}))
 const series = computed(() => {
   return [
     {
