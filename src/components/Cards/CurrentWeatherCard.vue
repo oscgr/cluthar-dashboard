@@ -117,7 +117,7 @@ const isCloudy = computed(() => (payload.value.current?.clouds || 0) > 50)
 const wind = computed(() => {
   if (typeof payload.value.current?.wind_speed !== 'number')
     return '?'
-  return `${Math.floor(payload.value.current?.wind_speed)} km/h`
+  return `${Math.floor((payload.value.current?.wind_speed || 0) * 3.6)} km/h`
 })
 
 const weatherDescription = computed(() => (payload.value.current?.weather?.map(({ description }) => description) || []).join(', '))

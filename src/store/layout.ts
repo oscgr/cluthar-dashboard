@@ -8,6 +8,7 @@ export enum CardType {
   MOON_TODAY = 'MOON_TODAY',
   RAIN_NEXT_HOUR = 'RAIN_NEXT_HOUR',
   TEMP_NEXT_24H = 'TEMP_NEXT_24H',
+  RAIN_NEXT_24H = 'RAIN_NEXT_24H',
   WEATHER_NEXT_6D = 'WEATHER_NEXT_6D',
   WEATHER_ALERTS = 'WEATHER_ALERTS',
 }
@@ -48,20 +49,29 @@ const DEFAULT_LAYOUT = [
   },
   {
     size: '6',
+    cardType: CardType.RAIN_NEXT_24H,
+  },
+  {
+    size: '6',
     cardType: CardType.WEATHER_NEXT_6D,
   },
 ] satisfies Card[]
 
 const layout = useLocalStorage<Card[]>('layout', cloneDeep(DEFAULT_LAYOUT), { deep: true, serializer: StorageSerializers.object })
 
-const useLayout = () => {
+function useLayout() {
   /* ==================== ACTIONS ==================== */
 
   const availableCards = (cardTypes: CardType[]) => Object.values(CardType).filter(v => !cardTypes.includes(v))
 
+  const resetLayout = () => {
+    layout.value = cloneDeep(DEFAULT_LAYOUT)
+  }
+
   return {
     layout,
     availableCards,
+    resetLayout,
   }
 }
 

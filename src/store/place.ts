@@ -13,7 +13,7 @@ const place = useLocalStorage<Place | null>('place', null, { deep: true, seriali
 
 const loading = ref(false)
 
-const usePlace = () => {
+function usePlace() {
   /* ==================== ACTIONS ==================== */
 
   // const setCoordinatesAsCurrentPosition = () => {

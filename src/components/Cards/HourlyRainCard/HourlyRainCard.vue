@@ -15,12 +15,12 @@
         ref="chart"
         class="pt-2 ml-n5 position-absolute"
         style="width: 108%; z-index: -1; pointer-events: none"
-        type="line"
+        type="area"
         :series="series"
         :options="chartOptions"
         height="140"
       />
-      <v-card-title v-text="`Températures - aujourd'hui`" />
+      <v-card-title v-text="`Pluie - aujourd'hui`" />
       <v-card-text>
         <v-row no-gutters class="flex-nowrap justify-space-between ">
           <v-col v-for="entry in chunkedCols" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">
@@ -40,38 +40,56 @@ import { chunk, dropRight, initial, tail } from 'lodash'
 import { useDark } from '@vueuse/core'
 import Global from '@/utils/global'
 import useWeather from '@/store/weather'
-import ChartCol from '@/components/Cards/HourlyTemperatureCard/HourlyTemperatureCardChartCol.vue'
+import ChartCol from '@/components/Cards/HourlyRainCard/HourlyRainCardChartCol.vue'
 
 const { loading, payload } = useWeather()
 
 const chart = ref(null)
 const dark = useDark()
-const CHART_CHUNK_SIZE = 2
+const CHART_CHUNK_SIZE = 1
 const COL_CHUNK_SIZE = 3
 // const temperatures = computed(() => payload.value.hourly?.map(m => m.temp))
 
 const noData = computed(() => typeof payload.value.hourly === 'undefined')
 const chunkedHourly = computed(() => chunk(dropRight(payload.value.hourly, 24) || [], CHART_CHUNK_SIZE).map(([first]) => first))
 const chunkedCols = computed(() => initial(tail(chunk(dropRight(payload.value.hourly, 24) || [], COL_CHUNK_SIZE))).map(([first]) => first))
-const chartOptions = computed<ApexOptions>(() => Global.mergeApexChartOptions({ colors: [dark.value ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)', dark.value ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'] }))
+const chartOptions = computed<ApexOptions>(() => Global.mergeApexChartOptions({
+  yaxis: {
+    // TODO make dynamic if > 8mm but should be unusual - @see http://pluiesextremes.meteo.fr/france-metropole/Intensite-de-precipitations.html
+    // TODO If > 8mm display rain as red?
+    max: 8,
+  },
+  chart: {
+    type: 'area',
+  },
+  stroke: {
+    width: 0,
+    curve: 'stepline',
+    lineCap: 'square',
+    // dashArray: 3,
+  },
+  fill: {
+    opacity: 1,
+    type: 'solid',
+    // type: 'pattern',
+    // pattern: {
+    //   style: ['verticalLines', 'horizontalLines'],
+    //   width: 5,
+    //   height: 6,
+    // },
+    colors: ['rgba(1,128,255,0.4)'],
+  },
+  colors: ['rgba(1,128,255,0.4)'],
+}))
 const series = computed(() => {
   return [
     {
-      name: 'Températures',
-      data: chunkedHourly.value.map(({ temp, dt }) => [dt, temp]),
-    },
-    // TODO in options
-    {
-      name: 'Ressenti',
-      data: chunkedHourly.value.map(({ feels_like, dt }) => [dt, feels_like]),
+      name: 'Pluie (1h)',
+      data: chunkedHourly.value.map(({ rain, dt }) => [dt, rain?.['1h'] || 0]),
     },
     // {
-    //   name: 'Dew point',
-    //   data: chunkedHourly.value.map(({ dew_point, dt }) => [dt, dew_point]),
-    // },
-    // {
-    //   name: 'Wind',
-    //   data: chunkedHourly.value.map(({ wind_speed, dt }) => [dt, wind_speed]),
+    //   name: 'Vent (km/h)',
+    //   data: chunkedHourly.value.map(({ wind_speed, dt }) => [dt, wind_speed * 3.6]),
     // },
   ]
 })

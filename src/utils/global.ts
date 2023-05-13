@@ -1,5 +1,7 @@
 import type { ApexOptions } from 'apexcharts'
+import { merge } from 'lodash'
 import CompassPoint from '@/enums/CompassPoint'
+import type { RecursivePartial } from '@/util'
 
 export default {
   getCompassPoint(degrees: number) {
@@ -28,11 +30,8 @@ export default {
   getDegreesFromRadian(rad: number) {
     return Math.round(rad * 180 / Math.PI)
   },
-  mergeApexChartOptions(partial: ApexOptions): ApexOptions {
-    return {
-      ...this.getGlobalApexChartOptions(),
-      ...partial,
-    }
+  mergeApexChartOptions(partial: RecursivePartial<ApexOptions>): ApexOptions {
+    return merge(this.getGlobalApexChartOptions(), partial)
   },
   /**
    * @private use

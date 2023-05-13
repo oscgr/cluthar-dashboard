@@ -12,7 +12,7 @@ const state = reactive({
   payload: {} as Partial<Forecast>,
 })
 
-const useWeather = () => {
+function useWeather() {
   const { isDay } = useAstro()
   const { place } = usePlace()
 
@@ -22,9 +22,11 @@ const useWeather = () => {
     state.loading = true
 
     try {
-      // @ts-expect-error noData already make this null safe
       const { data } = await axios.get<Forecast>(`https://api.openweathermap.org/data/2.5/onecall?lang=fr&lat=${place.value.latitude}&lon=${place.value.longitude}&units=metric&appid=${token.value}`, {
-        // timeout: 5000,
+        timeout: 60000,
+        // headers: {
+        //   'Cache-Control': 'no-cache',
+        // },
       })
       state.payload = data
     }
@@ -39,7 +41,7 @@ const useWeather = () => {
 
   const weatherIcon = (id?: number, ignoreDay = false) => {
     if (!id)
-      return null
+      return undefined
 
     return Global.getWeatherIcon(id, ignoreDay ? undefined : isDay.value)
   }

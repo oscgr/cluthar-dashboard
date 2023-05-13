@@ -84,7 +84,8 @@
         </v-card-text>
         <v-divider />
         <v-card-actions>
-          <v-btn variant="text" :disabled="!tokenStore || !placeStore" @click="reset" v-text="'Réinitialiser'" />
+          <v-btn variant="flat" :disabled="!tokenStore || !placeStore" @click="reset" v-text="'Réinitialiser tout'" />
+          <v-btn variant="text" :disabled="!tokenStore || !placeStore" @click="resetLayoutOnly" v-text="'Réinitialiser la disposition'" />
           <v-spacer />
           <v-btn variant="text" :disabled="!tokenStore || !placeStore" @click="show = false" v-text="'Annuler'" />
           <v-btn variant="flat" color="primary" @click="save" v-text="'OK'" />
@@ -111,7 +112,7 @@ const form = ref<InstanceType<typeof VForm> | null>(null)
 
 const { token: tokenStore } = useWeather()
 const { place: placeStore } = usePlace()
-const { layout: layoutStore } = useLayout()
+const { layout: layoutStore, resetLayout } = useLayout()
 
 const state = reactive({
   grab: false,
@@ -132,7 +133,7 @@ const state = reactive({
   },
 })
 
-const open = () => {
+function open() {
   state.setup = {
     token: trim(tokenStore.value || ''),
     place: cloneDeep(placeStore.value),
@@ -143,7 +144,7 @@ const open = () => {
   state.show = true
 }
 
-const save = async () => {
+async function save() {
   try {
     const { valid } = await form.value?.validate()
     if (!valid)
@@ -162,8 +163,11 @@ const save = async () => {
   }
 }
 
-const reset = () => {
+function reset() {
   state.setup = cloneDeep(state.pristine)
+}
+function resetLayoutOnly() {
+  resetLayout()
 }
 
 const searchLocations = useDebounceFn(async (v: string) => {

@@ -10,7 +10,7 @@ const units: Intl.RelativeTimeFormatUnit[] = [
   'second',
 ]
 
-export const diffNowLocaleString = (dateTime: DateTime) => {
+export function diffNowLocaleString(dateTime: DateTime) {
   if (!dateTime.isValid)
     return
   const diff = dateTime.diffNow().shiftTo(...units)
@@ -21,7 +21,7 @@ export const diffNowLocaleString = (dateTime: DateTime) => {
   })
   return relativeFormatter.format(Math.trunc(diff.as(unit)), unit)
 }
-export const diffLocaleString = (start: DateTime, end: DateTime) => {
+export function diffLocaleString(start: DateTime, end: DateTime) {
   if (!start.isValid || !end.isValid)
     return
   const diff = start.diff(end).shiftTo(...units)

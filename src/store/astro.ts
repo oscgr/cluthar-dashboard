@@ -15,7 +15,7 @@ const state = reactive({
   moonIllumination: null as SunCalc.GetMoonIlluminationResult | null,
 })
 
-const useAstro = () => {
+function useAstro() {
   const { place } = usePlace()
 
   const HALF_HOUR = 1800000

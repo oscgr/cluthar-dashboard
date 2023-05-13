@@ -12,6 +12,7 @@
             <MoonCard v-else-if="card.cardType === CardType.MOON_TODAY" />
             <PrecipitationCard v-else-if="card.cardType === CardType.RAIN_NEXT_HOUR" />
             <HourlyTemperatureCard v-else-if="card.cardType === CardType.TEMP_NEXT_24H" />
+            <HourlyRainCard v-else-if="card.cardType === CardType.RAIN_NEXT_24H" />
             <DailyTemperatureCard v-else-if="card.cardType === CardType.WEATHER_NEXT_6D" />
             <AlertsCard v-else-if="card.cardType === CardType.WEATHER_ALERTS" />
           </v-col>
@@ -52,6 +53,8 @@ import DailyTemperatureCard from '@/components/Cards/DailyTemperatureCard/DailyT
 import SetupDialog from '@/components/SetupDialog.vue'
 import useLayout, { CardType } from '@/store/layout'
 import SunCard from '@/components/Cards/SunCard.vue'
+import HourlyRainCard from '@/components/Cards/HourlyRainCard/HourlyRainCard.vue'
+
 const { toggle } = useFullscreen()
 const dark = useDark()
 const { isFullscreen } = useFullscreen()
@@ -63,7 +66,7 @@ const theme = useTheme()
 const setupDialog = ref<InstanceType<typeof SetupDialog>>()
 
 const { layout } = useLayout()
-const openSetupDialog = () => {
+function openSetupDialog() {
   setupDialog.value?.open()
 }
 

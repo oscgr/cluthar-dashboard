@@ -7,9 +7,10 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { DateTime } from 'luxon'
+import type { HourlyDataBlock } from 'owm-onecall-api/dist/types/types/response/hourly'
 
 const props = defineProps<{
-  entry: { temp: number; feels_like: number; dt: number }
+  entry: HourlyDataBlock
 }>()
 
 const temperature = computed(() => `${Math.floor(props.entry.temp)}°`)

@@ -13,6 +13,7 @@ import { wi } from '@/assets/iconsets/wi'
 import App from '@/App.vue'
 import en from '@/locales/en.json'
 import fr from '@/locales/fr.json'
+
 import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
 
 import '@fontsource/roboto/latin.css'
