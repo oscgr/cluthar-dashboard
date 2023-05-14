@@ -31,14 +31,14 @@ const DEFAULT_LAYOUT = [
     size: '6',
     cardType: CardType.WEATHER_TODAY,
   },
-  {
-    size: '6',
-    cardType: CardType.SUN_TODAY,
-  },
-  {
-    size: '6',
-    cardType: CardType.MOON_TODAY,
-  },
+  // {
+  //   size: '6',
+  //   cardType: CardType.SUN_TODAY,
+  // },
+  // {
+  //   size: '6',
+  //   cardType: CardType.MOON_TODAY,
+  // },
   {
     size: '6',
     cardType: CardType.RAIN_NEXT_HOUR,
@@ -62,7 +62,7 @@ const layout = useLocalStorage<Card[]>('layout', cloneDeep(DEFAULT_LAYOUT), { de
 function useLayout() {
   /* ==================== ACTIONS ==================== */
 
-  const availableCards = (cardTypes: CardType[]) => Object.values(CardType).filter(v => !cardTypes.includes(v))
+  const availableCards = (cardTypes: CardType[]): CardType[] => Object.values(CardType).filter(v => !cardTypes.includes(v))
 
   const resetLayout = () => {
     layout.value = cloneDeep(DEFAULT_LAYOUT)
@@ -70,8 +70,8 @@ function useLayout() {
 
   return {
     layout,
-    availableCards,
     resetLayout,
+    availableCards,
   }
 }
 
