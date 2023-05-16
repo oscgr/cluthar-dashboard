@@ -7,8 +7,8 @@
   "license": "MIT",
   "scripts": {
     "build": "vite build",
-    "dev": "vite --port 1994",
-    "dev:open": "vite --port 1994 --host",
+    "dev": "vite --port 1994 --open",
+    "dev:open": "vite --port 1994 --host --open",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview"
@@ -28,20 +28,20 @@
     "vue-i18n": "^9.2.2",
     "vue3-apexcharts": "^1.4.1",
     "vuedraggable": "^4.1.0",
-    "vuetify": "^3.2.4"
+    "vuetify": "^3.2.5"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.38.6",
     "@mdi/font": "^7.2.96",
     "@types/lodash": "^4.14.194",
     "@types/luxon": "^3.3.0",
-    "@types/node": "~18.16.8",
+    "@types/node": "~18.16.10",
     "@types/suncalc": "^1.9.0",
     "@vitejs/plugin-vue": "^4.2.3",
     "eslint": "^8.40.0",
     "owm-onecall-api": "^1.3.0",
     "sass": "^1.62.1",
     "typescript": "^5.0.4",
-    "vite": "^4.3.5"
+    "vite": "^4.3.7"
   }
 }
