@@ -22,8 +22,15 @@ function useWeather() {
     state.loading = true
 
     try {
-      const { data } = await axios.get<Forecast>(`https://api.openweathermap.org/data/2.5/onecall?lang=fr&lat=${place.value.latitude}&lon=${place.value.longitude}&units=metric&appid=${token.value}`, {
+      const { data } = await axios.get<Forecast>('https://api.openweathermap.org/data/2.5/onecall', {
         timeout: 60000,
+        params: {
+          lang: 'fr',
+          lat: place.value?.latitude,
+          lon: place.value?.longitude,
+          units: 'metric',
+          appid: token.value,
+        },
         // headers: {
         //   'Cache-Control': 'no-cache',
         // },
