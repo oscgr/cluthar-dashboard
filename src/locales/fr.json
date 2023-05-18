@@ -52,7 +52,8 @@
       "TEMP_NEXT_24H": "Températures 24h",
       "RAIN_NEXT_24H": "Pluie/vent 24h",
       "WEATHER_NEXT_6D": "Météo 1 semaine",
-      "WEATHER_ALERTS": "Alertes météos"
+      "WEATHER_ALERTS": "Alertes météos",
+      "NASA_POTC": "NASA (photo du jour)"
     }
   }
 }

@@ -11,6 +11,7 @@ export enum CardType {
   RAIN_NEXT_24H = 'RAIN_NEXT_24H',
   WEATHER_NEXT_6D = 'WEATHER_NEXT_6D',
   WEATHER_ALERTS = 'WEATHER_ALERTS',
+  NASA_POTC = 'NASA_POTC',
 }
 export interface Card {
   size: '3' | '4' | '6' | '12'

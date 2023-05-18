@@ -15,6 +15,7 @@
             <HourlyRainCard v-else-if="card.cardType === CardType.RAIN_NEXT_24H" />
             <DailyTemperatureCard v-else-if="card.cardType === CardType.WEATHER_NEXT_6D" />
             <AlertsCard v-else-if="card.cardType === CardType.WEATHER_ALERTS" />
+            <NasaPictureOfTheDayCard v-else-if="card.cardType === CardType.NASA_POTC" />
           </v-col>
         </v-row>
       </v-container>
@@ -54,6 +55,7 @@ import SetupDialog from '@/components/SetupDialog.vue'
 import useLayout, { CardType } from '@/store/layout'
 import SunCard from '@/components/Cards/SunCard.vue'
 import HourlyRainCard from '@/components/Cards/HourlyRainCard/HourlyRainCard.vue'
+import NasaPictureOfTheDayCard from '@/components/Cards/NasaPictureOfTheDayCard.vue'
 
 const { toggle } = useFullscreen()
 const dark = useDark()
