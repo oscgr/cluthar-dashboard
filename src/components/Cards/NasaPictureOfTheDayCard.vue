@@ -11,7 +11,8 @@
       <v-img
         v-if="payload.url"
         aspect-ratio="16/9"
-        style="max-height: 500px"
+        :style="{ filter: isHovering ? 'opacity(0.2)' : '' }"
+        style="max-height: 500px;"
         cover :src="payload.hdurl" :lazy-src="payload.url" :alt="`${payload.title} - Copyright ${payload.copyright}`"
       >
         <template #placeholder>
@@ -23,9 +24,9 @@
           </div>
         </template>
       </v-img>
-      <v-card-title v-show="isHovering" class="text-white position-absolute" style="top: 0" v-text="payload.title" />
-      <v-card-subtitle v-show="isHovering" class="text-white position-absolute" style="top: 40px" v-text="`© ${payload.copyright}`" />
-      <v-card-text v-show="isHovering" class="text-white position-absolute text-justify" style="top: 70px" v-text="payload.explanation" />
+      <v-card-title v-show="isHovering" class=" position-absolute" style="top: 0" v-text="payload.title" />
+      <v-card-subtitle v-show="isHovering" class=" position-absolute" style="top: 40px" v-text="`© ${payload.copyright}`" />
+      <v-card-text v-show="isHovering" class=" position-absolute text-justify" style="top: 70px" v-text="payload.explanation" />
     </v-card>
   </v-hover>
 </template>
