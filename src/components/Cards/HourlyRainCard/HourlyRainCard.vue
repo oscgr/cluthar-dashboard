@@ -13,8 +13,8 @@
       <VueApexCharts
         :key="`chart_temp_${loading}${dark}`"
         ref="chart"
-        class="pt-2 ml-n5 position-absolute"
-        style="width: 108%; z-index: -1; pointer-events: none"
+        class=" position-absolute"
+        style="width: 100%; bottom: 0; z-index: -1; pointer-events: none"
         type="area"
         :series="series"
         :options="chartOptions"
