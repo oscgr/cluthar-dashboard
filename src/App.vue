@@ -60,7 +60,7 @@ import NasaPictureOfTheDayCard from '@/components/Cards/NasaPictureOfTheDayCard.
 const { toggle } = useFullscreen()
 const dark = useDark()
 const { isFullscreen } = useFullscreen()
-const { fetchWeather, token } = useWeather()
+const { fetchWeather } = useWeather()
 const { fetchAstro } = useAstro()
 const { place } = usePlace()
 const theme = useTheme()
@@ -80,7 +80,6 @@ onMounted(() => {
 // TODO do not watch - use after config save
 watch(place, fetchAstro, { immediate: true })
 watch(place, fetchWeather, { immediate: true })
-watch(token, fetchWeather)
 
 watch(dark, (v) => {
   theme.global.name.value = v ? 'dark' : 'light'

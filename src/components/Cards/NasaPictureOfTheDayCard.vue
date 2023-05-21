@@ -35,7 +35,7 @@
 <script lang="ts" setup>
 import { useDark, useToggle } from '@vueuse/core'
 import { onMounted, ref } from 'vue'
-import axios from 'axios'
+import useAxiosInstance from '@/store/axiosInstance'
 
 interface NasaAPIResponse {
   copyright: string
@@ -52,14 +52,12 @@ const payload = ref<NasaAPIResponse>({
   title: '',
   url: '',
 })
+
+const { local } = useAxiosInstance()
+
 onMounted(async () => {
   try {
-    const { data } = await axios.get<NasaAPIResponse>('https://api.nasa.gov/planetary/apod', {
-      params: {
-        api_key: import.meta.env.VITE_NASA_API_KEY,
-      },
-
-    })
+    const { data } = await local.get<NasaAPIResponse>('/api/nasa')
     payload.value = data
   }
   catch (e) {

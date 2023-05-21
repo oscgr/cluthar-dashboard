@@ -1,9 +1,9 @@
 import { reactive, toRefs } from 'vue'
-import axios from 'axios'
 import type { Forecast } from 'owm-onecall-api'
 import useAstro from '@/store/astro'
 import usePlace from '@/store/place'
 import Global from '@/utils/global'
+import useAxiosInstance from '@/store/axiosInstance'
 
 const state = reactive({
   loading: false,
@@ -13,25 +13,17 @@ const state = reactive({
 function useWeather() {
   const { isDay } = useAstro()
   const { place } = usePlace()
+  const { local } = useAxiosInstance()
 
   const fetchWeather = async () => {
-    if (!import.meta.env.VITE_OPEN_WEATHER_API_KEY)
-      return
     state.loading = true
 
     try {
-      const { data } = await axios.get<Forecast>('https://api.openweathermap.org/data/2.5/onecall', {
-        timeout: 60000,
+      const { data } = await local.get<Forecast>('/api/weather', {
         params: {
-          lang: 'fr',
           lat: place.value?.latitude,
           lon: place.value?.longitude,
-          units: 'metric',
-          appid: import.meta.env.VITE_OPEN_WEATHER_API_KEY,
         },
-        // headers: {
-        //   'Cache-Control': 'no-cache',
-        // },
       })
       state.payload = data
     }
