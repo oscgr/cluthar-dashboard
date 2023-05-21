@@ -114,19 +114,20 @@
 <script lang="ts" setup>
 import { reactive, ref, toRefs } from 'vue'
 import { cloneDeep, omit, orderBy, uniqBy } from 'lodash'
-import axios from 'axios'
 import { useDebounceFn } from '@vueuse/core'
 import { VForm } from 'vuetify/components/VForm'
 import type { Place } from '@/store/place'
 import usePlace from '@/store/place'
 import type { Card, CardType } from '@/store/layout'
 import useLayout from '@/store/layout'
+import useAxiosInstance from '@/store/axiosInstance'
 
 const setupDialog = ref(null)
 const form = ref<InstanceType<typeof VForm> | null>(null)
 
 const { place: placeStore } = usePlace()
 const { layout: layoutStore, resetLayout: resetLayoutStore, availableCards } = useLayout()
+const { local } = useAxiosInstance()
 
 const state = reactive({
   grab: false,
@@ -189,16 +190,13 @@ const searchLocations = useDebounceFn(async (q: string) => {
   if (q) {
     try {
       state.place.loading = true
-      const { data } = await axios.get<{
+      const { data } = await local.get<{
         lat: number
         lon: number
         display_name: string
-      }[]>('https://nominatim.openstreetmap.org/search', {
+      }[]>('/api/geo', {
         params: {
           q,
-          'format': 'json',
-          'accept-language': 'fr',
-          'limit': 5,
         },
       })
       state.place.items = uniqBy(data, 'display_name').map(result => ({

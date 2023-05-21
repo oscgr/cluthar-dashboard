@@ -52,6 +52,39 @@ fastify.get('/api/nasa', async () => {
   }
 })
 
+fastify.get('/api/geo', async (request) => {
+  try {
+    if (!request.query.q)
+      throw new Error('Please provide "q" query param')
+    const { data } = await axios.get('https://nominatim.openstreetmap.org/search', {
+      params: {
+        'q': request.query.q,
+        'format': 'json',
+        'accept-language': 'fr',
+        'limit': 5,
+      },
+    }) // eslint-disable-next-line no-console
+    console.log(`Fetch OSM data (q=${request.query.q})`)
+    return data
+  }
+  catch (e) {
+    return { error: true, details: e.message }
+  }
+})
+// fastify.get('/api/wiki/qotd', async () => {
+//   try {
+//     const { data } = await axios.get('https://fr.wikiquote.org/wiki/Wikiquote:Accueil', {
+//       headers: { 'content-type': 'application/json' },
+//     })
+//     // eslint-disable-next-line no-console
+//     console.log(`Fetch NASA APOD data (date=${new Date()})`)
+//     return data
+//   }
+//   catch (e) {
+//     return { error: true, details: e.message }
+//   }
+// })
+
 /**
  * Run the server!
  */
