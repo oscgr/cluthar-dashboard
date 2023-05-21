@@ -1,12 +1,10 @@
 import { reactive, toRefs } from 'vue'
 import axios from 'axios'
 import type { Forecast } from 'owm-onecall-api'
-import { useLocalStorage } from '@vueuse/core'
 import useAstro from '@/store/astro'
 import usePlace from '@/store/place'
 import Global from '@/utils/global'
 
-const token = useLocalStorage<string | null>('open-wi-map-token', null)
 const state = reactive({
   loading: false,
   payload: {} as Partial<Forecast>,
@@ -17,7 +15,7 @@ function useWeather() {
   const { place } = usePlace()
 
   const fetchWeather = async () => {
-    if (!token.value)
+    if (!import.meta.env.VITE_OPEN_WEATHER_API_KEY)
       return
     state.loading = true
 
@@ -29,7 +27,7 @@ function useWeather() {
           lat: place.value?.latitude,
           lon: place.value?.longitude,
           units: 'metric',
-          appid: token.value,
+          appid: import.meta.env.VITE_OPEN_WEATHER_API_KEY,
         },
         // headers: {
         //   'Cache-Control': 'no-cache',
@@ -39,7 +37,7 @@ function useWeather() {
     }
     catch (e) {
       if (import.meta.env.DEV) // when coding without internet
-        state.payload = JSON.parse(import.meta.env.VITE_FAKE_WEATHER)
+        state.payload = JSON.parse(import.meta.env.VITE_FAKE_OPEN_WEATHER)
     }
     finally {
       state.loading = false
@@ -57,7 +55,6 @@ function useWeather() {
 
   return {
     ...toRefs(state),
-    token,
     fetchWeather,
     weatherIcon,
   }

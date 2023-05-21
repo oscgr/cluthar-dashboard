@@ -2,7 +2,7 @@
   <VForm ref="form" novalidate>
     <v-dialog
       ref="setupDialog" v-model="show" :width="$vuetify.display.smAndDown ? '' : '700'" scrollable
-      transition="dialog-bottom-transition" :persistent="!tokenStore || !placeStore"
+      transition="dialog-bottom-transition" :persistent="!placeStore"
       :fullscreen="$vuetify.display.smAndDown"
     >
       <v-card>
@@ -32,21 +32,6 @@
                     <v-list-item v-bind="props" :title="item?.title" :subtitle="item.raw?.fullResult" />
                   </template>
                 </v-autocomplete>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12">
-                <p class="pb-2 ">
-                  Nécessaire pour récupérer les informations de météo de votre localisation.
-                  Pour en récupérer un : <a href="https://openweathermap.org/api" target="_blank">https://openweathermap.org/api</a>
-                </p>
-                <v-text-field
-                  v-model.trim="setup.token"
-                  :rules="[(v) => !!v || 'Requis']"
-                  type="password"
-                  label="Token Open Weather Map"
-                  placeholder="Entrez votre token"
-                />
               </v-col>
             </v-row>
             <v-row>
@@ -90,7 +75,7 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col>
+              <v-col class="text-center">
                 <v-menu>
                   <template #activator="{ props }">
                     <v-btn v-bind="props" :disabled="availableCards(setup.layout.map(({ cardType }) => cardType)).length === 0" variant="flat" color="primary">
@@ -113,15 +98,12 @@
         <v-divider />
         <v-card-actions>
           <v-btn
-            variant="flat" color="error" :disabled="!tokenStore || !placeStore" @click="reset"
-            v-text="'Réinitialiser tout'"
-          />
-          <v-btn
-            variant="text" :disabled="!tokenStore || !placeStore" @click="resetLayoutOnly"
-            v-text="'Réinitialiser la disposition'"
+            color="primary"
+            variant="outlined" :disabled="!placeStore" @click="resetLayout"
+            v-text="'Réinitialiser'"
           />
           <v-spacer />
-          <v-btn variant="text" :disabled="!tokenStore || !placeStore" @click="show = false" v-text="'Annuler'" />
+          <v-btn variant="text" :disabled="!placeStore" @click="show = false" v-text="'Annuler'" />
           <v-btn variant="flat" color="primary" @click="save" v-text="'OK'" />
         </v-card-actions>
       </v-card>
@@ -131,11 +113,10 @@
 
 <script lang="ts" setup>
 import { reactive, ref, toRefs } from 'vue'
-import { cloneDeep, omit, orderBy, trim, uniqBy } from 'lodash'
+import { cloneDeep, omit, orderBy, uniqBy } from 'lodash'
 import axios from 'axios'
 import { useDebounceFn } from '@vueuse/core'
 import { VForm } from 'vuetify/components/VForm'
-import useWeather from '@/store/weather'
 import type { Place } from '@/store/place'
 import usePlace from '@/store/place'
 import type { Card, CardType } from '@/store/layout'
@@ -144,9 +125,8 @@ import useLayout from '@/store/layout'
 const setupDialog = ref(null)
 const form = ref<InstanceType<typeof VForm> | null>(null)
 
-const { token: tokenStore } = useWeather()
 const { place: placeStore } = usePlace()
-const { layout: layoutStore, resetLayout, availableCards } = useLayout()
+const { layout: layoutStore, resetLayout: resetLayoutStore, availableCards } = useLayout()
 
 const state = reactive({
   grab: false,
@@ -156,12 +136,10 @@ const state = reactive({
     items: [] as Place[],
   },
   pristine: {
-    token: '' as string | null,
     place: null as Place | null,
     layout: [] as Card[],
   },
   setup: {
-    token: '' as string | null,
     place: null as Place | null,
     layout: [] as Card[],
   },
@@ -169,7 +147,6 @@ const state = reactive({
 
 function open() {
   state.setup = {
-    token: trim(tokenStore.value || ''),
     place: cloneDeep(placeStore.value),
     layout: cloneDeep(layoutStore.value),
   }
@@ -184,10 +161,8 @@ async function save() {
     if (!valid)
       return
 
-    if (state.setup.token !== state.pristine.token)
-      tokenStore.value = state.setup.token
-    if (state.setup.place !== state.pristine.place)
-      placeStore.value = omit(state.setup.place, ['fullResult'])
+    if (state.setup.place !== state.pristine.place) // check back on lodash typing sometime in the future (ban "as" => use "satisfies")
+      placeStore.value = omit(state.setup.place, ['fullResult']) as Omit<Place, 'fullResult'>
     if (state.setup.layout !== state.pristine.layout)
       layoutStore.value = state.setup.layout
     state.show = false
@@ -197,12 +172,8 @@ async function save() {
   }
 }
 
-function reset() {
-  state.setup = cloneDeep(state.pristine)
-}
-
-function resetLayoutOnly() {
-  resetLayout()
+function resetLayout() {
+  resetLayoutStore()
   state.setup.layout = cloneDeep(layoutStore.value)
   state.pristine.layout = cloneDeep(layoutStore.value)
 }
@@ -214,15 +185,22 @@ function removeCard(card: Card) {
   state.setup.layout = state.setup.layout.filter(({ cardType }) => card.cardType !== cardType)
 }
 
-const searchLocations = useDebounceFn(async (v: string) => {
-  if (v) {
+const searchLocations = useDebounceFn(async (q: string) => {
+  if (q) {
     try {
       state.place.loading = true
       const { data } = await axios.get<{
         lat: number
         lon: number
         display_name: string
-      }[]>(`https://nominatim.openstreetmap.org/search?q=${v}&format=jsonv2&accept-language=fr&limit=5`)
+      }[]>('https://nominatim.openstreetmap.org/search', {
+        params: {
+          q,
+          'format': 'json',
+          'accept-language': 'fr',
+          'limit': 5,
+        },
+      })
       state.place.items = uniqBy(data, 'display_name').map(result => ({
         latitude: result.lat,
         longitude: result.lon,

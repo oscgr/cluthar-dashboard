@@ -73,7 +73,7 @@ function openSetupDialog() {
 }
 
 onMounted(() => {
-  if (!place.value || !token.value)
+  if (!place.value)
     setupDialog.value?.open()
 })
 

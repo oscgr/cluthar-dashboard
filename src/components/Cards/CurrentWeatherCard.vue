@@ -8,11 +8,7 @@
       flat
       :color="cardColor"
     >
-      <v-card-subtitle v-if="Object.keys(payload).length === 0" class="pa-4">
-        Veuillez renseigner votre token
-      </v-card-subtitle>
-
-      <v-card-text v-else>
+      <v-card-text>
         <v-row no-gutters>
           <v-col>
             <div title="température" class="text-h3 font-weight-thin" v-text="temperature" />

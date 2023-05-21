@@ -5,26 +5,21 @@
     flat
     :loading="loading"
   >
-    <v-card-subtitle v-if="noData" class="pa-4">
-      Veuillez renseigner votre token
-    </v-card-subtitle>
-    <template v-else>
-      <v-card-title class="position-absolute" v-text="`Précipitation dans l'heure`" />
-      <v-card-subtitle class="position-absolute mt-8" v-text="subtext" />
-      <v-card-text v-if="!anyPrecipitation" class="mt-8">
-        <span class="text-h5" v-text="'Aucune pluie enregistrée'" />
-      </v-card-text>
+    <v-card-title class="position-absolute" v-text="`Précipitation dans l'heure`" />
+    <v-card-subtitle class="position-absolute mt-8" v-text="subtext" />
+    <v-card-text v-if="!anyPrecipitation" class="mt-8">
+      <span class="text-h5" v-text="'Aucune pluie enregistrée'" />
+    </v-card-text>
 
-      <VueApexCharts
-        v-else
-        :key="`chart_precipitations_${loading}${dark}_${series[0].data.x}`"
-        style="pointer-events: none"
-        type="heatmap"
-        :series="series"
-        :options="chartOptions"
-        height="150"
-      />
-    </template>
+    <VueApexCharts
+      v-else
+      :key="`chart_precipitations_${loading}${dark}_${series[0].data.x}`"
+      style="pointer-events: none"
+      type="heatmap"
+      :series="series"
+      :options="chartOptions"
+      height="150"
+    />
   </v-card>
 </template>
 
@@ -47,7 +42,6 @@ const { t } = useI18n()
 const { payload, loading } = useWeather()
 
 const dark = useDark()
-const noData = computed<boolean>(() => typeof payload.value.minutely === 'undefined')
 const anyPrecipitation = computed<boolean>(() => payload.value.minutely?.some(m => m.precipitation > 0) || false)
 
 const chunkedMinutely = computed(() => chunk(payload.value.minutely || [], CHART_CHUNK_SIZE).map(([first]) => first))

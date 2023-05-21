@@ -6,29 +6,24 @@
     flat
     :loading="loading"
   >
-    <v-card-subtitle v-if="noData" class="pa-4">
-      Veuillez renseigner votre token
-    </v-card-subtitle>
-    <template v-else>
-      <VueApexCharts
-        :key="`chart_temp_${loading}${dark}`"
-        ref="chart"
-        class="pt-2 ml-n5 position-absolute"
-        style="width: 108%; z-index: -1; pointer-events: none"
-        type="line"
-        :series="series"
-        :options="chartOptions"
-        height="140"
-      />
-      <v-card-title v-text="`Températures - aujourd'hui`" />
-      <v-card-text>
-        <v-row no-gutters class="flex-nowrap justify-space-between ">
-          <v-col v-for="entry in chunkedCols" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">
-            <ChartCol :entry="entry" />
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </template>
+    <VueApexCharts
+      :key="`chart_temp_${loading}${dark}`"
+      ref="chart"
+      class="pt-2 ml-n5 position-absolute"
+      style="width: 108%; z-index: -1; pointer-events: none"
+      type="line"
+      :series="series"
+      :options="chartOptions"
+      height="140"
+    />
+    <v-card-title v-text="`Températures - aujourd'hui`" />
+    <v-card-text>
+      <v-row no-gutters class="flex-nowrap justify-space-between ">
+        <v-col v-for="entry in chunkedCols" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">
+          <ChartCol :entry="entry" />
+        </v-col>
+      </v-row>
+    </v-card-text>
   </v-card>
 </template>
 
@@ -50,7 +45,6 @@ const CHART_CHUNK_SIZE = 2
 const COL_CHUNK_SIZE = 3
 // const temperatures = computed(() => payload.value.hourly?.map(m => m.temp))
 
-const noData = computed(() => typeof payload.value.hourly === 'undefined')
 const chunkedHourly = computed(() => chunk(dropRight(payload.value.hourly, 24) || [], CHART_CHUNK_SIZE).map(([first]) => first))
 const chunkedCols = computed(() => initial(tail(chunk(dropRight(payload.value.hourly, 24) || [], COL_CHUNK_SIZE))).map(([first]) => first))
 const chartOptions = computed<ApexOptions>(() => Global.mergeApexChartOptions({ colors: [dark.value ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)', dark.value ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'] }))
