@@ -22,7 +22,7 @@ export interface Card {
 const DEFAULT_LAYOUT = [
   {
     size: '12',
-    cardType: CardType.WEATHER_ALERTS,
+    cardType: CardType.NASA_POTC,
   },
   {
     size: '6',

@@ -6,16 +6,7 @@
       <v-container :fluid="isFullscreen">
         <v-row>
           <v-col v-for="card in layout" :key="card.cardType" cols="12" :md="card.size">
-            <PlaceCard v-if="card.cardType === CardType.PLACE" />
-            <CurrentWeatherCard v-else-if="card.cardType === CardType.WEATHER_TODAY" />
-            <SunCard v-else-if="card.cardType === CardType.SUN_TODAY" />
-            <MoonCard v-else-if="card.cardType === CardType.MOON_TODAY" />
-            <PrecipitationCard v-else-if="card.cardType === CardType.RAIN_NEXT_HOUR" />
-            <HourlyTemperatureCard v-else-if="card.cardType === CardType.TEMP_NEXT_24H" />
-            <HourlyRainCard v-else-if="card.cardType === CardType.RAIN_NEXT_24H" />
-            <DailyTemperatureCard v-else-if="card.cardType === CardType.WEATHER_NEXT_6D" />
-            <AlertsCard v-else-if="card.cardType === CardType.WEATHER_ALERTS" />
-            <NasaPictureOfTheDayCard v-else-if="card.cardType === CardType.NASA_POTC" />
+            <Component :is="getCardTypeComponent(card.cardType)" />
           </v-col>
         </v-row>
       </v-container>
@@ -37,10 +28,10 @@
 </template>
 
 <script setup lang="ts">
+import type { Component } from 'vue'
 import { onMounted, ref, watch } from 'vue'
 import { useDark, useFullscreen } from '@vueuse/core'
 import { useTheme } from 'vuetify'
-import PlaceCard from '@/components/Cards/PlaceCard.vue'
 import AppBar from '@/components/AppBar.vue'
 import useWeather from '@/store/weather'
 import MoonCard from '@/components/Cards/MoonCard.vue'
@@ -56,6 +47,7 @@ import useLayout, { CardType } from '@/store/layout'
 import SunCard from '@/components/Cards/SunCard.vue'
 import HourlyRainCard from '@/components/Cards/HourlyRainCard/HourlyRainCard.vue'
 import NasaPictureOfTheDayCard from '@/components/Cards/NasaPictureOfTheDayCard.vue'
+import PlaceCard from '@/components/Cards/PlaceCard.vue'
 
 const { toggle } = useFullscreen()
 const dark = useDark()
@@ -76,6 +68,31 @@ onMounted(() => {
   if (!place.value)
     setupDialog.value?.open()
 })
+
+function getCardTypeComponent(cardType: CardType): Component {
+  switch (cardType) {
+    case CardType.PLACE:
+      return PlaceCard
+    case CardType.WEATHER_TODAY:
+      return CurrentWeatherCard
+    case CardType.SUN_TODAY:
+      return SunCard
+    case CardType.MOON_TODAY:
+      return MoonCard
+    case CardType.RAIN_NEXT_HOUR:
+      return PrecipitationCard
+    case CardType.TEMP_NEXT_24H:
+      return HourlyTemperatureCard
+    case CardType.RAIN_NEXT_24H:
+      return HourlyRainCard
+    case CardType.WEATHER_NEXT_6D:
+      return DailyTemperatureCard
+    case CardType.WEATHER_ALERTS:
+      return AlertsCard
+    case CardType.NASA_POTC:
+      return NasaPictureOfTheDayCard
+  }
+}
 
 // TODO do not watch - use after config save
 watch(place, fetchAstro, { immediate: true })

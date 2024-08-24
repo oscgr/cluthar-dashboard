@@ -93,7 +93,7 @@ function useAstro() {
     else return MoonPhase.NEW_MOON
   })
 
-  const moonIcon = computed(() => `wi:wi-moon-${round(state.moonIllumination?.phase * 27)}`)
+  const moonIcon = computed(() => `wi:wi-moon-${round((state.moonIllumination?.phase || 0) * 27)}`)
 
   /* ==================== ACTIONS ==================== */
 
