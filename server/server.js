@@ -35,7 +35,7 @@ await fastify.register(cors, {
 })
 
 fastify.register(staticFiles, {
-  root: join(dirname(fileURLToPath(import.meta.url)), '../static'),
+  root: join(dirname(fileURLToPath(import.meta.url)), '../www'),
 })
 
 fastify.get('/', (req, reply) => {
