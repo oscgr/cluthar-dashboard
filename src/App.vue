@@ -14,6 +14,7 @@
         <template #default="{ isHovering, props }">
           <v-btn
             v-bind="props"
+            aria-label="Passer en plein écran"
             class="ma-2" :style="{ 'right': '24px', 'bottom': '24px', 'position': 'fixed', 'z-index': 4 }"
             :icon="isHovering ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'" @click="toggle"
           />

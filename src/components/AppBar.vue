@@ -2,18 +2,19 @@
   <v-app-bar app>
     <template #prepend>
       <!--      <v-icon class="wi wi-day-snow-thunderstorm" /> -->
-      <v-app-bar-nav-icon icon="wi:wi-day-snow-thunderstorm" />
+      <v-app-bar-nav-icon aria-label="Bouton logo page d'accueil" icon="wi:wi-day-snow-thunderstorm" />
     </template>
 
     <v-app-bar-title>Dashboard</v-app-bar-title>
 
     <template v-if="$vuetify.display.mdAndUp" #append>
       <v-switch
-        v-model="dark" hide-details class="mr-4 v-switch-light" inset true-icon="mdi-brightness-2" false-icon="mdi-brightness-5"
+        v-model="dark"
+        aria-label="Passer en mode sombre" hide-details class="mr-4 v-switch-light" inset true-icon="mdi-brightness-2" false-icon="mdi-brightness-5"
       />
       <v-tooltip open-delay="500" text="Paramètres">
         <template #activator="{ props }">
-          <v-btn class="mr-2" icon="mdi-cog-outline" v-bind="props" @click="$emit('openSetupDialog')" />
+          <v-btn class="mr-2" aria-label="Paramètres" icon="mdi-cog-outline" v-bind="props" @click="$emit('openSetupDialog')" />
         </template>
       </v-tooltip>
     </template>
