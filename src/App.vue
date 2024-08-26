@@ -20,6 +20,7 @@
           />
         </template>
       </v-hover>
+      <ErrorsSnackbar />
     </v-main>
     <SetupDialog ref="setupDialog" />
     <!--    <v-footer v-show="!isFullscreen" app> -->
@@ -49,6 +50,7 @@ import SunCard from '@/components/Cards/SunCard.vue'
 import HourlyRainCard from '@/components/Cards/HourlyRainCard/HourlyRainCard.vue'
 import NasaPictureOfTheDayCard from '@/components/Cards/NasaPictureOfTheDayCard.vue'
 import PlaceCard from '@/components/Cards/PlaceCard.vue'
+import ErrorsSnackbar from '@/ErrorsSnackbar.vue'
 
 const { toggle } = useFullscreen()
 const dark = useDark()
