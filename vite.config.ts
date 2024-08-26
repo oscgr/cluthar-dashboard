@@ -4,6 +4,10 @@ import Vue from '@vitejs/plugin-vue'
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 
 export default defineConfig({
+  build: {
+    sourcemap: true,
+    outDir: path.resolve(__dirname, 'static'),
+  },
   resolve: {
     alias: {
       '@/': `${path.resolve(__dirname, 'src')}/`,

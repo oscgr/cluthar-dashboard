@@ -76,7 +76,6 @@ const vuetify = createVuetify({
       wi,
     },
   },
-
 })
 
 createApp(App)

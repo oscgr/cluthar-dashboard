@@ -1,19 +1,32 @@
+import process from 'node:process'
+import { fileURLToPath } from 'node:url'
+import { dirname, join } from 'node:path'
 import Fastify from 'fastify'
 import axios from 'axios'
+import helmet from '@fastify/helmet'
+import rateLimit from '@fastify/rate-limit'
+import staticFiles from '@fastify/static'
 import cors from '@fastify/cors'
 
-const fastify = Fastify({})
+const fastify = Fastify({
+  logger: true,
+})
+await fastify.register(helmet)
+await fastify.register(rateLimit, {
+  max: 100,
+  timeWindow: '1 minute',
+})
+
 await fastify.register(cors, {
-  origin: (origin, cb) => {
-    const hostname = new URL(origin).hostname
-    if (hostname === 'localhost') {
-      //  Request from localhost will pass
-      cb(null, true)
-      return
-    }
-    // Generate an error on other origins, disabling access
-    cb(new Error('Not allowed'), false)
-  },
+  origin: false,
+})
+
+fastify.register(staticFiles, {
+  root: join(dirname(fileURLToPath(import.meta.url)), '../static'),
+})
+
+fastify.get('/', (req, reply) => {
+  reply.sendFile('index.html')
 })
 
 fastify.get('/api/weather', async (request) => {
@@ -36,6 +49,7 @@ fastify.get('/api/weather', async (request) => {
     return { error: true, details: e.message }
   }
 })
+
 fastify.get('/api/nasa', async () => {
   try {
     const { data } = await axios.get('https://api.nasa.gov/planetary/apod', {
