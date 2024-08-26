@@ -18,7 +18,20 @@ await fastify.register(rateLimit, {
 })
 
 await fastify.register(cors, {
-  origin: false,
+  origin: (origin, cb) => {
+    if (!origin) {
+      cb(null, true)
+      return
+    }
+    const hostname = new URL(origin).hostname
+    if (hostname === 'localhost') {
+      //  Request from localhost will pass
+      cb(null, true)
+      return
+    }
+    // Generate an error on other origins, disabling access
+    cb(new Error('Not allowed'), false)
+  },
 })
 
 fastify.register(staticFiles, {
