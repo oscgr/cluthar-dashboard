@@ -3,7 +3,6 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import Fastify from 'fastify'
 import axios from 'axios'
-import helmet from '@fastify/helmet'
 import rateLimit from '@fastify/rate-limit'
 import staticFiles from '@fastify/static'
 import cors from '@fastify/cors'
@@ -11,7 +10,7 @@ import cors from '@fastify/cors'
 const fastify = Fastify({
   logger: true,
 })
-await fastify.register(helmet)
+
 await fastify.register(rateLimit, {
   max: 100,
   timeWindow: '1 minute',
@@ -54,8 +53,7 @@ fastify.get('/api/weather', async (request) => {
         ...request.query,
       },
     })
-    // eslint-disable-next-line no-console
-    console.log(`Fetch OWM data (lat=${request.query.lat},lon=${request.query.lon})`)
+    fastify.log.info(`Fetch OWM data (lat=${request.query.lat},lon=${request.query.lon})`)
     return data
   }
   catch (e) {
@@ -70,8 +68,7 @@ fastify.get('/api/nasa', async () => {
         api_key: process.env.NASA_API_KEY,
       },
     })
-    // eslint-disable-next-line no-console
-    console.log(`Fetch NASA APOD data (date=${new Date()})`)
+    fastify.log.info(`Fetch NASA APOD data (date=${new Date()})`)
     return data
   }
   catch (e) {
@@ -90,8 +87,8 @@ fastify.get('/api/geo', async (request) => {
         'accept-language': 'fr',
         'limit': 5,
       },
-    }) // eslint-disable-next-line no-console
-    console.log(`Fetch OSM data (q=${request.query.q})`)
+    })
+    fastify.log.info(`Fetch OSM data (q=${request.query.q})`)
     return data
   }
   catch (e) {
