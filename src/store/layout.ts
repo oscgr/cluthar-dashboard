@@ -11,6 +11,7 @@ export enum CardType {
   RAIN_NEXT_24H = 'RAIN_NEXT_24H',
   WEATHER_NEXT_6D = 'WEATHER_NEXT_6D',
   WEATHER_ALERTS = 'WEATHER_ALERTS',
+  COCKTAIL = 'COCKTAIL',
   NASA_POTC = 'NASA_POTC',
 }
 export interface Card {
@@ -32,14 +33,6 @@ const DEFAULT_LAYOUT = [
     size: '6',
     cardType: CardType.WEATHER_TODAY,
   },
-  // {
-  //   size: '6',
-  //   cardType: CardType.SUN_TODAY,
-  // },
-  // {
-  //   size: '6',
-  //   cardType: CardType.MOON_TODAY,
-  // },
   {
     size: '6',
     cardType: CardType.RAIN_NEXT_HOUR,

@@ -51,6 +51,7 @@ import HourlyRainCard from '@/components/Cards/HourlyRainCard/HourlyRainCard.vue
 import NasaPictureOfTheDayCard from '@/components/Cards/NasaPictureOfTheDayCard.vue'
 import PlaceCard from '@/components/Cards/PlaceCard.vue'
 import ErrorsSnackbar from '@/ErrorsSnackbar.vue'
+import CocktailCard from '@/components/Cards/CocktailCard.vue'
 
 const { toggle } = useFullscreen()
 const dark = useDark()
@@ -94,6 +95,8 @@ function getCardTypeComponent(cardType: CardType): Component {
       return AlertsCard
     case CardType.NASA_POTC:
       return NasaPictureOfTheDayCard
+    case CardType.COCKTAIL:
+      return CocktailCard
   }
 }
 

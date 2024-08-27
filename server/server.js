@@ -95,19 +95,18 @@ fastify.get('/api/geo', async (request) => {
     return { error: true, details: e.message }
   }
 })
-// fastify.get('/api/wiki/qotd', async () => {
-//   try {
-//     const { data } = await axios.get('https://fr.wikiquote.org/wiki/Wikiquote:Accueil', {
-//       headers: { 'content-type': 'application/json' },
-//     })
-//     // eslint-disable-next-line no-console
-//     console.log(`Fetch NASA APOD data (date=${new Date()})`)
-//     return data
-//   }
-//   catch (e) {
-//     return { error: true, details: e.message }
-//   }
-// })
+fastify.get('/api/cocktail', async () => {
+  try {
+    const { data } = await axios.get('https://www.thecocktaildb.com/api/json/v1/1/random.php', {
+      headers: { 'content-type': 'application/json' },
+    })
+    fastify.log.info(`Fetch random cocktail (date=${new Date()})`)
+    return data?.drinks?.[0]
+  }
+  catch (e) {
+    return { error: true, details: e.message }
+  }
+})
 
 /**
  * Run the server!
