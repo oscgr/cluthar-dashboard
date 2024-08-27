@@ -79,7 +79,7 @@ const series = computed(() => {
   return [
     {
       name: 'Pluie (1h)',
-      data: chunkedHourly.value.map(({ rain, dt }) => [dt, rain?.['1h'] || 0]),
+      data: chunkedHourly.value?.map(({ rain, dt }) => [dt, rain?.['1h'] || 0]) || [],
     },
     // {
     //   name: 'Vent (km/h)',
