@@ -52,11 +52,14 @@ import NasaPictureOfTheDayCard from '@/components/Cards/NasaPictureOfTheDayCard.
 import PlaceCard from '@/components/Cards/PlaceCard.vue'
 import ErrorsSnackbar from '@/ErrorsSnackbar.vue'
 import CocktailCard from '@/components/Cards/CocktailCard.vue'
+import usePollution from '@/store/pollution'
+import PollutionCard from '@/components/PollutionCard.vue'
 
 const { toggle } = useFullscreen()
 const dark = useDark()
 const { isFullscreen } = useFullscreen()
 const { fetchWeather } = useWeather()
+const { fetchPollution } = usePollution()
 const { fetchAstro } = useAstro()
 const { place } = usePlace()
 const theme = useTheme()
@@ -97,12 +100,15 @@ function getCardTypeComponent(cardType: CardType): Component {
       return NasaPictureOfTheDayCard
     case CardType.COCKTAIL:
       return CocktailCard
+    case CardType.POLLUTION:
+      return PollutionCard
   }
 }
 
 // TODO do not watch - use after config save
 watch(place, fetchAstro, { immediate: true })
 watch(place, fetchWeather, { immediate: true })
+watch(place, fetchPollution, { immediate: true })
 
 watch(dark, (v) => {
   theme.global.name.value = v ? 'dark' : 'light'

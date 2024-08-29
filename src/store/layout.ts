@@ -13,6 +13,7 @@ export enum CardType {
   WEATHER_ALERTS = 'WEATHER_ALERTS',
   COCKTAIL = 'COCKTAIL',
   NASA_POTC = 'NASA_POTC',
+  POLLUTION = 'POLLUTION',
 }
 export interface Card {
   size: '3' | '4' | '6' | '12'

@@ -61,6 +61,31 @@ fastify.get('/api/weather', async (request) => {
   }
 })
 
+fastify.get('/api/pollution', async (request) => {
+  try {
+    if (!request.query.lat || !request.query.lon)
+      throw new Error('Please provide both "lat" and "lon" query params')
+    const { data } = await axios.get('https://air-quality-api.open-meteo.com/v1/air-quality', {
+      params: {
+        lang: 'fr',
+        units: 'metric',
+        current: 'european_aqi',
+        hourly: 'european_aqi',
+        forecast_days: '1',
+        domains: 'cams_europe',
+        latitude: request.query.lat,
+        longitude: request.query.lon,
+        timezone: 'auto',
+      },
+    })
+    fastify.log.info(`Fetch pollution data (lat=${request.query.lat},lon=${request.query.lon})`)
+    return data
+  }
+  catch (e) {
+    return { error: true, details: e.message }
+  }
+})
+
 fastify.get('/api/nasa', async () => {
   try {
     const { data } = await axios.get('https://api.nasa.gov/planetary/apod', {

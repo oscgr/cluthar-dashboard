@@ -44,6 +44,7 @@
       "HEAVY": "pluie forte"
     },
     "LAYOUT_CARD": {
+      "POLLUTION": "Qualité de l'air",
       "PLACE": "Localisation",
       "WEATHER_TODAY": "Météo maintenant",
       "SUN_TODAY": "Infos soleil",
