@@ -21,7 +21,7 @@
                   :items="place.items"
                   :rules="[(v) => !!v || 'Requis']"
                   return-object
-                  :item-title="(v) => v.name ? `${v.name}, ${v.country}` : ''"
+                  :item-title="(v) => `${v.name} (${v.postcode || v.country})`"
                   label="Ville ou localisation"
                   :loading="place.loading"
                   hide-no-data
@@ -29,7 +29,7 @@
                   @update:search="searchLocations"
                 >
                   <template #item="{ item, props }">
-                    <v-list-item v-bind="props" :title="item?.title" :subtitle="item.raw?.fullResult" />
+                    <v-list-item v-bind="props" :title="item?.title" :subtitle="item.raw.administrative" />
                   </template>
                 </v-autocomplete>
               </v-col>
@@ -113,7 +113,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref, toRefs } from 'vue'
-import { cloneDeep, omit, orderBy, uniqBy } from 'lodash'
+import { cloneDeep, omit, orderBy, sortBy } from 'lodash'
 import { useDebounceFn } from '@vueuse/core'
 import { VForm } from 'vuetify/components/VForm'
 import type { Place } from '@/store/place'
@@ -191,20 +191,27 @@ const searchLocations = useDebounceFn(async (q: string) => {
     try {
       state.place.loading = true
       const { data } = await local.get<{
-        lat: number
-        lon: number
-        display_name: string
+        latitude: number
+        longitude: number
+        name: string
+        country: string
+        postcodes: string[]
+        admin1?: string
+        admin2?: string
+        admin3?: string
+        admin4?: string
       }[]>('/api/geo', {
         params: {
           q,
         },
       })
-      state.place.items = uniqBy(data, 'display_name').map(result => ({
-        latitude: result.lat,
-        longitude: result.lon,
-        name: result.display_name?.split(', ')[0],
-        country: result.display_name?.split(', ')[result.display_name?.split(',').length - 1],
-        fullResult: result.display_name,
+      state.place.items = data.map(result => ({
+        latitude: result.latitude,
+        longitude: result.longitude,
+        name: result.name,
+        country: result.country,
+        administrative: [1, 2, 3, 4].map(i => result[`admin${i}`]).filter(v => !!v).join(', '),
+        postcode: sortBy(result.postcodes)[0],
       }))
     }
     catch (e) {

@@ -80,16 +80,16 @@ fastify.get('/api/geo', async (request) => {
   try {
     if (!request.query.q)
       throw new Error('Please provide "q" query param')
-    const { data } = await axios.get('https://nominatim.openstreetmap.org/search', {
+    const { data } = await axios.get('https://geocoding-api.open-meteo.com/v1/search', {
       params: {
-        'q': request.query.q,
-        'format': 'json',
-        'accept-language': 'fr',
-        'limit': 5,
+        name: request.query.q,
+        format: 'json',
+        language: 'fr',
+        count: 5,
       },
     })
-    fastify.log.info(`Fetch OSM data (q=${request.query.q})`)
-    return data
+    fastify.log.info(`Fetch geocoding data (q=${request.query.q})`)
+    return data.results
   }
   catch (e) {
     return { error: true, details: e.message }
