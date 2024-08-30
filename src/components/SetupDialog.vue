@@ -36,6 +36,18 @@
             </v-row>
             <v-row>
               <v-col cols="12">
+                <p class="pb-2 ">
+                  Veuillez saisir le serveur
+                </p>
+                <v-text-field
+                  v-model="setup.server"
+                  :rules="[(v) => !!v || 'Requis']"
+                  label="Serveur"
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
                 <div class="text-subtitle-1">
                   Disposition
                 </div>
@@ -49,19 +61,19 @@
                       <v-card variant="outlined" :style="{ cursor: grab ? 'grabbing' : 'grab' }">
                         <v-btn variant="flat" size="sm" icon="mdi-close" class="position-absolute mt-1 mr-1" style="right: 0" @click="removeCard(element)" />
                         <v-card-text class="text-center pa-2">
-                          <div v-text="$t(`constants.LAYOUT_CARD.${element.cardType}`)" />
+                          <div v-text="t(`constants.LAYOUT_CARD.${element.cardType}`)" />
                           <v-chip-group
-                            v-model="element.size" class="justify-center" color="primary" mandatory
+                            v-model="element.size" class="justify-content-center" color="primary" mandatory
                             variant="outlined"
                           >
-                            <v-chip value="3">
-                              ¼
-                            </v-chip>
                             <v-chip value="4">
                               ⅓
                             </v-chip>
                             <v-chip value="6">
                               ½
+                            </v-chip>
+                            <v-chip value="8">
+                              ⅔
                             </v-chip>
                             <v-chip value="12">
                               1
@@ -84,10 +96,10 @@
                   </template>
                   <v-list>
                     <v-list-item
-                      v-for="availableCard in orderBy(availableCards(setup.layout.map(({ cardType }) => cardType)), v => $t(`constants.LAYOUT_CARD.${v}`))"
+                      v-for="availableCard in orderBy(availableCards(setup.layout.map(({ cardType }) => cardType)), v => t(`constants.LAYOUT_CARD.${v}`))"
                       :key="availableCard" @click="() => addCard(availableCard)"
                     >
-                      <v-list-item-title v-text="$t(`constants.LAYOUT_CARD.${availableCard}`)" />
+                      <v-list-item-title v-text="t(`constants.LAYOUT_CARD.${availableCard}`)" />
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -116,6 +128,7 @@ import { reactive, ref, toRefs } from 'vue'
 import { cloneDeep, omit, orderBy, sortBy } from 'lodash'
 import { useDebounceFn } from '@vueuse/core'
 import { VForm } from 'vuetify/components/VForm'
+import { useI18n } from 'vue-i18n'
 import type { Place } from '@/store/place'
 import usePlace from '@/store/place'
 import type { Card, CardType } from '@/store/layout'
@@ -127,8 +140,8 @@ const form = ref<InstanceType<typeof VForm> | null>(null)
 
 const { place: placeStore } = usePlace()
 const { layout: layoutStore, resetLayout: resetLayoutStore, availableCards } = useLayout()
-const { local } = useAxiosInstance()
-
+const { local, server } = useAxiosInstance()
+const { t } = useI18n()
 const state = reactive({
   grab: false,
   show: false,
@@ -138,10 +151,12 @@ const state = reactive({
   },
   pristine: {
     place: null as Place | null,
+    server: null as string | null,
     layout: [] as Card[],
   },
   setup: {
     place: null as Place | null,
+    server: null as string | null,
     layout: [] as Card[],
   },
 })
@@ -150,6 +165,7 @@ function open() {
   state.setup = {
     place: cloneDeep(placeStore.value),
     layout: cloneDeep(layoutStore.value),
+    server: cloneDeep(server.value),
   }
   state.pristine = cloneDeep(state.setup)
 
@@ -157,26 +173,26 @@ function open() {
 }
 
 async function save() {
-  try {
-    const { valid } = await form.value?.validate()
-    if (!valid)
-      return
+  const { valid } = await form.value?.validate()
+  if (!valid)
+    return
 
-    if (state.setup.place !== state.pristine.place) // check back on lodash typing sometime in the future (ban "as" => use "satisfies")
-      placeStore.value = omit(state.setup.place, ['fullResult']) as Omit<Place, 'fullResult'>
-    if (state.setup.layout !== state.pristine.layout)
-      layoutStore.value = state.setup.layout
-    state.show = false
-  }
-  catch (e) {
-    //
-  }
+  if (state.setup.place !== state.pristine.place) // check back on lodash typing sometime in the future (ban "as" => use "satisfies")
+    placeStore.value = omit(state.setup.place, ['fullResult']) as Omit<Place, 'fullResult'>
+  if (state.setup.layout !== state.pristine.layout)
+    layoutStore.value = state.setup.layout
+  if (state.setup.server !== state.pristine.server)
+    server.value = state.setup.server
+  state.show = false
+  if (state.setup.server !== state.pristine.server)
+    location.reload() // might be a better way to force axios instance recreation
 }
 
 function resetLayout() {
   resetLayoutStore()
   state.setup.layout = cloneDeep(layoutStore.value)
   state.pristine.layout = cloneDeep(layoutStore.value)
+  state.pristine.server = cloneDeep(server.value)
 }
 
 function addCard(cardType: CardType) {
@@ -210,7 +226,7 @@ const searchLocations = useDebounceFn(async (q: string) => {
         longitude: result.longitude,
         name: result.name,
         country: result.country,
-        administrative: [1, 2, 3, 4].map(i => result[`admin${i}`]).filter(v => !!v).join(', '),
+        administrative: ['1', '2', '3', '4'].map(i => result[`admin${i as '1' | '2' | '3' | '4'}`]).filter(v => !!v).join(', '),
         postcode: sortBy(result.postcodes)[0],
       }))
     }
@@ -227,3 +243,9 @@ const { show, setup, place, grab } = toRefs(state)
 
 defineExpose({ open })
 </script>
+
+<style>
+.v-slide-group__content {
+  justify-content: center;
+}
+</style>
