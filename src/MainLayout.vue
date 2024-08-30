@@ -9,7 +9,8 @@
 <script lang="ts" setup>
 import type { Component } from 'vue'
 import { watch } from 'vue'
-import useLayout, { CardType } from '@/store/layout'
+import type { CardType } from '@/store/layout'
+import useLayout from '@/store/layout'
 import PlaceCard from '@/components/Cards/PlaceCard.vue'
 import CurrentWeatherCard from '@/components/Cards/CurrentWeatherCard.vue'
 import SunCard from '@/components/Cards/SunCard.vue'
@@ -34,29 +35,29 @@ const { fetchAstro } = useAstro()
 
 function getCardTypeComponent(cardType: CardType): Component {
   switch (cardType) {
-    case CardType.PLACE:
+    case 'PLACE':
       return PlaceCard
-    case CardType.WEATHER_TODAY:
+    case 'WEATHER_TODAY':
       return CurrentWeatherCard
-    case CardType.SUN_TODAY:
+    case 'SUN_TODAY':
       return SunCard
-    case CardType.MOON_TODAY:
+    case 'MOON_TODAY':
       return MoonCard
-    case CardType.RAIN_NEXT_HOUR:
+    case 'RAIN_NEXT_HOUR':
       return PrecipitationCard
-    case CardType.TEMP_NEXT_24H:
+    case 'TEMP_NEXT_24H':
       return HourlyTemperatureCard
-    case CardType.RAIN_NEXT_24H:
+    case 'RAIN_NEXT_24H':
       return HourlyRainCard
-    case CardType.WEATHER_NEXT_6D:
+    case 'WEATHER_NEXT_6D':
       return DailyTemperatureCard
-    case CardType.WEATHER_ALERTS:
+    case 'WEATHER_ALERTS':
       return AlertsCard
-    case CardType.NASA_POTC:
+    case 'NASA_POTC':
       return NasaPictureOfTheDayCard
-    case CardType.COCKTAIL:
+    case 'COCKTAIL':
       return CocktailCard
-    case CardType.POLLUTION:
+    case 'POLLUTION':
       return PollutionCard
   }
 }
