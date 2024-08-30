@@ -4,11 +4,14 @@
 
     <v-main>
       <v-container :fluid="isFullscreen">
-        <v-row>
-          <v-col v-for="card in layout" :key="card.cardType" cols="12" :md="card.size">
-            <Component :is="getCardTypeComponent(card.cardType)" />
-          </v-col>
-        </v-row>
+        <FirstTimeSetup>
+          <v-row>
+            <v-col v-for="card in layout" :key="card.cardType" cols="12" :md="card.size">
+              <Component :is="getCardTypeComponent(card.cardType)" />
+            </v-col>
+          </v-row>
+          <ErrorsSnackbar />
+        </firsttimesetup>
       </v-container>
       <v-hover>
         <template #default="{ isHovering, props }">
@@ -20,18 +23,14 @@
           />
         </template>
       </v-hover>
-      <ErrorsSnackbar />
     </v-main>
     <SetupDialog ref="setupDialog" />
-    <!--    <v-footer v-show="!isFullscreen" app> -->
-    <!--      <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
-    <!--    </v-footer> -->
   </v-app>
 </template>
 
 <script setup lang="ts">
 import type { Component } from 'vue'
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useDark, useFullscreen } from '@vueuse/core'
 import { useTheme } from 'vuetify'
 import AppBar from '@/components/AppBar.vue'
@@ -41,7 +40,6 @@ import useAstro from '@/store/astro'
 import CurrentWeatherCard from '@/components/Cards/CurrentWeatherCard.vue'
 import PrecipitationCard from '@/components/Cards/PrecipitationCard.vue'
 import HourlyTemperatureCard from '@/components/Cards/HourlyTemperatureCard/HourlyTemperatureCard.vue'
-import usePlace from '@/store/place'
 import AlertsCard from '@/components/Cards/AlertsCard.vue'
 import DailyTemperatureCard from '@/components/Cards/DailyTemperatureCard/DailyTemperatureCard.vue'
 import SetupDialog from '@/components/SetupDialog.vue'
@@ -54,6 +52,8 @@ import ErrorsSnackbar from '@/ErrorsSnackbar.vue'
 import CocktailCard from '@/components/Cards/CocktailCard.vue'
 import usePollution from '@/store/pollution'
 import PollutionCard from '@/components/PollutionCard.vue'
+import FirstTimeSetup from '@/FirstTimeSetup.vue'
+import usePlace from '@/store/place'
 
 const { toggle } = useFullscreen()
 const dark = useDark()
@@ -61,7 +61,6 @@ const { isFullscreen } = useFullscreen()
 const { fetchWeather } = useWeather()
 const { fetchPollution } = usePollution()
 const { fetchAstro } = useAstro()
-const { place } = usePlace()
 const theme = useTheme()
 
 const setupDialog = ref<InstanceType<typeof SetupDialog>>()
@@ -70,11 +69,6 @@ const { layout } = useLayout()
 function openSetupDialog() {
   setupDialog.value?.open()
 }
-
-onMounted(() => {
-  if (!place.value)
-    setupDialog.value?.open()
-})
 
 function getCardTypeComponent(cardType: CardType): Component {
   switch (cardType) {
@@ -105,6 +99,7 @@ function getCardTypeComponent(cardType: CardType): Component {
   }
 }
 
+const { place } = usePlace()
 // TODO do not watch - use after config save
 watch(place, fetchAstro, { immediate: true })
 watch(place, fetchWeather, { immediate: true })

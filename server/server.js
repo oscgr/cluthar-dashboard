@@ -34,6 +34,10 @@ fastify.get('/api/ping', (req, reply) => {
   fastify.log.info(`Ping received from ${req.remoteAddress}`)
   reply.send('pong')
 })
+fastify.get('/api/secure/ping', (req, reply) => {
+  fastify.log.info(`Ping received from ${req.remoteAddress}`)
+  reply.send('pong')
+})
 
 fastify.get('/api/secure/weather', async (request) => {
   try {

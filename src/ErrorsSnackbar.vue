@@ -19,7 +19,7 @@ onMounted(() => {
         text: error.message,
       }
     }
-    return error
+    Promise.reject(error)
   })
 })
 </script>

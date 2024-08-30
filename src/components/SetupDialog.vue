@@ -37,12 +37,13 @@
             <v-row>
               <v-col cols="12">
                 <p class="pb-2 ">
-                  Veuillez saisir le serveur
+                  Modifier la clé API
                 </p>
                 <v-text-field
-                  v-model="setup.server"
+                  v-model="setup.key"
                   :rules="[(v) => !!v || 'Requis']"
                   label="Serveur"
+                  type="password"
                 />
               </v-col>
             </v-row>
@@ -140,7 +141,7 @@ const form = ref<InstanceType<typeof VForm> | null>(null)
 
 const { place: placeStore } = usePlace()
 const { layout: layoutStore, resetLayout: resetLayoutStore, availableCards } = useLayout()
-const { local, server } = useAxiosInstance()
+const { local, key } = useAxiosInstance()
 const { t } = useI18n()
 const state = reactive({
   grab: false,
@@ -151,12 +152,12 @@ const state = reactive({
   },
   pristine: {
     place: null as Place | null,
-    server: null as string | null,
+    key: null as string | null,
     layout: [] as Card[],
   },
   setup: {
     place: null as Place | null,
-    server: null as string | null,
+    key: null as string | null,
     layout: [] as Card[],
   },
 })
@@ -165,7 +166,7 @@ function open() {
   state.setup = {
     place: cloneDeep(placeStore.value),
     layout: cloneDeep(layoutStore.value),
-    server: cloneDeep(server.value),
+    key: cloneDeep(key.value),
   }
   state.pristine = cloneDeep(state.setup)
 
@@ -181,10 +182,10 @@ async function save() {
     placeStore.value = omit(state.setup.place, ['fullResult']) as Omit<Place, 'fullResult'>
   if (state.setup.layout !== state.pristine.layout)
     layoutStore.value = state.setup.layout
-  if (state.setup.server !== state.pristine.server)
-    server.value = state.setup.server
+  if (state.setup.key !== state.pristine.key)
+    key.value = state.setup.key
   state.show = false
-  if (state.setup.server !== state.pristine.server)
+  if (state.setup.key !== state.pristine.key)
     location.reload() // might be a better way to force axios instance recreation
 }
 
@@ -192,7 +193,7 @@ function resetLayout() {
   resetLayoutStore()
   state.setup.layout = cloneDeep(layoutStore.value)
   state.pristine.layout = cloneDeep(layoutStore.value)
-  state.pristine.server = cloneDeep(server.value)
+  state.pristine.key = cloneDeep(key.value)
 }
 
 function addCard(cardType: CardType) {
