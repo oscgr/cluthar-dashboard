@@ -60,18 +60,10 @@ const { local } = useAxiosInstance()
 const isVideo = computed(() => payload.value?.url?.includes('youtube'))
 
 onMounted(async () => {
-  try {
-    const { data } = await local.get<NasaAPIResponse>('/api/nasa')
-    payload.value = data
-    if (isVideo.value)
-      displayInfos.value = true
-  }
-  catch (e) {
-    if (import.meta.env.DEV) // when coding without internet
-      payload.value = JSON.parse(import.meta.env.VITE_FAKE_NASA_API)
-    else
-      throw e
-  }
+  const { data } = await local.get<NasaAPIResponse>('/api/secure/nasa')
+  payload.value = data
+  if (isVideo.value)
+    displayInfos.value = true
 })
 const dark = useDark()
 </script>

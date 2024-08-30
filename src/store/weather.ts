@@ -19,17 +19,13 @@ function useWeather() {
     state.loading = true
 
     try {
-      const { data } = await local.get<Forecast>('/api/weather', {
+      const { data } = await local.get<Forecast>('/api/secure/weather', {
         params: {
           lat: place.value?.latitude,
           lon: place.value?.longitude,
         },
       })
       state.payload = data
-    }
-    catch (e) {
-      if (import.meta.env.DEV) // when coding without internet
-        state.payload = JSON.parse(import.meta.env.VITE_FAKE_OPEN_WEATHER)
     }
     finally {
       state.loading = false

@@ -86,7 +86,7 @@ const ingredients = computed<Ingredient[]>(() => Array.from({ length: 14 }).redu
   return prev
 }, [] as Ingredient[]))
 onMounted(async () => {
-  const { data } = await local.get<Drink>('/api/cocktail')
+  const { data } = await local.get<Drink>('/api/secure/cocktail')
   cocktail.value = data
 })
 </script>

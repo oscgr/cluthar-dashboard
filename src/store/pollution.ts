@@ -25,7 +25,7 @@ function usePollution() {
     state.loading = true
 
     try {
-      const { data } = await local.get<Pollution>('/api/pollution', {
+      const { data } = await local.get<Pollution>('/api/secure/pollution', {
         params: {
           lat: place.value?.latitude,
           lon: place.value?.longitude,

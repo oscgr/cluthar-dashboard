@@ -6,6 +6,8 @@ import axios from 'axios'
 import rateLimit from '@fastify/rate-limit'
 import staticFiles from '@fastify/static'
 import cors from '@fastify/cors'
+import bcrypt from 'bcrypt'
+import { authorizationMiddleware } from './auth.js'
 
 const fastify = Fastify({
   logger: true,
@@ -15,22 +17,10 @@ await fastify.register(rateLimit, {
   max: 100,
   timeWindow: '1 minute',
 })
+fastify.addHook('onRequest', (req, rep) => authorizationMiddleware(req, rep, fastify))
 
 await fastify.register(cors, {
-  origin: (origin, cb) => {
-    if (!origin) {
-      cb(null, true)
-      return
-    }
-    const hostname = new URL(origin).hostname
-    if (hostname === 'localhost') {
-      //  Request from localhost will pass
-      cb(null, true)
-      return
-    }
-    // Generate an error on other origins, disabling access
-    cb(new Error('Not allowed'), false)
-  },
+  origin: '*',
 })
 
 fastify.register(staticFiles, {
@@ -40,8 +30,12 @@ fastify.register(staticFiles, {
 fastify.get('/', (req, reply) => {
   reply.sendFile('index.html')
 })
+fastify.get('/api/ping', (req, reply) => {
+  fastify.log.info(`Ping received from ${req.remoteAddress}`)
+  reply.send('pong')
+})
 
-fastify.get('/api/weather', async (request) => {
+fastify.get('/api/secure/weather', async (request) => {
   try {
     if (!request.query.lat || !request.query.lon)
       throw new Error('Please provide both "lat" and "lon" query params')
@@ -61,7 +55,7 @@ fastify.get('/api/weather', async (request) => {
   }
 })
 
-fastify.get('/api/pollution', async (request) => {
+fastify.get('/api/secure/pollution', async (request) => {
   try {
     if (!request.query.lat || !request.query.lon)
       throw new Error('Please provide both "lat" and "lon" query params')
@@ -86,7 +80,7 @@ fastify.get('/api/pollution', async (request) => {
   }
 })
 
-fastify.get('/api/nasa', async () => {
+fastify.get('/api/secure/nasa', async () => {
   try {
     const { data } = await axios.get('https://api.nasa.gov/planetary/apod', {
       params: {
@@ -101,7 +95,7 @@ fastify.get('/api/nasa', async () => {
   }
 })
 
-fastify.get('/api/geo', async (request) => {
+fastify.get('/api/secure/geo', async (request) => {
   try {
     if (!request.query.q)
       throw new Error('Please provide "q" query param')
@@ -120,7 +114,7 @@ fastify.get('/api/geo', async (request) => {
     return { error: true, details: e.message }
   }
 })
-fastify.get('/api/cocktail', async () => {
+fastify.get('/api/secure/cocktail', async () => {
   try {
     const { data } = await axios.get('https://www.thecocktaildb.com/api/json/v1/1/random.php', {
       headers: { 'content-type': 'application/json' },
@@ -133,12 +127,16 @@ fastify.get('/api/cocktail', async () => {
   }
 })
 
+fastify.post('/api/secure/generate-hash', async (request) => {
+  return bcrypt.hashSync(request.body.password, 10)
+})
+
 /**
  * Run the server!
  */
 async function start() {
   try {
-    await fastify.listen({ port: Number(process.env.VITE_SERVER_PORT) || 8080 })
+    await fastify.listen({ port: Number(process.env.PORT) || 8080, host: '0.0.0.0' })
   }
   catch (err) {
     fastify.log.error(err)

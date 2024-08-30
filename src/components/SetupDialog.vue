@@ -216,7 +216,7 @@ const searchLocations = useDebounceFn(async (q: string) => {
         admin2?: string
         admin3?: string
         admin4?: string
-      }[]>('/api/geo', {
+      }[]>('/api/secure/geo', {
         params: {
           q,
         },
