@@ -3,22 +3,24 @@
     <v-col cols="12" class="d-flex justify-center">
       <v-progress-linear v-if="loading" indeterminate type="card" :loading="loading" />
       <v-card v-else-if="setupIsRequired" flat width="600">
-        <v-stepper ref="stepper" alt-labels non-linear>
+        <v-stepper v-model="stepper" alt-labels non-linear>
           <v-stepper-header>
             <v-stepper-item
               title="Clé API"
-              value="1"
+              :value="1"
+              :complete="key.valid"
             />
 
             <v-divider />
 
             <v-stepper-item
               title="Localisation"
-              value="2"
+              :value="2"
+              :complete="!!placeStore"
             />
           </v-stepper-header>
           <v-stepper-window>
-            <v-stepper-window-item value="1">
+            <v-stepper-window-item :value="1">
               <v-card title="Veuillez renseigner votre clé API" flat>
                 <v-text-field
                   v-model="key.input"
@@ -30,13 +32,13 @@
                 />
                 <v-card-actions>
                   <v-spacer />
-                  <v-btn :disabled="!key.valid" :loading="key.loading" @click="$refs.stepper?.next?.()">
+                  <v-btn :disabled="!key.valid" :loading="key.loading" @click="stepper = 2">
                     Suivant
                   </v-btn>
                 </v-card-actions>
               </v-card>
             </v-stepper-window-item>
-            <v-stepper-window-item value="2">
+            <v-stepper-window-item :value="2">
               <v-card title="Veuillez renseigner votre localisation" flat>
                 <v-autocomplete
                   v-model="placeStore"
@@ -57,7 +59,7 @@
                 <v-card-actions>
                   <v-spacer />
                   <v-btn :disabled="!placeStore" :loading="place.loading" @click="setupIsRequired = false">
-                    Suivant
+                    Valider
                   </v-btn>
                 </v-card-actions>
               </v-card>
@@ -71,16 +73,16 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive, toRefs } from 'vue'
+import { computed, onBeforeMount, reactive, toRefs } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
-import { sortBy } from 'lodash'
+import { sortBy, trim } from 'lodash'
 import useAxiosInstance from '@/store/axiosInstance'
 import usePlace, { type Place } from '@/store/place'
 
 const { key: keyStore, local } = useAxiosInstance()
 const { place: placeStore } = usePlace()
-
 const state = reactive({
+  stepper: 1 as 1 | 2,
   loading: true,
   setupIsRequired: false,
   key: {
@@ -94,7 +96,7 @@ const state = reactive({
     items: [] as Place[],
   },
 })
-const { place, key, loading, setupIsRequired } = toRefs(state)
+const { place, key, loading, setupIsRequired, stepper } = toRefs(state)
 const searchLocations = useDebounceFn(async (q: string) => {
   if (q) {
     try {
@@ -150,13 +152,17 @@ async function checkKey(_key?: string): Promise<boolean> {
     return false
   }
 }
-onMounted(async () => {
-  if (!key.value || !place.value) {
+const keyIsDefined = computed(() => (!!keyStore.value) && (trim(keyStore.value) !== ''))
+onBeforeMount(async () => {
+  if (!keyIsDefined.value || !placeStore.value)
     setupIsRequired.value = true
-    loading.value = false
-    return
+
+  if (keyIsDefined.value) {
+    state.key.valid = (await checkKey())
+    if (state.key.valid) {
+      state.stepper = 2
+    }
   }
-  setupIsRequired.value = !(await checkKey())
   loading.value = false
 })
 </script>
