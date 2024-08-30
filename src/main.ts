@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { createI18n } from 'vue-i18n'
+import { createI18n, useI18n } from 'vue-i18n'
 import VueApexCharts from 'vue3-apexcharts'
 
 import 'vuetify/styles'
@@ -11,13 +11,21 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import draggable from 'vuedraggable'
 import { wi } from '@/assets/iconsets/wi'
 import App from '@/App.vue'
-import en from '@/locales/en.json'
-import fr from '@/locales/fr.json'
 
 import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
 
 import '@fontsource/roboto/latin.css'
 import '@fontsource/roboto-condensed/latin.css'
+import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n'
+
+const en = async () => (await import('@/locales/en.json')).default
+const fr = async () => (await import('@/locales/fr.json')).default
+// @ts-ignore
+const vuetifyFr = async () => (await import('vuetify/lib/locale/fr.mjs')).default
+// @ts-ignore
+const vuetifyEn = async () => (await import('vuetify/lib/locale/en.mjs')).default
+
+const locale = navigator.language.split('-')[0]
 
 const light: ThemeDefinition = {
   dark: false,
@@ -51,15 +59,23 @@ const dark: ThemeDefinition = {
 }
 
 const i18n = createI18n({
-  locale: 'fr', // set locale
-  fallbackLocale: 'fr', // set fallback locale
-  messages: { fr, en },
+  locale,
+  fallbackLocale: 'en',
   legacy: false,
+  globalInjection: true,
+  messages: {},
+  silentTranslationWarn: import.meta.env.PROD,
 })
+
+if (locale === 'fr')
+  i18n.global.setLocaleMessage('fr', { ...(await fr()), $vuetify: (await vuetifyFr()) })
+else
+  i18n.global.setLocaleMessage('en', { ...(await en()), $vuetify: (await vuetifyEn()) })
+
 const vuetify = createVuetify({
   components,
   locale: {
-    locale: 'fr',
+    adapter: createVueI18nAdapter({ i18n, useI18n }),
   },
   theme: {
     themes: {
