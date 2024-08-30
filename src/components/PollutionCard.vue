@@ -5,18 +5,18 @@
     min-height="150px"
     flat
     :loading="loading"
+    title="Qualité de l'air"
   >
     <VueApexCharts
       :key="`chart_temp_${loading}${dark}`"
       ref="chart"
       class="pt-2 ml-n5 position-absolute"
-      style="width: 108%; z-index: -1; pointer-events: none"
+      style="width: 108%; z-index: -1; pointer-events: none; bottom: 0;"
       type="line"
       :series="series"
       :options="chartOptions"
       height="140"
     />
-    <v-card-title v-text="`Qualité de l'air`" />
     <v-card-subtitle>
       Actuellement - <span class="font-weight-bold" v-text="getAirQualityText(payload.current?.european_aqi)" />
     </v-card-subtitle>
@@ -25,6 +25,7 @@
         <v-col v-for="entry in chunkedCols" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">
           <div style="backdrop-filter: opacity(50%); border-radius: 2px; font-family: 'Roboto Condensed', sans-serif; font-size: 18px; white-space: nowrap" v-text="`${DateTime.fromMillis(entry.dt).hour}h`" />
         </v-col>
+        <v-col class="flex-grow-0 flex-shrink-1" />
       </v-row>
     </v-card-text>
   </v-card>

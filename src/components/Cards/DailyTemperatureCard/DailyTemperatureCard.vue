@@ -9,13 +9,13 @@
     <VueApexCharts
       :key="`chart_temp_${loading}${dark}`"
       class="pt-2 ml-n8 position-absolute"
-      style="width: 114%; z-index: -1; pointer-events: none"
+      style="width: 114%; z-index: -1; bottom: 0; pointer-events: none"
       type="line"
       :series="series"
       :options="chartOptions"
       height="140"
+      title="Tendances - une semaine"
     />
-    <v-card-title v-text="`Tendances - une semaine`" />
     <v-card-text>
       <v-row no-gutters class="flex-nowrap justify-space-between ">
         <v-col

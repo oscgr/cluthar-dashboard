@@ -5,18 +5,18 @@
     min-height="150px"
     flat
     :loading="loading"
+    title="Températures - aujourd'hui"
   >
     <VueApexCharts
       :key="`chart_temp_${loading}${dark}`"
       ref="chart"
       class="pt-2 ml-n5 position-absolute"
-      style="width: 108%; z-index: -1; pointer-events: none"
+      style="width: 108%; z-index: -1; bottom: 0; pointer-events: none"
       type="line"
       :series="series"
       :options="chartOptions"
       height="140"
     />
-    <v-card-title v-text="`Températures - aujourd'hui`" />
     <v-card-text>
       <v-row no-gutters class="flex-nowrap justify-space-between ">
         <v-col v-for="entry in chunkedCols" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">

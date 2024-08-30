@@ -5,6 +5,7 @@
     min-height="150px"
     flat
     :loading="loading"
+    title="Pluie - aujourd'hui"
   >
     <VueApexCharts
       :key="`chart_temp_${loading}${dark}`"
@@ -16,7 +17,6 @@
       :options="chartOptions"
       height="140"
     />
-    <v-card-title v-text="`Pluie - aujourd'hui`" />
     <v-card-text>
       <v-row no-gutters class="flex-nowrap justify-space-between ">
         <v-col v-for="entry in chunkedCols" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">

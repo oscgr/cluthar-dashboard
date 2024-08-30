@@ -14,10 +14,8 @@
             <div title="température" class="text-h3 font-weight-thin" v-text="temperature" />
             <span v-if="temperature !== feelsLike" title="ressenti" class="" v-text="`Ressenti ${feelsLike}`" />
           </v-col>
-          <v-col v-if="isHovering" class="text-h4  text-right">
-            <span v-text="capitalize(weatherDescription)" />
-          </v-col>
-          <v-col v-else class="flex-grow-0 d-flex text-right pr-8">
+          <v-col class="flex-grow-0 flex-shrink-1 d-flex text-right align-center pr-8">
+            <div v-if="isHovering" class="text-no-wrap text-h4 font-weight-thin pr-4 text-right" v-text="capitalize(weatherDescription)" />
             <v-icon v-for="weather in (payload.current?.weather || [])" :key="weather.id" :icon="weatherIcon(weather.id)" size="64" />
           </v-col>
         </v-row>

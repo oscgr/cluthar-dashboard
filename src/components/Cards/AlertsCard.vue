@@ -3,13 +3,13 @@
     width="100%"
     height="100%"
     flat
-    :color="(alerts.length > 0) ? (dark ? '#801336' : '#f89a9a') : null"
+    :color="(alerts.length > 0) ? (dark ? 'primary' : '') : null"
   >
     <v-card-subtitle v-if="alerts.length === 0" class="pa-4">
       Aucune alerte météo
     </v-card-subtitle>
     <v-card-text v-else>
-      <v-row v-for="(alert, i) in payload.alerts" :key="alert.name" no-gutters>
+      <v-row v-for="(alert, i) in alerts" :key="alert.name" no-gutters>
         <v-col v-if="i !== 0" cols="12">
           <v-divider class="my-4" />
         </v-col>
@@ -47,7 +47,17 @@ const { payload } = useWeather()
 
 const dark = useDark()
 
-const alerts = computed(() => payload.value?.alerts || [])
+const alerts = computed(() => (payload.value?.alerts || []).reduce((previousValue, currentValue, currentIndex, array) => {
+  const existingAlert = previousValue.find(pv => pv.event === currentValue.event)
+  if (existingAlert) {
+    existingAlert.start = (existingAlert.start < currentValue.start) ? existingAlert.start : currentValue.start
+    existingAlert.end = (currentValue.end < existingAlert.end) ? existingAlert.end : currentValue.end
+  }
+  else {
+    previousValue.push(currentValue)
+  }
+  return previousValue
+}, []))
 
 const unixFormatted = (unixDate?: number) => unixDate && DateTime.fromMillis(unixDate * 1000).toLocaleString(DateTime.DATETIME_SHORT)
 

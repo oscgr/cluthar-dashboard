@@ -33,9 +33,7 @@ export default {
   mergeApexChartOptions(partial: RecursivePartial<ApexOptions>): ApexOptions {
     return merge(this.getGlobalApexChartOptions(), partial)
   },
-  /**
-   * @private use
-   */
+
   getGlobalApexChartOptions(): ApexOptions {
     return {
       dataLabels: {

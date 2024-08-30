@@ -4,9 +4,9 @@
     height="100%"
     flat
     :loading="loading"
+    title="Précipitation dans l'heure"
+    :subtitle="subtext"
   >
-    <v-card-title class="position-absolute" v-text="`Précipitation dans l'heure`" />
-    <v-card-subtitle class="position-absolute mt-8" v-text="subtext" />
     <v-card-text v-if="!anyPrecipitation" class="mt-8">
       <span class="text-h5" v-text="'Aucune pluie enregistrée'" />
     </v-card-text>
@@ -137,7 +137,7 @@ const chartOptions = computed<ApexOptions>(() => {
   },
   )
 })
-const series = computed<{ name: string; data: { x: number; y: number } }[]>(() => {
+const series = computed<{ name: string, data: { x: number, y: number } }[]>(() => {
   return [{
     name: 'rain',
     data: chunkedMinutely.value.map(({ dt, precipitation }) => ({ x: dt, y: precipitation })),

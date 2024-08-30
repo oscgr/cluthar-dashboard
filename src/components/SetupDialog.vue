@@ -5,8 +5,7 @@
       transition="dialog-bottom-transition" :persistent="!placeStore"
       :fullscreen="$vuetify.display.smAndDown"
     >
-      <v-card>
-        <v-card-title>Paramètres</v-card-title>
+      <v-card title="Paramètres">
         <v-divider />
         <v-card-text>
           <v-container fluid>
