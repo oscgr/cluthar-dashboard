@@ -2,10 +2,12 @@ import { StorageSerializers, useLocalStorage } from '@vueuse/core'
 import { ref } from 'vue'
 
 export interface Place {
+  id: number
   latitude: number
   longitude: number
   name: string
   country: string
+  postcode?: string
   fullResult?: string // for items in search
 }
 
