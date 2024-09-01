@@ -1,5 +1,8 @@
 <template>
   <v-row>
+    <v-col v-if="layout.length === 0" class="text-center text-subtitle-2">
+      Aucun widget sélectionné
+    </v-col>
     <v-col v-for="card in layout" :key="card.cardType" cols="12" :md="card.size">
       <Component :is="getCardTypeComponent(card.cardType)" />
     </v-col>
@@ -67,14 +70,14 @@ function getCardTypeComponent(cardType: CardType): Component {
   }
 }
 
-const { trigger: triggerAstro } = watchTriggerable(place || astroIsRequired.value, fetchAstro, { immediate: true })
-const { trigger: triggerWeather } = watchTriggerable(() => place || weatherInfoIsRequired.value, fetchWeather, { immediate: true })
-const { trigger: triggerPollution } = watchTriggerable(() => place || pollutionInfoIsRequired.value, fetchPollution, { immediate: true })
+const { trigger: triggerAstro } = watchTriggerable(() => place.value || astroIsRequired.value, fetchAstro, { immediate: true })
+const { trigger: triggerWeather } = watchTriggerable(() => place.value || weatherInfoIsRequired.value, fetchWeather, { immediate: true })
+const { trigger: triggerPollution } = watchTriggerable(() => place.value || pollutionInfoIsRequired.value, fetchPollution, { immediate: true })
 const { trigger: triggerPotd } = watchTriggerable(nasaInfoIsRequired, fetchPotd, { immediate: true })
 const { trigger: triggerCocktail } = watchTriggerable(cocktailInfoIsRequired, fetchCocktail, { immediate: true })
 
 // cron + watcher
-useIntervalFn(triggerAstro, 1000 * 60) // 1 min
+useIntervalFn(triggerAstro, 1000 * 60 * 5) // 5 min
 useIntervalFn(triggerWeather, 1000 * 60 * 5) // 5 min
 useIntervalFn(triggerPollution, 1000 * 60 * 60) // 1h
 useIntervalFn(triggerPotd, 1000 * 60 * 60 * 12) // 12h

@@ -83,6 +83,11 @@
                       </v-card>
                     </v-col>
                   </template>
+                  <template v-if="setup.layout.length === 0" #header>
+                    <v-col class="text-center text-subtitle-2">
+                      Aucun widget sélectionné
+                    </v-col>
+                  </template>
                 </VueDraggable>
               </v-col>
             </v-row>
