@@ -14,8 +14,8 @@ const fastify = Fastify({
 })
 
 await fastify.register(rateLimit, {
-  max: 100,
-  timeWindow: '1 minute',
+  max: 50,
+  timeWindow: 1000 * 60,
 })
 fastify.addHook('onRequest', (req, rep) => authorizationMiddleware(req, rep, fastify))
 

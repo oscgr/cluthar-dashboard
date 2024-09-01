@@ -49,13 +49,21 @@
       "WEATHER_TODAY": "Météo maintenant",
       "SUN_TODAY": "Infos soleil",
       "MOON_TODAY": "Infos lune",
-      "RAIN_NEXT_HOUR": "Pluie dans l'heure",
-      "TEMP_NEXT_24H": "Températures 24h",
-      "RAIN_NEXT_24H": "Pluie/vent 24h",
-      "WEATHER_NEXT_6D": "Météo 1 semaine",
+      "RAIN_NEXT_HOUR": "Précipitations dans l'heure",
+      "TEMP_NEXT_24H": "Températures (24h)",
+      "RAIN_NEXT_24H": "Pluie (24h)",
+      "WEATHER_NEXT_6D": "Météo (6 jours)",
       "WEATHER_ALERTS": "Alertes météos",
-      "NASA_POTC": "NASA (photo du jour)",
+      "NASA_POTD": "NASA photo du jour",
       "COCKTAIL": "Cocktail du jour"
+    }
+  },
+  "error": {
+    "undefined": "Erreur inconnue",
+    "statusCode": {
+      "429": "Limite d'appels atteinte",
+      "403": "Vous n'êtes pas connecté",
+      "500": "Erreur serveur inconnue"
     }
   }
 }

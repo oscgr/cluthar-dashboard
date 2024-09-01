@@ -5,25 +5,28 @@
     min-height="150px"
     flat
     :loading="loading"
-    title="Pluie - aujourd'hui"
+    :title="t('constants.LAYOUT_CARD.RAIN_NEXT_24H')"
   >
-    <VueApexCharts
-      :key="`chart_temp_${loading}${dark}`"
-      ref="chart"
-      class=" position-absolute"
-      style="width: 100%; bottom: 0; z-index: -1; pointer-events: none"
-      type="area"
-      :series="series"
-      :options="chartOptions"
-      height="140"
-    />
-    <v-card-text>
-      <v-row no-gutters class="flex-nowrap justify-space-between ">
-        <v-col v-for="entry in chunkedCols" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">
-          <ChartCol :entry="entry" />
-        </v-col>
-      </v-row>
-    </v-card-text>
+    <v-card-subtitle v-if="error" v-text="error" />
+    <template v-else-if="!loading">
+      <VueApexCharts
+        :key="`chart_temp_${loading}${dark}`"
+        ref="chart"
+        class="position-absolute"
+        style="width: 100%; bottom: 0; z-index: -1; pointer-events: none"
+        type="area"
+        :series="series"
+        :options="chartOptions"
+        height="140"
+      />
+      <v-card-text class="pt-0">
+        <v-row no-gutters class="flex-nowrap justify-space-between ">
+          <v-col v-for="entry in chunkedCols" :key="entry.dt" class="text-center d-flex align-center flex-column flex-grow-0 flex-shrink-1">
+            <ChartCol :entry="entry" />
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </template>
   </v-card>
 </template>
 
@@ -33,12 +36,13 @@ import VueApexCharts from 'vue3-apexcharts'
 import type { ApexOptions } from 'apexcharts'
 import { chunk, dropRight, initial, tail } from 'lodash'
 import { useDark } from '@vueuse/core'
+import { useI18n } from 'vue-i18n'
 import Global from '@/utils/global'
 import useWeather from '@/store/weather'
 import ChartCol from '@/components/Cards/HourlyRainCard/HourlyRainCardChartCol.vue'
 
-const { loading, payload } = useWeather()
-
+const { loading, payload, error } = useWeather()
+const { t } = useI18n()
 const chart = ref(null)
 const dark = useDark()
 const CHART_CHUNK_SIZE = 1

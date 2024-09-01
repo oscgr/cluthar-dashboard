@@ -13,7 +13,7 @@ export type CardType =
   'WEATHER_NEXT_6D' |
   'WEATHER_ALERTS' |
   'COCKTAIL' |
-  'NASA_POTC' |
+  'NASA_POTD' |
   'POLLUTION'
 export interface Card {
   size: '3' | '4' | '6' | '12'
@@ -24,7 +24,7 @@ export interface Card {
 const DEFAULT_LAYOUT = [
   {
     size: '12',
-    cardType: 'NASA_POTC',
+    cardType: 'NASA_POTD',
   },
   {
     size: '6',
@@ -57,7 +57,7 @@ const layout = useLocalStorage<Card[]>('layout', cloneDeep(DEFAULT_LAYOUT), { de
 function useLayout() {
   /* ==================== ACTIONS ==================== */
 
-  const availableCards = (cardTypes: CardType[]): CardType[] => ['PLACE', 'WEATHER_TODAY', 'SUN_TODAY', 'MOON_TODAY', 'RAIN_NEXT_HOUR', 'TEMP_NEXT_24H', 'RAIN_NEXT_24H', 'WEATHER_NEXT_6D', 'WEATHER_ALERTS', 'COCKTAIL', 'NASA_POTC', 'POLLUTION'].filter((v: CardType) => !cardTypes.includes(v))
+  const availableCards = (cardTypes: CardType[]): CardType[] => ['PLACE', 'WEATHER_TODAY', 'SUN_TODAY', 'MOON_TODAY', 'RAIN_NEXT_HOUR', 'TEMP_NEXT_24H', 'RAIN_NEXT_24H', 'WEATHER_NEXT_6D', 'WEATHER_ALERTS', 'COCKTAIL', 'NASA_POTD', 'POLLUTION'].filter((v: CardType) => !cardTypes.includes(v))
 
   const resetLayout = () => {
     layout.value = cloneDeep(DEFAULT_LAYOUT)

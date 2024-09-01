@@ -5,6 +5,7 @@
       width="100%"
       height="100%"
       dark
+      min-height="150px"
       flat
       :color="dark ? '#0b3c5d' : '#c8cdd0'"
     >

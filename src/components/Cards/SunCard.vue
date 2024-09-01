@@ -4,6 +4,7 @@
       v-bind="props"
       width="100%"
       height="100%"
+      min-height="150px"
       flat
       :color="dark ? '#600e28' : '#dfd3c3'"
     >

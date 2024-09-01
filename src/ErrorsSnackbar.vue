@@ -1,5 +1,5 @@
 <template>
-  <v-snackbar v-model="snackbar.display" position="fixed" color="error" :text="snackbar.text" />
+  <v-snackbar v-model="snackbar.display" position="fixed" location="bottom start" color="error" :text="snackbar.text" />
 </template>
 
 <script setup lang="ts">

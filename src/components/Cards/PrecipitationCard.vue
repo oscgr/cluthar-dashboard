@@ -3,23 +3,27 @@
     width="100%"
     height="100%"
     flat
+    min-height="150px"
     :loading="loading"
-    title="Précipitation dans l'heure"
-    :subtitle="subtext"
+    :title="t('constants.LAYOUT_CARD.RAIN_NEXT_HOUR')"
+    :subtitle="(loading || error) ? null : subtext"
   >
-    <v-card-text v-if="!anyPrecipitation" class="mt-8">
-      <span class="text-h5" v-text="'Aucune pluie enregistrée'" />
-    </v-card-text>
+    <v-card-subtitle v-if="error" v-text="error" />
+    <template v-else-if="!loading">
+      <v-card-text v-if="!anyPrecipitation" class="mt-8">
+        <span class="text-h5" v-text="'Aucune pluie enregistrée'" />
+      </v-card-text>
 
-    <VueApexCharts
-      v-else
-      :key="`chart_precipitations_${loading}${dark}_${series[0].data.x}`"
-      style="pointer-events: none"
-      type="heatmap"
-      :series="series"
-      :options="chartOptions"
-      height="150"
-    />
+      <VueApexCharts
+        v-else
+        :key="`chart_precipitations_${loading}${dark}_${series[0].data.x}`"
+        style="pointer-events: none"
+        type="heatmap"
+        :series="series"
+        :options="chartOptions"
+        height="150"
+      />
+    </template>
   </v-card>
 </template>
 
@@ -39,7 +43,7 @@ import { diffNowLocaleString } from '@/utils/durationDisplay'
 const CHART_CHUNK_SIZE = 10
 
 const { t } = useI18n()
-const { payload, loading } = useWeather()
+const { payload, loading, error } = useWeather()
 
 const dark = useDark()
 const anyPrecipitation = computed<boolean>(() => payload.value.minutely?.some(m => m.precipitation > 0) || false)

@@ -6,6 +6,8 @@ import { round } from 'lodash'
 import DayPhase from '@/enums/DayPhase'
 import MoonPhase from '@/enums/MoonPhase'
 import usePlace from '@/store/place'
+import type { CardType } from '@/store/layout'
+import useLayout from '@/store/layout'
 
 const state = reactive({
   sunTimes: null as SunCalc.GetTimesResult | null,
@@ -17,10 +19,12 @@ const state = reactive({
 
 function useAstro() {
   const { place } = usePlace()
+  const { layout } = useLayout()
 
   const HALF_HOUR = 1800000
 
-  // SUN
+  // includes weatherInfoIsRequired - todo there must be a better way
+  const astroIsRequired = computed(() => layout.value.some(c => (['SUN_TODAY', 'MOON_TODAY', 'WEATHER_ALERTS', 'WEATHER_TODAY', 'WEATHER_NEXT_6D', 'RAIN_NEXT_24H', 'RAIN_NEXT_HOUR', 'TEMP_NEXT_24H'] satisfies CardType[]).includes(c.cardType)))
 
   const sunPhase = computed<DayPhase | undefined>(() => {
     if (!state.sunTimes)
@@ -98,6 +102,8 @@ function useAstro() {
   /* ==================== ACTIONS ==================== */
 
   const fetchAstro = () => {
+    if (!astroIsRequired.value)
+      return
     if (!place.value?.latitude || !place.value?.longitude)
       return
     const now = new Date()
@@ -115,6 +121,7 @@ function useAstro() {
     sunPhase,
     isDay,
     moonPhase,
+    astroIsRequired,
   }
 }
 

@@ -1,6 +1,9 @@
-import { reactive, toRefs } from 'vue'
+import { computed, reactive, toRefs } from 'vue'
 import usePlace from '@/store/place'
 import useAxiosInstance from '@/store/axiosInstance'
+import type { CardType } from '@/store/layout'
+import useLayout from '@/store/layout'
+import useErrorHandler from '@/utils/errorHandler'
 
 export interface Pollution {
   current: {
@@ -13,16 +16,27 @@ export interface Pollution {
 }
 
 const state = reactive({
-  loading: false,
+  loading: false as boolean | string,
   payload: {} as Partial<Pollution>,
+  error: false as boolean | string,
 })
 
 function usePollution() {
   const { place } = usePlace()
+  const { layout } = useLayout()
   const { local } = useAxiosInstance()
+  const { handleErrorTranslation } = useErrorHandler()
+  const pollutionInfoIsRequired = computed(() => layout.value.some(c => (['POLLUTION'] satisfies CardType[]).includes(c.cardType)))
 
   const fetchPollution = async () => {
+    if (!pollutionInfoIsRequired.value)
+      return
+    if (!place.value?.latitude || !place.value?.longitude) {
+      state.error = 'Veuillez renseigner une localisation'
+      return
+    }
     state.loading = true
+    state.error = false
 
     try {
       const { data } = await local.get<Pollution>('/api/secure/pollution', {
@@ -32,6 +46,10 @@ function usePollution() {
         },
       })
       state.payload = data
+    }
+    catch (e) {
+      state.payload = {}
+      state.error = handleErrorTranslation(e)
     }
     finally {
       state.loading = false
@@ -79,6 +97,7 @@ function usePollution() {
     fetchPollution,
     getAirQualityColor,
     getAirQualityText,
+    pollutionInfoIsRequired,
   }
 }
 
