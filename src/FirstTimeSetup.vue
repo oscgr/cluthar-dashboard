@@ -45,7 +45,7 @@
                   :items="place.items"
                   :rules="[(v) => !!v || 'Requis']"
                   return-object
-                  :item-title="(v) => `${v.name} (${v.postcode || v.country})`"
+                  :item-title="itemTitle"
                   label="Ville ou localisation"
                   :loading="place.loading"
                   hide-no-data
@@ -97,8 +97,11 @@ const state = reactive({
   },
 })
 const { place, key, loading, setupIsRequired, stepper } = toRefs(state)
+
+const itemTitle = (v?: Place) => `${v?.name} (${v?.postcode || v?.country})`
+
 const searchLocations = useDebounceFn(async (q: string) => {
-  if (q) {
+  if (q && (q !== itemTitle(placeStore.value))) {
     try {
       state.place.loading = true
       const { data } = await local.get<{

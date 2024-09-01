@@ -20,10 +20,11 @@
                   :items="place.items"
                   :rules="[(v) => !!v || 'Requis']"
                   return-object
-                  :item-title="(v) => `${v.name} (${v.postcode || v.country})`"
+                  :item-title="itemTitle"
                   label="Ville ou localisation"
                   :loading="place.loading"
                   hide-no-data
+                  item-value="id"
                   placeholder="Recherchez votre localisation"
                   @update:search="searchLocations"
                 >
@@ -176,6 +177,7 @@ function open() {
 
   state.show = true
 }
+const itemTitle = (v?: Place) => `${v?.name} (${v?.postcode || v?.country})`
 
 async function save() {
   const { valid } = await form.value?.validate()
@@ -208,7 +210,7 @@ function removeCard(card: Card) {
 }
 
 const searchLocations = useDebounceFn(async (q: string) => {
-  if (q) {
+  if (q && (q !== itemTitle(placeStore.value))) {
     try {
       state.place.loading = true
       const { data } = await local.get<{
