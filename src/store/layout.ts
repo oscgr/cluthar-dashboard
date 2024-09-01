@@ -23,10 +23,6 @@ export interface Card {
 
 const DEFAULT_LAYOUT = [
   {
-    size: '12',
-    cardType: 'NASA_POTD',
-  },
-  {
     size: '6',
     cardType: 'PLACE',
   },
