@@ -17,44 +17,44 @@
     "docker:run": "docker-compose up -d",
     "predocker:build": "vite build"
   },
-  "packageManager": "pnpm@9.9.0",
+  "packageManager": "pnpm@9.14.0",
   "engines": {
-    "node": "20"
+    "node": "22"
   },
   "dependencies": {
-    "@fastify/cors": "^9.0.1",
-    "@fastify/rate-limit": "^9.1.0",
-    "@fastify/static": "^7.0.4",
-    "axios": "^1.7.5",
+    "@fastify/cors": "^10.0.1",
+    "@fastify/rate-limit": "^10.2.1",
+    "@fastify/static": "^8.0.3",
+    "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
-    "dotenv": "^16.4.5",
-    "fastify": "^4.28.1"
+    "dotenv": "^16.4.7",
+    "fastify": "^5.2.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.27.1",
-    "@fontsource/roboto": "^5.0.14",
-    "@fontsource/roboto-condensed": "^5.0.17",
+    "@antfu/eslint-config": "^3.12.1",
+    "@fontsource/roboto": "^5.1.0",
+    "@fontsource/roboto-condensed": "^5.1.0",
     "@mdi/font": "^7.4.47",
-    "@types/lodash": "^4.17.7",
+    "@types/lodash": "^4.17.13",
     "@types/luxon": "^3.4.2",
-    "@types/node": "~20.15.0",
+    "@types/node": "~22.10.2",
     "@types/suncalc": "^1.9.2",
-    "@vitejs/plugin-vue": "^5.1.2",
-    "@vueuse/core": "^11.0.3",
-    "apexcharts": "^3.52.0",
-    "eslint": "8.57.0",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vueuse/core": "^12.2.0",
+    "apexcharts": "^4.3.0",
+    "eslint": "9.17.0",
     "lodash": "^4.17.21",
     "luxon": "^3.5.0",
     "owm-onecall-api": "^1.3.0",
-    "sass": "^1.77.8",
+    "sass": "^1.83.0",
     "suncalc": "^1.9.0",
-    "typescript": "^5.5.4",
+    "typescript": "^5.7.2",
     "utility-types": "^3.11.0",
-    "vite": "^5.4.2",
-    "vue": "^3.4.38",
-    "vue-i18n": "^9.14.0",
-    "vue3-apexcharts": "^1.5.3",
+    "vite": "^6.0.6",
+    "vue": "^3.5.13",
+    "vue-i18n": "^11.0.1",
+    "vue3-apexcharts": "^1.8.0",
     "vuedraggable": "^4.1.0",
-    "vuetify": "^3.7.0"
+    "vuetify": "^3.7.6"
   }
 }
